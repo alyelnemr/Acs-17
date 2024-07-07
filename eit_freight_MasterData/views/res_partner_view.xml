@@ -1,0 +1,78 @@
+<odoo>
+    <record id="view_partner_inherit" model="ir.ui.view">
+        <field name="name">res.partner.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </xpath>
+            <field name="property_account_position_id" position="after">
+                <field name="created_by"/>
+                <field name="excecuters" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="res_partner_view_tree_inherit_partner" model="ir.ui.view">
+        <field name="name">res.partner.view.tree.inherit.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_view_search_inherit_partner" model="ir.ui.view">
+        <field name="name">res.partner.view.search.inherit.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="salesperson" position="after">
+                <filter name="partner_type" string="Partner Type" context="{'group_by': 'partner_type_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="res_partner_kanban_view_inheirt" model="ir.ui.view">
+        <field name="name">res.partner.view.kanban.innheirt</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <field name="mobile" position="after">
+                <field name="partner_type_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="res_partner_kanban_view_inherit" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inheriit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_setup.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_kanban_partner_categories')]" position="after">
+                <div class="oe_kanban_list_many2many">
+                    <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                </div>
+            </xpath>
+            <!--             <field name="property_account_position_id" position="after">-->
+            <!--                 <field name="created_by"/>-->
+            <!--             </field>-->
+            <!--            view_partner_property_form-->
+        </field>
+    </record>
+
+
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="context">{'default_is_company': True,'search_default_type_company': True}</field>
+    </record>
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
+            'default_is_company': True, 'default_customer_rank': 1}
+        </field>
+        <field name="domain">[('customer_rank', '=', True)]</field>
+    </record>
+
+</odoo>

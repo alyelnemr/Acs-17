@@ -1,0 +1,351 @@
+<odoo>
+    <data>
+        <record id="seq_crm_lead_opp_id" model="ir.sequence">
+            <field name="name">CRM Lead OPP ID</field>
+            <field name="code">crm.lead.opp.id</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="use_date_range">True</field>
+        </record>
+        <record id="view_crm_lead_form_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.form.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_title')]" position="replace">
+                    <div class="oe_title" invisible="type == 'lead'">
+                        <h1>
+                            <field class="text-break" options="{'line_breaks': False}" widget="text" name="name"
+                                   placeholder="e.g. Product Pricing" readonly="1"/>
+                        </h1>
+                        <h2 class="row g-0 pb-3 pb-sm-4">
+                            <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead'">
+                                <label for="expected_revenue" class="oe_edit_only"/>
+                                <div class="d-flex align-items-baseline">
+                                    <field name="company_currency" invisible="1"/>
+                                    <field name="expected_revenue" class="o_input_13ch" widget="monetary"
+                                           options="{'currency_field': 'company_currency'}"/>
+                                    <span class="oe_grey p-2" groups="crm.group_use_recurring_revenues">+</span>
+                                    <span class="oe_grey p-2" groups="!crm.group_use_recurring_revenues">at</span>
+                                    <div class="d-flex align-items-baseline gap-3"
+                                         groups="crm.group_use_recurring_revenues">
+                                        <field name="recurring_revenue" class="o_input_10ch" widget="monetary"
+                                               options="{'currency_field': 'company_currency'}"/>
+                                        <div class="d-flex align-items-baseline">
+                                            <field name="recurring_plan" class="oe_inline o_input_13ch"
+                                                   placeholder="e.g. &quot;Monthly&quot;"
+                                                   required="recurring_revenue != 0"
+                                                   options="{'no_create': True, 'no_open': True}"/>
+                                            <span class="oe_grey p-2 text-nowrap">at</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <label for="probability" class="d-inline-block"/>
+                                <button class="d-inline-block px-2 py-0 btn btn-link"
+                                        name="action_set_automated_probability" type="object"
+                                        invisible="is_automated_probability">
+                                    <i class="fa fa-gear" role="img" title="Switch to automatic probability"
+                                       aria-label="Switch to automatic probability"/>
+                                </button>
+                                <small class="d-inline-block oe_grey h6 mb-0" invisible="is_automated_probability">
+                                    <field class="mb-0" name="automated_probability" force_save="1"/>
+                                    %
+                                </small>
+                                <div id="probability" class="d-flex align-items-baseline">
+                                    <field name="is_automated_probability" invisible="1"/>
+                                    <field name="probability" widget="float" class="oe_inline o_input_6ch"/>
+                                    <span class="oe_grey p-2">%</span>
+                                </div>
+                            </div>
+                        </h2>
+                    </div>
+                </xpath>
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" invisible="type == 'lead'"
+                           domain="[('partner_type_id', 'in', [1]), ('is_company', '=', True)]"/>
+                </field>
+
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='lead_partner']//field[@name='partner_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='campaign_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='medium_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='lead']//field[@name='source_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='extra']//field[@name='medium_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='extra']//field[@name='source_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="opp_id" readonly="1"></field>
+                </xpath>
+                <field name="tag_ids" position="after">
+                    <field name="opportunity_source" invisible="type == 'lead'"/>
+                </field>
+
+
+                <xpath expr="//sheet/notebook" position="before">
+
+                    <group name="opp_inf" string="OPP INFO" invisible="type == 'lead'">
+                        <group>
+                            <field name="transport_type_id" options="{'no_create': True,'no_open': True}"/>
+                            <field name="is_ocean_or_inland" invisible='1'/>
+                            <field name="product_id_domain" invisible="1"/>
+                            <field name="shipment_scope_id" invisible="transport_type_id  in [1]"
+                                   domain="product_id_domain" options="{'no_create': True,'no_open': True}"/>
+                            <field name="is_fcl_or_ftl" invisible='1'/>
+                            <field name="is_lcl_or_ltl" invisible='1'/>
+                            <field name="is_air" invisible='1'/>
+                        </group>
+
+                        <group>
+                            <field name="pol_id" options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
+                            <field name="pod_id" options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
+                            <field name="incoterms_id"
+                                   options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
+                            <field name="pickup_address" invisible="not incoterms_id"/>
+                            <field name="pickup_address2" invisible="not incoterms_id"/>
+                        </group>
+
+                    </group>
+
+
+                </xpath>
+
+
+                <xpath expr="//group[@name='opp_inf']" position="after">
+
+                    <group invisible="type == 'lead'">
+                        <field name="commodity_id"
+                               options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
+                        <field name="commodity_equip"/>
+                        <field name="temperature" invisible="commodity_equip !='reefer'"/>
+                        <field name="un_number" invisible="commodity_equip !='imo'"/>
+                        <field name="attachment" invisible="commodity_equip !='imo'"/>
+                    </group>
+
+
+                    <group invisible="type == 'lead'">
+                        <field name="air_package_type_ids" widget="one2many" invisible="not is_air"
+                        >
+                            <tree editable="bottom">
+                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="qty"/>
+                                <field name="gw_kg"/>
+                                <field name="cbm" readonly="1"/>
+                                <field name="vm" readonly="1" column_invisible="1"/>
+                                <field name="length_cm"/>
+                                <field name="width_cm"/>
+                                <field name="height_cm"/>
+                                <field name="chw"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <!-- For FCL or FTL Shipment Scope -->
+                    <group invisible="not is_fcl_or_ftl or type == 'lead'">
+                        <field name="container_type_ids">
+                            <tree editable="bottom">
+                                <field name="container_type_id" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="qty"/>
+                                <field name="gw_kg"/>
+                            </tree>
+                        </field>
+                    </group>
+
+
+                    <group>
+                        <field name="non_air_package_type_ids" widget="one2many"
+                               invisible="not is_lcl_or_ltl or type == 'lead'">
+                            <tree editable="bottom">
+                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="qty"/>
+                                <field name="gw_kg"/>
+                                <field name="cbm" readonly="1"/>
+                                <field name="length_cm"/>
+                                <field name="width_cm"/>
+                                <field name="height_cm"/>
+                            </tree>
+                        </field>
+                    </group>
+
+
+                </xpath>
+
+                <xpath expr="//notebook/page[@name='internal_notes']" position="before">
+                    <page name="customer_requirements" string="Customer Requirements" invisible="type == 'lead'">
+                        <group>
+                            <group>
+                                <field name="cargo_readiness_date"/>
+                                <label for="transit_time_duration" string="Transit Time"/>
+                                <div style="display: flex; align-items: center;">
+                                    <field name="transit_time_duration"/>
+                                    <div class="o_form_label">Days</div>
+                                </div>
+                                <label for="free_time_duration" string="Free Time"/>
+
+                                <div style="display: flex; align-items: center;">
+                                    <field name="free_time_duration"/>
+                                    <div class="o_form_label">Days</div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="target_rate"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                                <field name="preferred_line_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="service_needed_ids"/>
+                        </group>
+                    </page>
+                </xpath>
+
+
+            </field>
+        </record>
+    <record id="view_crm_lead_shipping_info_form_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.shipping</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Shipping Information" name="shipping_info">
+                    <field name="transport_type_id"/>
+                    <field name="from_port_cities_id"/>
+                    <field name="to_port_cities_id"/>
+                    <field name="commodity_id"/>
+                    <field name="cargo_readiness_date"/>
+                    <field name="additional_information"/>
+                    <field name="by_unit"/>
+                    <field name="equipment_type_id"/>
+                    <field name="shipping_info_ids">
+                        <tree editable="bottom">
+                            <field name="dimensions_l"/>
+                            <field name="dimensions_w"/>
+                            <field name="dimensions_h"/>
+                            <field name="quantity"/>
+                            <field name="weight"/>
+                            <field name="chw"/>
+                            <field name="volume"/>
+                            <field name="container_type_id"/>
+                            <field name="cbm"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <field name="dimensions_l"/>
+                                <field name="dimensions_w"/>
+                                <field name="dimensions_h"/>
+                                <field name="quantity"/>
+                                <field name="weight"/>
+                                <field name="chw"/>
+                                <field name="volume"/>
+                                <field name="container_type_id"/>
+                                <field name="cbm"/>
+                            </group>
+                        </form>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+
+        <record id="crm_case_kanban_view_leads_inherit" model="ir.ui.view">
+            <field name="name">crm.kandan.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="on_create" position="replace"></attribute>
+                </xpath>
+                <xpath expr="//kanban" position="inside">
+                    <field name="transport_type_id"/>
+                    <field name="pol_id"/>
+                    <field name="pod_id"/>
+                </xpath>
+                <xpath expr="//div[hasclass('oe_kanban_content')]" position="inside">
+                    <div>
+                        Transport Type :
+                        <span class="o_text_overflow" t-if="record.transport_type_id.value"
+                              t-esc="record.transport_type_id.value"></span>
+                    </div>
+                    <div>
+                        POL :
+                        <span class="o_text_overflow" t-if="record.pol_id.value"
+                              t-esc="record.pol_id.value"></span>
+                    </div>
+                    <div>
+                        POD :
+                        <span class="o_text_overflow" t-if="record.pod_id.value"
+                              t-esc="record.pod_id.value"></span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="crm_opportunity_partner_type_filter">
+            <field name="name">crm.opportunity.partner</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="arch" type="xml">
+                <filter name="city" position="replace">
+                    <filter name="transport_type" string="Transport Type" context="{'group_by': 'transport_type_id'}"/>
+                </filter>
+                <filter name="country" position="replace">
+                </filter>
+
+            </field>
+        </record>
+
+        <record id="view_crm_opportunity_inherit_tree" model="ir.ui.view">
+            <field name="name">crm.lead.inherit.tree.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="arch" type="xml">
+                <field name="name" position="attributes">
+                    <attribute name="string">OPP ID</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_crm_staging" model="ir.ui.view">
+            <field name="name">crm.lead.staging</field>
+            <field name="model">crm.stage</field>
+            <field name="inherit_id" ref="crm.crm_stage_form"/>
+            <field name="arch" type="xml">
+                <field name="is_won" position="after">
+                    <field name="is_pricing_stage"/>
+                    <field name="is_follow_up_stage"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

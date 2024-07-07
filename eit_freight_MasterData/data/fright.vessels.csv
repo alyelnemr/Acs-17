@@ -1,0 +1,15 @@
+id,code,name,partner_id:id
+fright_vessels_1,9518359,COSCO AQABA,res_partner_9
+fright_vessels_2,9335197,CMA CGM ALCAZAR,res_partner_8
+fright_vessels_3,9251705,MSC FLORENTINA,
+fright_vessels_4,8310889,SAFMARINE SOYO,
+fright_vessels_5,9632155,METTE MAERSK,
+fright_vessels_6,9356165,MAERSK NAIROBI,
+fright_vessels_7,9365790,CMA CGM BUTTERFLY,res_partner_8
+fright_vessels_8,9839143,CMA CGM LOUVRE,res_partner_8
+fright_vessels_9,9619464,MSC AGADIR,
+fright_vessels_10,9943267,EVER ACME,res_partner_16
+fright_vessels_11,9939149,ONE INSPIRATION,
+fright_vessels_12,9540144,BUSAN EXPRESS,res_partner_18
+fright_vessels_13,9786839,EVER GLORY,res_partner_16
+fright_vessels_14,9795610,COSCO UNIVERSE,res_partner_9
