@@ -25,6 +25,15 @@ class CrmLead(models.Model):
     )
     name = fields.Char(required=False, readonly=True)
 
+    equipment_type_id = fields.Many2one(comodel_name='shipment.scop', string='Equipment Type')
+    shipping_info_ids = fields.One2many(comodel_name='shipping.info', inverse_name='crm_lead_id', string='Shipping Info')
+    additional_information = fields.Text(string='Additional Information')
+    by_unit = fields.Boolean(string='By Unit')
+    from_port_cities_id = fields.Many2one(comodel_name='port.cites', string='From Port Cities')
+    to_port_cities_id = fields.Many2one(comodel_name='port.cites', string='To Port Cities')
+    commodity_id = fields.Many2one(comodel_name='commodity.data', string='Commodity')
+    cargo_readiness_date = fields.Date(string='Cargo Readiness Date')
+
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
 

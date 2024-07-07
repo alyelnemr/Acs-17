@@ -205,36 +205,3 @@ class FreightController(AuthSignupHome):
     @http.route('/thank-you', type='http', auth='public', website=True, sitemap=False)
     def thank_you(self, *args, **kw):
         return request.render('eit_freight_request_quote.thank_you_page')
-
-    def _prepare_signup_values(self, qcontext):
-        """Updated the values with newly added fields"""
-        keys = ['login', 'name', 'password']
-        configuration = request.env['signup.configuration'] \
-            .sudo().search([], limit=1)
-        for field in configuration.signup_field_ids:
-            keys.append(field.field_id.name)
-        values = {key: qcontext.get(key) for key in keys}
-        if not values:
-            raise UserError(_("The form was not properly filled in."))
-        if values.get('password') != qcontext.get('confirm_password'):
-            raise UserError(_("Passwords do not match; please retype them."))
-        supported_lang_codes = [code for code, _ in
-                                request.env['res.lang'].sudo().get_installed()]
-        lang = request.context.get('lang', '')
-        if lang in supported_lang_codes:
-            values['lang'] = lang
-        return values
-
-    @http.route('/web/signup', type='http', auth="public", website=True,
-                sitemap=False)
-    def website_signup(self):
-        """Perform website signup."""
-        values = {}
-        configuration_signup = request.env[
-            'configuration.signup'].sudo().search([], limit=1)
-        if configuration_signup.is_show_terms_conditions:
-            values[
-                'terms_and_conditions'] = configuration_signup \
-                .terms_and_conditions
-        return request.render(
-            "advance_signup_portal.advance_signup_portal.fields", values)

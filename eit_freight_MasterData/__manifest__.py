@@ -23,6 +23,7 @@
         'views/charge_types_view.xml',
         'views/account_incoterms_view.xml',
         'views/purchase_order_view.xml',
+        'views/product_template_view.xml',
         'data/demo.xml',
         'data/contaniner_type_demo.xml',
         'data/package.type.csv',

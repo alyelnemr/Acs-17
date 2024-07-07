@@ -58,25 +58,33 @@
                                                     <tr>
                                                         <td>1</td>
                                                         <td>
-                                                            <input type="number" name="dimensions_l[]" class="form-control dimensions_l"/>
+                                                            <input type="number" name="dimensions_l[]"
+                                                                   class="form-control dimensions_l"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="dimensions_w[]" class="form-control dimensions_w"/>
+                                                            <input type="number" name="dimensions_w[]"
+                                                                   class="form-control dimensions_w"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="dimensions_h[]" class="form-control dimensions_h"/>
+                                                            <input type="number" name="dimensions_h[]"
+                                                                   class="form-control dimensions_h"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="quantity[]" class="form-control quantity"/>
+                                                            <input type="number" name="quantity[]"
+                                                                   class="form-control quantity"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="weight[]" class="form-control weight"/>
+                                                            <input type="number" name="weight[]"
+                                                                   class="form-control weight"/>
                                                         </td>
                                                         <td>
-                                                            <input name="chw[]" readonly="readonly" class="form-control chw" />
+                                                            <input name="chw[]" readonly="readonly"
+                                                                   class="form-control chw"/>
                                                         </td>
                                                         <td>
-                                                            <button id="removeRow" class="btn btn-danger removeRow">Remove</button>
+                                                            <button id="removeRow" class="btn btn-danger removeRow">
+                                                                Remove
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -84,7 +92,8 @@
                                             <button id="addRow" class="btn btn-primary">Add New Line</button>
                                         </div>
                                     </div>
-                                    <div class="row hide_for_by_unit" name="hide_for_by_unit_div" style="display: none;">
+                                    <div class="row hide_for_by_unit" name="hide_for_by_unit_div"
+                                         style="display: none;">
                                         <div class="form-group">
                                             <table id="Table" class="table table-striped">
                                                 <thead>
@@ -96,10 +105,12 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <input type="number" name="weight_for_volume[]" class="form-control weight_for_volume"/>
+                                                            <input type="number" name="weight_for_volume[]"
+                                                                   class="form-control weight_for_volume"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="volume_for_volume[]" class="form-control volume_for_volume"/>
+                                                            <input type="number" name="volume_for_volume[]"
+                                                                   class="form-control volume_for_volume"/>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -113,13 +124,15 @@
                                         <label for="equipment_type_for_sea">Equipment Type</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <select id="equipment_type_for_sea" name="equipment_type_for_sea" class="form-control link-style">
+                                        <select id="equipment_type_for_sea" name="equipment_type_for_sea"
+                                                class="form-control link-style">
                                             <t t-foreach="equipment_type_for_sea" t-as="item">
                                                 <option t-esc="item.name" t-att-value="item.code"/>
                                             </t>
                                         </select>
                                     </div>
-                                    <div class="row show_for_fcl_sea" name="show_for_fcl_sea_div" style="display: none;">
+                                    <div class="row show_for_fcl_sea" name="show_for_fcl_sea_div"
+                                         style="display: none;">
                                         <div class="form-group">
                                             <table id="dynamicTable_fcl_sea" class="table table-striped">
                                                 <thead>
@@ -134,20 +147,25 @@
                                                     <tr>
                                                         <td>1</td>
                                                         <td>
-                                                            <select name="container_type[]" class="form-control link-style">
+                                                            <select name="container_type[]"
+                                                                    class="form-control link-style">
                                                                 <t t-foreach="container_type" t-as="item">
                                                                     <option t-esc="item.name" t-att-value="item.id"/>
                                                                 </t>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="quantity_for_volume_fcl[]" class="form-control quantity_fcl"/>
+                                                            <input type="number" name="quantity_for_volume_fcl[]"
+                                                                   class="form-control quantity_fcl"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="weight_for_volume_fcl[]" class="form-control weight_fcl"/>
+                                                            <input type="number" name="weight_for_volume_fcl[]"
+                                                                   class="form-control weight_fcl"/>
                                                         </td>
                                                         <td>
-                                                            <button id="removeRow_fcl" class="btn btn-danger removeRow_fcl">Remove</button>
+                                                            <button id="removeRow_fcl"
+                                                                    class="btn btn-danger removeRow_fcl">Remove
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -155,7 +173,8 @@
                                             <button id="addRow_fcl" class="btn btn-primary">Add New Line</button>
                                         </div>
                                     </div>
-                                    <div class="row show_for_lcl_sea" name="show_for_lcl_sea_div" style="display: none;">
+                                    <div class="row show_for_lcl_sea" name="show_for_lcl_sea_div"
+                                         style="display: none;">
                                         <div class="form-group">
                                             <label for="by_unit_lcl">By Unit</label>
                                             <input type="checkbox" name="by_unit_lcl_checkbox" t-att-value="by_unit_lcl"
@@ -180,25 +199,33 @@
                                                         <tr>
                                                             <td>1</td>
                                                             <td>
-                                                                <input type="number" name="dimensions_l_lcl[]" class="form-control dimensions_l_lcl"/>
+                                                                <input type="number" name="dimensions_l_lcl[]"
+                                                                       class="form-control dimensions_l_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="dimensions_w_lcl[]" class="form-control dimensions_w_lcl"/>
+                                                                <input type="number" name="dimensions_w_lcl[]"
+                                                                       class="form-control dimensions_w_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="dimensions_h_lcl[]" class="form-control dimensions_h_lcl"/>
+                                                                <input type="number" name="dimensions_h_lcl[]"
+                                                                       class="form-control dimensions_h_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="quantity_lcl[]" class="form-control quantity_lcl"/>
+                                                                <input type="number" name="quantity_lcl[]"
+                                                                       class="form-control quantity_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="weight_lcl[]" class="form-control weight_lcl"/>
+                                                                <input type="number" name="weight_lcl[]"
+                                                                       class="form-control weight_lcl"/>
                                                             </td>
                                                             <td>
-                                                            <input name="cbm_lcl[]" readonly="readonly" class="form-control cbm_lcl" />
+                                                                <input name="cbm_lcl[]" readonly="readonly"
+                                                                       class="form-control cbm_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <button id="removeRow_lcl" class="btn btn-danger removeRow">Remove</button>
+                                                                <button id="removeRow_lcl"
+                                                                        class="btn btn-danger removeRow">Remove
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -206,7 +233,8 @@
                                                 <button id="addRow_lcl" class="btn btn-primary">Add New Line</button>
                                             </div>
                                         </div>
-                                        <div class="row hide_for_by_unit_lcl" name="hide_for_by_unit_lcl_div" style="display: none;">
+                                        <div class="row hide_for_by_unit_lcl" name="hide_for_by_unit_lcl_div"
+                                             style="display: none;">
                                             <div class="form-group">
                                                 <table id="Table_lcl" class="table table-striped">
                                                     <thead>
@@ -218,10 +246,12 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                <input type="number" name="weight_for_volume_lcl[]" class="form-control weight_lcl"/>
+                                                                <input type="number" name="weight_for_volume_lcl[]"
+                                                                       class="form-control weight_lcl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="volume_for_volume_lcl[]" class="form-control volume_lcl"/>
+                                                                <input type="number" name="volume_for_volume_lcl[]"
+                                                                       class="form-control volume_lcl"/>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -258,20 +288,25 @@
                                                     <tr>
                                                         <td>1</td>
                                                         <td>
-                                                            <select name="container_type_ftl_inland[]" class="form-control link-style">
+                                                            <select name="container_type_ftl_inland[]"
+                                                                    class="form-control link-style">
                                                                 <t t-foreach="container_type" t-as="item">
                                                                     <option t-esc="item.name" t-att-value="item.id"/>
                                                                 </t>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="quantity_ftl[]" class="form-control quantity_ftl"/>
+                                                            <input type="number" name="quantity_ftl[]"
+                                                                   class="form-control quantity_ftl"/>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="weight_ftl[]" class="form-control weight_ftl"/>
+                                                            <input type="number" name="weight_ftl[]"
+                                                                   class="form-control weight_ftl"/>
                                                         </td>
                                                         <td>
-                                                            <button id="removeRow_ftl" class="btn btn-danger removeRow_ftl">Remove</button>
+                                                            <button id="removeRow_ftl"
+                                                                    class="btn btn-danger removeRow_ftl">Remove
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -305,25 +340,33 @@
                                                         <tr>
                                                             <td>1</td>
                                                             <td>
-                                                                <input type="number" name="dimensions_l_ltl[]" class="form-control dimensions_l_ltl"/>
+                                                                <input type="number" name="dimensions_l_ltl[]"
+                                                                       class="form-control dimensions_l_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="dimensions_w_ltl[]" class="form-control dimensions_w_ltl"/>
+                                                                <input type="number" name="dimensions_w_ltl[]"
+                                                                       class="form-control dimensions_w_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="dimensions_h_ltl[]" class="form-control dimensions_h_ltl"/>
+                                                                <input type="number" name="dimensions_h_ltl[]"
+                                                                       class="form-control dimensions_h_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="quantity_ltl[]" class="form-control quantity_ltl"/>
+                                                                <input type="number" name="quantity_ltl[]"
+                                                                       class="form-control quantity_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="weight_ltl[]" class="form-control weight_ltl"/>
+                                                                <input type="number" name="weight_ltl[]"
+                                                                       class="form-control weight_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input name="cbm_ltl[]" readonly="readonly" class="form-control cbm_ltl" />
+                                                                <input name="cbm_ltl[]" readonly="readonly"
+                                                                       class="form-control cbm_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <button id="removeRow_ltl" class="btn btn-danger removeRow">Remove</button>
+                                                                <button id="removeRow_ltl"
+                                                                        class="btn btn-danger removeRow">Remove
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -344,10 +387,12 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                <input type="number" name="weight_for_volume_ltl[]" class="form-control weight_ltl"/>
+                                                                <input type="number" name="weight_for_volume_ltl[]"
+                                                                       class="form-control weight_ltl"/>
                                                             </td>
                                                             <td>
-                                                                <input type="number" name="volume_for_volume_ltl[]" class="form-control volume_ltl"/>
+                                                                <input type="number" name="volume_for_volume_ltl[]"
+                                                                       class="form-control volume_ltl"/>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -362,7 +407,8 @@
                                         <label for="from_port_cities">From</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <select id="from_port_cities" name="from_port_cities" class="form-control link-style">
+                                        <select id="from_port_cities" name="from_port_cities"
+                                                class="form-control link-style">
                                             <t t-foreach="from_port_cities" t-as="item">
                                                 <option t-esc="item.name" t-att-value="item.id"/>
                                             </t>
@@ -372,7 +418,8 @@
                                         <label for="to_port_cities">To</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <select id="to_port_cities" name="to_port_cities" class="form-control link-style">
+                                        <select id="to_port_cities" name="to_port_cities"
+                                                class="form-control link-style">
                                             <t t-foreach="to_port_cities" t-as="item">
                                                 <option t-esc="item.name" t-att-value="item.id"/>
                                             </t>
@@ -532,7 +579,8 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
-                                                <input type="tel" id="contact_phone" name="contact_phone" class="form-control" required="required"/>
+                                                <input type="tel" id="contact_phone" name="contact_phone"
+                                                       class="form-control" required="required"/>
                                             </div>
                                         </div>
                                     </div>

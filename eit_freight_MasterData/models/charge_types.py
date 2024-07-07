@@ -47,3 +47,13 @@ class ProductTemplate(models.Model):
             raise UserError(_('Please add the Charge Type from the MasterData App \n Master Data >> Service Setting Menu >> Charge Type'))
 
         return res
+
+    def write(self, vals):
+        is_sale_purchase = self.env.context.get('default_is_sale_purchase', False)
+
+        if vals.get('detailed_type') == 'charge_type' and is_sale_purchase:
+            raise UserError(
+                _('Please add the Charge Type from the MasterData App \n Master Data >> Service Setting Menu >> Charge Type'))
+
+        result = super(ProductTemplate, self).write(vals)
+        return result

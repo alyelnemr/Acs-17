@@ -34,6 +34,7 @@ class SaleOrder(models.Model):
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True, )
     is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland',
                                         invisible=True)
+    shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True, )
     is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl', invisible=True)
     is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl', invisible=True)
     container_type = fields.Many2one('container.type', string='Container Type')

@@ -9,8 +9,8 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
 
-<!--                <xpath expr="//button[@name='470']" position="replace">-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//button[@name='470']" position="replace">-->
+                <!--                </xpath>-->
 
                 <field name="partner_invoice_id" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -95,19 +95,19 @@
                 </xpath>
                 <xpath expr="//notebook/page[@name='order_lines']" position="before">
                     <page string="Charges" name="charges">
-                            <field name="charges_ids">
-                                <tree editable="bottom">
-                                    <field name="product_id" options="{'no_edit': True, 'no_create': True}"/>
-                                    <field name="sale_price"/>
-                                    <field name="qty"/>
-                                    <field name="package_type" options="{'no_edit': True, 'no_create': True}"/>
-                                    <field name="currency_id" options="{'no_edit': True, 'no_create': True}"/>
-                                    <field name="ex_rate"/>
-                                    <field name="tot_cost_fr" column_invisible="1"/>
-                                    <field name="tot_cost"/>
-                                </tree>
-                            </field>
-                        </page>
+                        <field name="charges_ids">
+                            <tree editable="bottom">
+                                <field name="product_id" options="{'no_edit': True, 'no_create': True}"/>
+                                <field name="sale_price"/>
+                                <field name="qty"/>
+                                <field name="package_type" options="{'no_edit': True, 'no_create': True}"/>
+                                <field name="currency_id" options="{'no_edit': True, 'no_create': True}"/>
+                                <field name="ex_rate"/>
+                                <field name="tot_cost_fr" column_invisible="1"/>
+                                <field name="tot_cost"/>
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
             </field>
         </record>

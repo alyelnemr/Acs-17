@@ -72,7 +72,12 @@
         <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
             'default_is_company': True, 'default_customer_rank': 1}
         </field>
-        <field name="domain">[('customer_rank', '=', True)]</field>
+        <field name="domain">[('partner_type_id', 'in', [1])]</field>
+    </record>
+     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="domain">[('partner_type_id', 'in', [12,11,13,7,5,4,6])]</field>
+         <field name="context">{'search_default_type_company': True}
+        </field>
     </record>
 
 </odoo>
