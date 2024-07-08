@@ -33,6 +33,11 @@
         'views/sale_order_view.xml',
         'views/request_quote.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            '/eit_freight_sales/static/src/js/main.js'
+        ]
+    },
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

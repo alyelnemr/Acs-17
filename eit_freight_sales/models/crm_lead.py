@@ -183,11 +183,9 @@ class CrmLead(models.Model):
 
     @api.model
     def create(self, vals):
-        res = super(CrmLead, self).create(vals)
         if not vals.get('name'):
             vals['name'] = self._generate_opp_id()
         vals['date_deadline'] = date.today() + timedelta(days=30)
-        print(res.date_deadline)
         return super(CrmLead, self).create(vals)
 
     @api.model
