@@ -1,0 +1,62 @@
+<odoo>
+    <record id="view_origin_route" model="ir.ui.view">
+        <field name="name">origin.route.form</field>
+        <field name="model">origin.route</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="port_id" widget="selection"/>
+                            <field name="expected_date" invisible="loaded == True"/>
+                            <field name="actual_date" invisible="loaded == False"/>
+                            <field name="transport_type_id" invisible="1"/>
+                            <field name="task_id" invisible="1"/>
+                            <field name="shipment_scope_id"  invisible="1"/>
+                            <field name="incoterm_id"  invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="port_id_origin" widget="selection"/>
+                            <field name="date_start" string="Add ETD" widget="daterange"
+                                   options="{&quot;end_date_field&quot;: &quot;date&quot;, &quot;always_range&quot;: &quot;1&quot;}"
+                                   invisible="loaded == True"/>
+                            <field name="actual_date_start" string="Add ATD" widget="daterange"
+                                   options="{&quot;end_date_field&quot;: &quot;date&quot;, &quot;always_range&quot;: &quot;1&quot;}"
+                                   invisible="loaded == False"/>
+                            <field name="loaded" widget="boolean_toggle" invisible="loaded == True"/>
+                            <field name="loaded" widget="boolean_toggle" string="Loaded Done"
+                                   invisible="loaded == False"/>
+                        </group>
+                        <group>
+                            <field name="pickup_address"/>
+                            <field name="routing_types" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Services">
+                            <field name="origin_services_ids">
+                                <tree editable="bottom">
+                                    <field name="service_scope_id" widget="selection"/>
+                                    <field name="description"/>
+                                    <field name="task_id" invisible="1" optional="hide"/>
+                                    <field name="trasit_route_id" invisible="1" optional="hide"/>
+                                    <field name="dest_route_id" invisible="1" optional="hide"/>
+                                    <field name="route_id" invisible="1" optional="hide"/>
+                                    <field name="routing_types" invisible="1" optional="hide"/>
+                                    <field name="shipment_scope_id" optional="hide"/>
+                                    <field name="incoterm_id" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Create" name="create_origin_route" type="object"
+                            class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

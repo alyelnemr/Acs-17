@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="stage_pricing_5" model="stage.pricing">
+            <field name="name">New</field>
+            <field name="sequences">1</field>
+        </record>
+        <record id="stage_pricing_6" model="stage.pricing">
+            <field name="name">RFQ Sent</field>
+            <field name="sequences">2</field>
+        </record>
+        <record id="stage_pricing_7" model="stage.pricing">
+            <field name="name">Done</field>
+            <field name="sequences">3</field>
+        </record>
+        <record id="stage_pricing_8" model="stage.pricing">
+            <field name="name">Cancelled</field>
+            <field name="sequences">4</field>
+        </record>
+    </data>
+</odoo>
