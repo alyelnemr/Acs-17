@@ -6,9 +6,9 @@
             <search>
                 <field name="name" string="Product"
                        filter_domain="[('name', 'ilike', self)]"/>
-                <field name="pol_id" string="pol"
+                <field name="pol_id" string="POL"
                        filter_domain="[('pol_id', 'ilike', self)]"/>
-                <field name="pod_id" string="pod"
+                <field name="pod_id" string="POD"
                        filter_domain="[('pod_id', 'ilike', self)]"/>
                 <separator/>
                 <filter string="My Pricing" name="my_pricing" domain="[('p_user_ids', 'in', uid)]"/>
@@ -38,7 +38,9 @@
                 <field name="transport_type_id"/>
                 <field name="pol_id"/>
                 <field name="pod_id"/>
-                <field name="transit_time_duration" string="T.T"/>
+                <field name="list_price" string="Sale Rate (USD) "
+                       options="{'currency_field': 'currency_id'}" optional="show" decoration-muted="not sale_ok"/>
+                <field name="transit_time_duration" string="T.T" optional="show"/>
                 <field name="product_variant_count" column_invisible="True"/>
                 <!--                <field name="list_price" string="Rate" widget='monetary'-->
                 <!--                       options="{'currency_field': 'currency_id'}" optional="show" decoration-muted="not sale_ok"/>-->
@@ -46,15 +48,13 @@
                 <field name="currency_id" column_invisible="True"/>
                 <field name="expiration_date"/>
                 <field name="cost_currency_id" column_invisible="True"/>
-                <field name="list_price" string="Sale Rate (USD) " widget='monetary'
-                       options="{'currency_field': 'currency_id'}" optional="show" decoration-muted="not sale_ok"/>
                 <field name="standard_price" widget='monetary' options="{'currency_field': 'cost_currency_id'}"
                        optional="show" readonly="1" column_invisible="True" string="Cost Rate (USD)"/>
-                <field name="p_user_ids" widget="many2many_avatar_user"/>
+                <field name="p_user_ids" widget="many2many_avatar_user" optional="show"/>
                 <field name="uom_id" string="Unit" readonly="1" optional="show" groups="uom.group_uom"/>
                 <field name="active" column_invisible="True"/>
                 <field name="activity_exception_decoration" widget="activity_exception"/>
-                <field name="is_published"/>
+                <field name="is_published" optional="show"/>
                 <field name="activity_ids" widget="list_activity"/>
 
             </tree>
@@ -97,6 +97,11 @@
                                 <span class="o_stat_text">Sold</span>
                             </div>
                         </button>
+                        <button name="%(product.product_variant_action)d" type="action" icon="fa-sitemap"
+                                class="oe_stat_button"
+                        >
+                            <field string="Variants" name="product_variant_count" widget="statinfo"/>
+                        </button>
                     </div>
                     <div class="oe_title">
                         <h1 class="d-flex flex-row">
@@ -107,14 +112,15 @@
                     </div>
                     <group>
                         <group>
-                            <field name="p_user_ids" widget="many2many_avatar_user"/>
-                            <field name="transport_type_id" readonly="id != False"/>
+                            <field name="p_user_ids" widget="many2many_avatar_user"
+                                   options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="transport_type_id" readonly="id != False" options="{'no_open': True}"/>
                             <!--                            <field name="service_scope" invisible="transport_type_id not in (2, 3)"-->
                             <!--                                   required="transport_type_id in (2, 3)"/>-->
                             <field name="sale_ok" invisible="1"/>
                         </group>
                         <group>
-                            <field name="partner_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="partner_id" options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                             <field name="currency_id" options="{'no_edit': True, 'no_create': True}" readonly="0"
                                    invisible="1"/>
                             <field name="expiration_date"/>
@@ -124,13 +130,13 @@
                     <group name="pricing_info" string="Pricing Info.">
                         <group>
                             <field name="air_line" invisible="transport_type_id not in [1]"
-                                   options="{'no_edit': True, 'no_create': True}"/>
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                             <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
-                                   domain="[('type', '=', 'sea')]"/>
+                                   domain="[('type', '=', 'sea')]" options="{'no_open': True}"/>
                             <field name="shipment_scope_id" invisible="transport_type_id not in [3]"
-                                   domain="[('type', '=', 'inland')]"/>
+                                   domain="[('type', '=', 'inland')]" options="{'no_open': True}"/>
                             <field name="commodity_id" options="{'no_edit': True, 'no_create': True}"
-                                   invisible="transport_type_id in [1,2,3]"/>
+                                   invisible="1"/>
                             <label for="transit_time_duration" string="Transit Time"/>
                             <div style="display: flex; align-items: center;">
                                 <field name="transit_time_duration"/>
@@ -144,9 +150,9 @@
                         </group>
                         <group>
                             <field name="pol_id" domain="[('type_id', '=', transport_type_id)]"
-                                   options="{'no_edit': True, 'no_create': True}"/>
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                             <field name="pod_id" domain="[('type_id', '=', transport_type_id)]"
-                                   options="{'no_edit': True, 'no_create': True}"/>
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                             <!--                            <field name="package_type" invisible="transport_type_id not in [1]"-->
                             <!--                                   domain="[('tag_type_ids.name', '=', 'AIR')]"-->
                             <!--                                   options="{'no_edit': True, 'no_create': True}"/>-->
@@ -159,9 +165,12 @@
                             <!--                                   options="{'no_edit': True, 'no_create': True}"-->
                             <!--                            />-->
                             <field name="shipping_line" invisible="transport_type_id not in [2]"
-                                   options="{'no_edit': True, 'no_create': True}"/>
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                             <field name="trucker" invisible="transport_type_id not in [3]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="scope_ids" widget="many2many_tags"
                                    options="{'no_edit': True, 'no_create': True}"/>
+
                         </group>
                     </group>
                     <notebook>
@@ -170,39 +179,40 @@
                                 <tree editable="bottom">
                                     <field name="product_id_2"
                                            options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
-                                    <field name="cost_price"/>
-                                    <field name="package_type" column_invisible="parent.shipment_scope_id not in [1,3]"
+                                    <field name="package_type"
+                                           column_invisible="parent.transport_type_id not in [1,2,3] or parent.shipment_scope_id in [1,3]"
                                            options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                    <field name="container_type"
+                                           column_invisible="parent.transport_type_id in [1] or parent.shipment_scope_id not in [1,3]"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                           optional="show"/>
+                                    <field name="cost_price"/>
                                     <field name="sale_price"/>
                                     <field name="currency_id"
                                            options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
                                     <field name="qty" column_invisible="1"/>
                                     <field name="ex_rate"/>
-                                    <field name="tot_cost"/>
-                                    <field name="container_type"
-                                           column_invisible="parent.shipment_scope_id not in [1,3]"
-                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
-                                           optional="show"/>
-                                    <field name="tot_cost_fr" optional="show"/>
-                                    <field name="tot_cost_uusd" optional="show"/>
                                     <field name="tot_in_cost" optional="show"/>
+                                    <field name="tot_cost_uusd" optional="show"/>
+                                    <field name="tot_cost_fr" optional="show"/>
+                                    <field name="tot_cost"/>
                                     <field name="company_id" column_invisible="1"/>
                                 </tree>
                             </field>
                             <div class="row">
                                 <div name="total_currency_for_cost" class="col">
-                                    <label for="tot_cost">Total Currency For Cost</label>
+                                    <label for="tot_cost">Cost Per Currency</label>
                                     <field name="tot_cost" nolabel="1">
-                                        <tree>
+                                        <tree edit="0" delete="0" create="0" no_open="True">
                                             <field name="currency_id"/>
                                             <field name="amount"/>
                                         </tree>
                                     </field>
                                 </div>
                                 <div name="total_currency_for_sale" class="col">
-                                    <label for="tot_sale">Total Currency For Sale</label>
+                                    <label for="tot_sale">Sales Per Currency</label>
                                     <field name="tot_sale" nolabel="1">
-                                        <tree>
+                                        <tree edit="0" delete="0" create="0" no_open="True">
                                             <field name="currency_id"/>
                                             <field name="amount"/>
                                         </tree>
@@ -215,13 +225,13 @@
                                 <div class="col" style="text-align:right">
                                     <field name="currency_id" invisible="1"/>
                                     Total Sale in USD
-                                    <field name="total_sale_in_usd"/>
+                                    <field name="total_sale_in_usd" readonly="1"/>
                                     <br/>
                                     Total Cost in USD
-                                    <field name="total_cost_in_usd"/>
+                                    <field name="total_cost_in_usd" readonly="1"/>
                                     <br/>
                                     Expected Revenue
-                                    <field name="expected_revennue"/>
+                                    <field name="expected_revennue" readonly="1"/>
                                 </div>
                             </div>
 
@@ -292,11 +302,10 @@
 
                         </page>
                         <page string="Rate Conditions">
+                            <label for="conndition_ids" string="Terms &amp; Conditions"/>
                             <field name="conndition_ids">
-                                <tree editable="bottom">
-                                    <field name="name"/>
-                                </tree>
                             </field>
+                            <field name="condition_test"/>
                         </page>
                         <page string="Accounting" name="invoicing"
                               groups="account.group_account_readonly,account.group_account_invoice">
@@ -360,8 +369,8 @@
             </div>
             <div name="product_lst_price" position="replace">
                 <div name="product_lst_price" class="mt-1">
-                    Rate:
-                    <field name="list_price" widget="monetary"
+                    Sales Rate (USD):
+                    <field name="list_price"
                            options="{'currency_field': 'currency_id', 'field_digits': True}"/>
                 </div>
             </div>
@@ -370,8 +379,6 @@
                     Expiration Date:
                     <field name="expiration_date"/>
                 </div>
-                <field name="p_user_ids" widget="many2many_tags"/>
-                <field name="activity_ids" widget="list_activity"/>
                 <div class="border-top mt-2 pt-2">
                     <field name="is_published" widget="boolean_toggle"/>
                     <t t-if="record.is_published.raw_value">Published</t>
