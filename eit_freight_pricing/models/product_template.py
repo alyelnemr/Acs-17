@@ -10,6 +10,7 @@ class ProductTemplate(models.Model):
     p_user_ids = fields.Many2many('res.users', string="Executors")
     transport_type_id = fields.Many2one('transport.type', string="Transport Type", required=True)
     service_scope = fields.Many2one('service.scope', string="Service Scope")
+    scope_ids = fields.Many2many('service.scope', string="Services")
     expiration_date = fields.Date(string='Expiration Date')
     partner_id = fields.Many2one('res.partner', string="Vendor",
                                  domain="[('partner_type_id', 'in', [4, 5, 7, 11, 12]),('is_company', '=', True)]")
@@ -50,16 +51,24 @@ class ProductTemplate(models.Model):
                                string="Total Currency For Sale")
     tot_cost = fields.One2many('total.cost.currency', 'product_cost',
                                string="Total Currency For Cost")
-    total_sale_in_usd = fields.Float(string="Total Sales in USD")
-    total_cost_in_usd = fields.Float(string="Total Cost in USD")
+    total_sale_in_usd = fields.Float(string="Sales Per Currency")
+    total_cost_in_usd = fields.Float(string="Cost Per Currency")
     expected_revennue = fields.Float(string="Expected Revenue")
-    conndition_ids = fields.Many2many('freight.conditions', string="Terms & Conditions")
+    conndition_ids = fields.Many2one('freight.conditions', string="Terms & Conditions")
+    condition_test = fields.Text(string="Conditions")
+
+    @api.onchange('conndition_ids')
+    def _onchange_conndition_ids(self):
+        if self.conndition_ids:
+            self.condition_test = self.conndition_ids.Terms
 
     @api.onchange('pricing_charge_ids')
     def _onchange_pricing_charge_ids(self):
         self.total_sale_in_usd = sum(self.pricing_charge_ids.mapped('tot_cost'))
         self.total_cost_in_usd = sum(self.pricing_charge_ids.mapped('tot_cost_uusd'))
         self.expected_revennue = self.total_sale_in_usd - self.total_cost_in_usd
+        self.standard_price = self.total_cost_in_usd
+        self.list_price = self.total_sale_in_usd
 
     @api.onchange('pricing_charge_ids')
     def compute_tot_cost(self):
@@ -71,7 +80,7 @@ class ProductTemplate(models.Model):
                     amount = 0
                     for charg in rec.pricing_charge_ids:
                         if cur.id == charg.currency_id.id:
-                            amount += charg.tot_in_cost
+                            amount += charg.cost_price
                     val = {
                         'currency_id': cur,
                         'amount': amount
@@ -91,7 +100,7 @@ class ProductTemplate(models.Model):
                     amount = 0
                     for charg in rec.pricing_charge_ids:
                         if cur.id == charg.currency_id.id:
-                            amount += charg.tot_cost_fr
+                            amount += charg.sale_price
                     val = {
                         'currency_id': cur,
                         'amount': amount
@@ -149,15 +158,15 @@ class ProductCharges(models.Model):
     sale_price = fields.Monetary(string="Sale price")
     cost_price = fields.Monetary(string="Cost price")
     qty = fields.Float(string="QTY", default=1)
-    package_type = fields.Many2one('package.type', string="Package Type")
-    container_type = fields.Many2one('container.type', string="Container Type")
+    package_type = fields.Many2one('package.type', string="Container Type/Package Type")
+    container_type = fields.Many2one('container.type', string="Container Type/Package Type")
     currency_id = fields.Many2one('res.currency', string="Currency")
     ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
-    tot_cost_fr = fields.Float(string="Total sale Currency", compute='_compute_tot_price')
-    tot_cost = fields.Float(string="Total Sales(USD)",
+    tot_cost_fr = fields.Float(string="Sale Main Curr", compute='_compute_tot_price')
+    tot_cost = fields.Float(string="Sales(USD)",
                             compute='_compute_tot_price')
-    tot_in_cost = fields.Float(string="Total Cost Currency", compute='_compute_tot_price')
-    tot_cost_uusd = fields.Float(string="Total Cost(USD)",
+    tot_in_cost = fields.Float(string="Cost Main Curr", compute='_compute_tot_price')
+    tot_cost_uusd = fields.Float(string="Cost (USD)",
                                  compute='_compute_tot_price')
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
@@ -169,18 +178,16 @@ class ProductCharges(models.Model):
             else:
                 record.tot_cost_fr = 0
 
-            currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
-            today = date.today()
-            currency_rate = self.env['res.currency']._get_conversion_rate(
-                from_currency=record.currency_id,
-                to_currency=currency_id,
-                company=record.company_id,
-                date=today,
-            )
-            print('cureeeeee', currency_rate)
-            record.tot_in_cost = record.cost_price * record.ex_rate
-            record.tot_cost_uusd = currency_rate * record.tot_in_cost
-            record.tot_cost = currency_rate * record.tot_cost_fr
+            if record.ex_rate:
+                inverse_company_rate = 1.0 / record.ex_rate
+
+                record.tot_in_cost = record.cost_price * record.ex_rate
+                record.tot_cost_uusd = inverse_company_rate * record.tot_in_cost
+                record.tot_cost = inverse_company_rate * record.tot_cost_fr
+            else:
+                record.tot_in_cost = 0
+                record.tot_cost_uusd = 0
+                record.tot_cost = 0
 
 
 class ProductSupplierInfo(models.Model):
