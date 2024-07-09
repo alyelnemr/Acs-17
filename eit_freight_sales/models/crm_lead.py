@@ -298,13 +298,4 @@ class CrmLeadContainerType(models.Model):
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    group_use_lead = fields.Boolean(default=True)
-
-    @api.model
-    def get_values(self):
-        res = super(ResConfigSettings, self).get_values()
-        res.update(
-            group_use_lead=True,
-            group_proforma_sales=True
-        )
-        return res
+    group_use_lead = fields.Boolean(default=False)
