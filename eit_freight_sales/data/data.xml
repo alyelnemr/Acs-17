@@ -1,0 +1,8 @@
+<odoo>
+    <record id="website_request_quote_record" model="website.menu">
+        <field name="name">Request Quote</field>
+        <field name="url">/web/shipping-request</field>
+        <field name="parent_id" ref="website.main_menu" />
+        <field name="sequence">10</field>
+    </record>
+</odoo>

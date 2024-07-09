@@ -1,0 +1,376 @@
+<odoo>
+    <record model="ir.ui.view" id="commodity_data_search">
+        <field name="name">Commodities</field>
+        <field name="model">commodity.data</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Commodity Group" name='cgroup' context="{'group_by':'group_id'}"/>
+                </group>
+                <separator/>
+                <filter name="dry" string="Dry" domain="[('type', '=', 'dry')]"/>
+                <filter name="reefer" string="Reefer" domain="[('type', '=', 'reefer')]"/>
+                <filter name="imo" string="Imo" domain="[('type', '=', 'imo')]"/>
+                <filter name="active" string="Active" domain="[('active1', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active1', '=', False)]"/>
+
+            </search>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="commodity_dta_form">
+        <field name="name">Commodities</field>
+        <field name="model">commodity.data</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="tax"/>
+                            <field name="export_tax"/>
+                            <field name="group_id"/>
+                            <field name="industry_id"/>
+                        </group>
+                        <group>
+                            <field name="req_id" widget="many2many_checkboxes"/>
+                            <field name="vat"/>
+                            <field name="tag_id" widget="many2many_tags" />
+                            <field name="active1" widget="boolean_toggle"/>
+
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approvals">
+                            <group>
+                                <group>
+                                    <field name="import_approval">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group>
+                                    <field name="export_approval">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Customs Req">
+                            <group>
+                                <group>
+                                    <field name="import_custom">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group>
+                                    <field name="export_custom">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Tracking">
+                            <group>
+                                <group>
+                                    <field name="created_by"/>
+                                    <field name="created_on"/>
+                                </group>
+                                <group>
+                                    <field name="updated_by"/>
+                                    <field name="updated_on"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="commodity_data_list">
+        <field name="name">Commodities</field>
+        <field name="model">commodity.data</field>
+        <field name="arch" type="xml">
+            <tree>
+
+                 <field name="name"/>
+                <field name="code"/>
+                <field name="group_id"/>
+                <field name="tax"/>
+                <field name="vat"/>
+                <field name="tag_id" widget="many2many_tags"/>
+                <field name="active1" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_commodity_data">
+        <field name="name">Commodities</field>
+        <field name="res_model">commodity.data</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="commodity_group_search">
+        <field name="name">Commodity Group</field>
+        <field name="model">commodity.group</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="commodity_group_form">
+        <field name="name">Commodity Group</field>
+        <field name="model">commodity.group</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="commodity_groupe_list">
+        <field name="name">Commodity Group</field>
+        <field name="model">commodity.group</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_commodity_group">
+        <field name="name">Commodity Group</field>
+        <field name="res_model">commodity.group</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="document_datap_search">
+        <field name="name">Document Type</field>
+        <field name="model">document.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('type', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="document_data_tree">
+        <field name="name">Document Type</field>
+        <field name="model">document.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="document_data_form">
+        <field name="name">Document Type</field>
+        <field name="model">document.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="type" widget="radio"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="action_document_type">
+        <field name="name">Document Type</field>
+        <field name="res_model">document.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="frieght_tag_search">
+        <field name="name">Freight Tags</field>
+        <field name="model">frieght.tags</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="frieght_tag_tree">
+        <field name="name">Freight Tags</field>
+        <field name="model">frieght.tags</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="color" widget="color_picker"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="frieght_tag_form">
+        <field name="name">Freight Tags</field>
+        <field name="model">frieght.tags</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_frieht_tag">
+        <field name="name">Freight Tags</field>
+        <field name="res_model">frieght.tags</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="partner_type_form">
+        <field name="name">Partner Type</field>
+        <field name="model">partner.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="partner_type_list">
+        <field name="name">Partner Type</field>
+        <field name="model">partner.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="color" widget="color_picker"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_partner_type">
+        <field name="name">Partner Type</field>
+        <field name="res_model">partner.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="freight_condition_search">
+        <field name="name">Freight Condition</field>
+        <field name="model">freight.conditions</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('Terms', 'ilike', self)]"/>
+                <separator/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="freight_condition_form">
+        <field name="name">Freight Condition</field>
+        <field name="model">freight.conditions</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="Terms"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="freight_condition_list">
+        <field name="name">Freight Condition</field>
+        <field name="model">freight.conditions</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="Terms"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+     <record model="ir.actions.act_window" id="action_frieht_condition">
+        <field name="name">Freight Condition</field>
+        <field name="res_model">freight.conditions</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Configurations" id="menu_freight_configuration" parent="menu_freight"/>
+    <menuitem name="Commodity Group" id="menu_commodity_group" parent="menu_freight_configuration"
+              action="action_commodity_group" sequence="1"/>
+    <menuitem name="Commodities" id="menu_commodity_data" parent="menu_freight_configuration"
+              action="action_commodity_data" sequence="2"/>
+    <menuitem name="Partner Type" id="menu_partner_type" parent="menu_freight_configuration"
+              action="action_partner_type" sequence="3"/>
+    <menuitem name="Documents Type" id="menu_document_type" parent="menu_freight_configuration"
+              action="action_document_type" sequence="4"/>
+    <menuitem name="Freight Tags" id="menu_frieght_tags" parent="menu_freight_configuration"
+              action="action_frieht_tag" sequence="5"/>
+    <menuitem name="Freight Condition" id="menu_frieght_condition" parent="menu_freight_configuration"
+              action="action_frieht_condition" sequence="6"/>
+</odoo>

@@ -1,0 +1,11 @@
+id,code,name
+service_scope_1,AIR,Air Freight
+service_scope_2,FRH,Free Hand
+service_scope_3,CCL,Custms Clearance
+service_scope_6,SEA,Ocean Freight
+service_scope_7,TRK,In-land Freight
+service_scope_8,FUG,Fumigation
+service_scope_9,PAK,Packing/Repacking
+service_scope_10,LSH,Lashing
+service_scope_11,INS,Insurance
+service_scope_12,OTH,Other
