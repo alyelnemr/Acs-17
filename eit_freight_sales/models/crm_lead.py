@@ -183,10 +183,15 @@ class CrmLead(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('name'):
+        if not vals.get('name') and vals.get('type') == 'opportunity':
             vals['name'] = self._generate_opp_id()
         vals['date_deadline'] = date.today() + timedelta(days=30)
         return super(CrmLead, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('type') == 'opportunity' or self.type == 'opportunity':
+            vals['name'] = self._generate_opp_id()
+        return super(CrmLead, self).write(vals)
 
     @api.model
     def _generate_opp_id(self):
