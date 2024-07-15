@@ -18,21 +18,54 @@ class CrmLead(models.Model):
     is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl', invisible=True)
     is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl', invisible=True)
     is_air = fields.Boolean(string="Is Air", compute='_compute_is_air', invisible=True)
-    product_id_domain = fields.Char(
-        compute="_compute_product_id_domain",
-        readonly=True,
-        store=False,
-    )
-    name = fields.Char(required=False, readonly=True)
-
+    product_id_domain = fields.Char(compute="_compute_product_id_domain", readonly=True, store=False)
+    name = fields.Char(
+        'Opportunity', index='trigram', required=False,
+        compute='_compute_name', readonly=False, store=True)
+    partner_id = fields.Many2one(domain="[('partner_type_id', 'in', [1]),('is_company', '=', True)]")
     equipment_type_id = fields.Many2one(comodel_name='shipment.scop', string='Equipment Type')
-    shipping_info_ids = fields.One2many(comodel_name='shipping.info', inverse_name='crm_lead_id', string='Shipping Info')
     additional_information = fields.Text(string='Additional Information')
     by_unit = fields.Boolean(string='By Unit')
-    from_port_cities_id = fields.Many2one(comodel_name='port.cites', string='From Port Cities')
-    to_port_cities_id = fields.Many2one(comodel_name='port.cites', string='To Port Cities')
     commodity_id = fields.Many2one(comodel_name='commodity.data', string='Commodity')
     cargo_readiness_date = fields.Date(string='Cargo Readiness Date')
+    container_lines_ids = fields.One2many('container.lines', 'crm_id',
+                                          string='Container/s Type, Quantity and Weight')
+
+    air_package_type_ids = fields.One2many(
+        'crm.lead.air.package.type', 'lead_id', string="Package Types", store=True, )
+    non_air_package_type_ids = fields.One2many(
+        'crm.lead.non.air.package.type', 'lead_id', string="Package Types", store=True, )
+
+    container_type_ids = fields.One2many('crm.lead.container.type', 'lead_id', string="Container Types", store=True)
+
+    pol_id = fields.Many2one('port.cites', string="POL", store=True)
+    pod_id = fields.Many2one('port.cites', string="POD", store=True)
+    commodity_equip = fields.Selection([
+        ('dry', 'Dry'),
+        ('reefer', 'Reefer'),
+        ('imo', 'IMO')
+    ], string="Commodity Equip", store=True)
+
+    temperature = fields.Float(string="Temperature", store=True)
+    un_number = fields.Integer(string="UN Number", store=True)
+    attachment = fields.Binary(string="Attachment", attachment=True, help="Upload your MSDS")
+    incoterms_id = fields.Many2one('account.incoterms', string="Incoterms", store=True,
+                                   )
+    transit_time_duration = fields.Integer(string="Transit Time", store=True)
+    free_time_duration = fields.Integer(string="Free Time", store=True)
+    target_rate = fields.Monetary(string="Target Rate", store=True)
+    currency_id = fields.Many2one('res.currency', string="Currency", store=True,
+                                  )
+    preferred_line_id = fields.Many2one('res.partner', string="Preferred Line",
+                                        domain="[('partner_type_id.name', '=', 'Shipping Line'), ('is_company', '=', True)]",
+                                        store=True,
+                                        )
+    service_needed_ids = fields.Many2many('service.scope', string="Service Needed", store=True)
+    opp_id = fields.Char(
+        string='OPP ID', index=True, readonly=True, store=True)
+    name = fields.Char(readonly=True)
+    pickup_address = fields.Char(string="Pickup Address")
+    pickup_address2 = fields.Text(string="Delivery Address")
 
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
@@ -132,46 +165,6 @@ class CrmLead(models.Model):
             else:
                 record.is_lcl_or_ltl = False
 
-    air_package_type_ids = fields.One2many(
-        'crm.lead.air.package.type', 'lead_id', string="Package Types", store=True, )
-    non_air_package_type_ids = fields.One2many(
-        'crm.lead.non.air.package.type', 'lead_id', string="Package Types", store=True, )
-
-    container_type_ids = fields.One2many('crm.lead.container.type', 'lead_id', string="Container Types", store=True,
-                                         )
-
-    pol_id = fields.Many2one('port.cites', string="POL", store=True)
-    pod_id = fields.Many2one('port.cites', string="POD", store=True)
-    commodity_id = fields.Many2one('commodity.data', string="Commodity", store=True)
-    commodity_equip = fields.Selection([
-        ('dry', 'Dry'),
-        ('reefer', 'Reefer'),
-        ('imo', 'IMO')
-    ], string="Commodity Equip", store=True)
-
-    temperature = fields.Float(string="Temperature", store=True)
-    un_number = fields.Integer(string="UN Number", store=True)
-    attachment = fields.Binary(string="Attachment", attachment=True, help="Upload your MSDS")
-    incoterms_id = fields.Many2one('account.incoterms', string="Incoterms", store=True,
-                                   )
-
-    cargo_readiness_date = fields.Date(string="Cargo Readiness Date", store=True)
-    transit_time_duration = fields.Integer(string="Transit Time", store=True)
-    free_time_duration = fields.Integer(string="Free Time", store=True)
-    target_rate = fields.Monetary(string="Target Rate", store=True)
-    currency_id = fields.Many2one('res.currency', string="Currency", store=True,
-                                  )
-    preferred_line_id = fields.Many2one('res.partner', string="Preferred Line",
-                                        domain="[('partner_type_id.name', '=', 'Shipping Line'), ('is_company', '=', True)]",
-                                        store=True,
-                                        )
-    service_needed_ids = fields.Many2many('service.scope', string="Service Needed", store=True)
-    opp_id = fields.Char(
-        string='OPP ID', index=True, readonly=True, store=True)
-    name = fields.Char(readonly=True)
-    pickup_address = fields.Char(string="Pickup Address")
-    pickup_address2 = fields.Text(string="Delivery Address")
-
     @api.onchange('pol_id', 'pod_id')
     def onchange_pod_id(self):
         if self.pol_id and self.pod_id:
@@ -183,15 +176,10 @@ class CrmLead(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('name') and vals.get('type') == 'opportunity':
+        if not vals.get('name'):
             vals['name'] = self._generate_opp_id()
         vals['date_deadline'] = date.today() + timedelta(days=30)
         return super(CrmLead, self).create(vals)
-
-    def write(self, vals):
-        if vals.get('type') == 'opportunity' or self.type == 'opportunity':
-            vals['name'] = self._generate_opp_id()
-        return super(CrmLead, self).write(vals)
 
     @api.model
     def _generate_opp_id(self):
@@ -200,107 +188,8 @@ class CrmLead(models.Model):
         seq = self.env['ir.sequence'].next_by_code('crm.lead.opp.id') or '0000'
         return f"OPP{year_suffix}/{seq}"
 
-    name = fields.Char(
-        'Opportunity', index='trigram', required=False,
-        compute='_compute_name', readonly=False, store=True)
-    partner_id = fields.Many2one(domain="[('partner_type_id', 'in', [1]),('is_company', '=', True)]")
-
     @api.depends('partner_id')
     def _compute_name(self):
         for lead in self:
             if not lead.name and lead.partner_id and lead.partner_id.name:
                 lead.name = _("%s's opportunity") % lead.partner_id.name
-
-
-class Stage(models.Model):
-    _inherit = "crm.stage"
-
-    name = fields.Char(string="Pricing")
-    is_pricing_stage = fields.Boolean(string="Is Pricing Stage")
-    is_follow_up_stage = fields.Boolean(string="Is Follow Up Stage")
-
-    @api.onchange('is_pricing_stage')
-    def _onchhange_is_pricing_stage(self):
-        if self.is_pricing_stage:
-            if self.name == "Proposition":
-                self.name = "Follow Up"
-        else:
-            if self.name == "Proposition":
-                self.name = "Proposition"
-
-
-class CrmLeadAirPackageType(models.Model):
-    _name = 'crm.lead.air.package.type'
-    _description = 'CRM Lead AIR Package Type'
-
-    lead_id = fields.Many2one('crm.lead', string="Lead", store=True)
-    package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True,
-        domain="[('tag_type_ids', 'in', [2])]",
-        onchange=True
-    )
-
-    qty = fields.Float(string="QTY", store=True)
-    gw_kg = fields.Float(string="GW (KG)", store=True)
-    length_cm = fields.Float(string="L (CM)", store=True)
-    width_cm = fields.Float(string="W (CM)", store=True)
-    height_cm = fields.Float(string="H (CM)", store=True)
-    cbm = fields.Float(string="CBM")
-    vm = fields.Float(string="VM", compute='_compute_vm', store=True)
-    chw = fields.Float(string="CHW", compute="compute_chw", store=True)
-
-    def compute_chw(self):
-        for rec in self:
-            if rec.gw_kg * rec.qty > rec.vm:
-                rec.chw = rec.gw_kg * rec.qty
-            else:
-                rec.chw = rec.vm
-
-    @api.onchange('length_cm', 'width_cm', 'height_cm')
-    def _compute_cbm(self):
-        for rec in self:
-            rec.cbm = (rec.length_cm * rec.width_cm * rec.height_cm) / 1000
-
-    @api.depends('length_cm', 'width_cm', 'height_cm')
-    def _compute_vm(self):
-        for rec in self:
-            rec.vm = (rec.length_cm * rec.width_cm * rec.height_cm) / 6000
-
-
-class CrmLeadNonAirPackageType(models.Model):
-    _name = 'crm.lead.non.air.package.type'
-    _description = 'CRM Lead Non-AIR Package Type'
-
-    lead_id = fields.Many2one('crm.lead', string="Lead", store=True)
-    package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True,
-        domain="[('tag_type_ids', 'in', [1])]",
-        onchange=True
-    )
-    qty = fields.Float(string="QTY", store=True)
-    gw_kg = fields.Float(string="GW (KG)", store=True)
-    length_cm = fields.Float(string="L (CM)", store=True)
-    width_cm = fields.Float(string="W (CM)", store=True)
-    height_cm = fields.Float(string="H (CM)", store=True)
-    cbm = fields.Float(string="CBM")
-
-    @api.onchange('length_cm', 'width_cm', 'height_cm')
-    def _compute_cbm(self):
-        for rec in self:
-            rec.cbm = (rec.length_cm * rec.width_cm * rec.height_cm) / 1000
-
-
-class CrmLeadContainerType(models.Model):
-    _name = 'crm.lead.container.type'
-    _description = 'CRM Lead Container Type'
-
-    lead_id = fields.Many2one('crm.lead', string="Lead", store=True)
-    container_type_id = fields.Many2one('container.type', string="Container Type", store=True)
-    qty = fields.Float(string="QTY", store=True)
-    gw_kg = fields.Float(string="GW (KG)", store=True)
-
-
-class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
-
-    group_use_lead = fields.Boolean(default=False)

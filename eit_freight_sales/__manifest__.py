@@ -23,7 +23,7 @@
     'application': False,
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm', 'sale_management', 'account', 'eit_freight_MasterData', 'sale_crm'],
+    'depends': ['base', 'crm', 'sale_management', 'account', 'eit_freight_MasterData', 'sale_crm', 'website', 'eit_freight_pricing'],
 
     # always loaded
     'data': [

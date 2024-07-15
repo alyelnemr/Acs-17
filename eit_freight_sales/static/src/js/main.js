@@ -23,11 +23,11 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         'click #removeRow_ftl': '_onRemoveRowFTL',
         'click #addRow_ltl': '_onAddRowLTL',
         'click #removeRow_ltl': '_onRemoveRowLTL',
-        'input .dimensions_l': '_onInputChange',
-        'input .dimensions_h': '_onInputChange',
-        'input .dimensions_w': '_onInputChange',
-        'input .quantity': '_onInputChange',
-        'input .weight': '_onInputChange',
+        'input .dimensions_l': '_onInputChange_air',
+        'input .dimensions_h': '_onInputChange_air',
+        'input .dimensions_w': '_onInputChange_air',
+        'input .quantity': '_onInputChange_air',
+        'input .weight': '_onInputChange_air',
         'input .dimensions_l_lcl': '_onInputChange_lcl',
         'input .dimensions_h_lcl': '_onInputChange_lcl',
         'input .dimensions_w_lcl': '_onInputChange_lcl',
@@ -46,7 +46,12 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         this.$inland_id = this.$('input[name="inland_id"]').val();
         this.$show_for_air_div = this.$('div[name="show_for_air_div"]');
         this.$show_for_sea_div = this.$('div[name="show_for_sea_div"]');
+        this.$show_for_air_all = this.$('.show_for_air');
+        this.$show_for_sea_all = this.$('.show_for_sea');
+        this.$show_from_cities_air_sea = this.$('.show_from_cities_air_sea');
+        this.$show_from_cities_inland = this.$('.show_from_cities_inland');
         this.$show_for_inland_div = this.$('div[name="show_for_inland_div"]');
+        this.$show_for_inland_all = this.$('.show_for_inland');
         this.$equipment_type_select = this.$('select[name="equipment_type_for_sea"]');
         this.$equipment_type_inland_select = this.$('select[name="equipment_type_for_inland"]');
         this.$show_for_fcl_sea_div = this.$('div[name="show_for_fcl_sea_div"]');
@@ -60,11 +65,16 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         this.$show_for_by_unit_ltl_div = this.$('div[name="show_for_by_unit_ltl_div"]');
         this.$hide_for_by_unit_ltl_div = this.$('div[name="hide_for_by_unit_ltl_div"]');
         this.$by_unit_checkbox = this.$('input[id="by_unit_checkbox"]');
-        this.$show_for_inland_div.show();
+        this.$show_for_inland_div.hide();
+        this.$show_for_inland_all.hide();
         this.$show_for_air_div.hide();
+        this.$show_for_air_all.hide();
         this.$show_for_sea_div.hide();
-        this.$equipment_type_inland_select.val('FTL');
-        this.$equipment_type_inland_select.trigger('change');
+        this.$show_for_sea_all.hide();
+        this.$show_from_cities_air_sea.hide();
+        this.$show_from_cities_inland.show();
+        //        this.$equipment_type_inland_select.val('FTL');
+        //        this.$equipment_type_inland_select.trigger('change');
         this.rowCount = 1;
         this.rowCountLCL = 1;
         this.rowCountFCL = 1;
@@ -75,22 +85,32 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         return def;
     },
     _replaceSelect: async function (type_id) {
+        debugger;
         const element_from = this.$('select[name="from_port_cities"]');
         const element_to = this.$('select[name="to_port_cities"]');
         const model = 'port.cites';
-        const domain = [['type_id', 'in', [parseInt(type_id)]]];
+        const domain = [];
         const fields = ['id', 'name'];
         var $select_from = $('<select></select>')
             .attr('id', 'from_port_cities')
             .attr('name', 'from_port_cities')
-            .attr('class', 'form-control link-style');
+            .attr('class', 'form-control link-style')
+            .append($('<option></option>').attr('value', '').text('Select...'));
         var $select_to = $('<select></select>')
             .attr('id', 'to_port_cities')
             .attr('name', 'to_port_cities')
-            .attr('class', 'form-control link-style');
+            .attr('class', 'form-control link-style')
+            .append($('<option></option>').attr('value', '').text('Select...'));
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select_from.append($defaultOption);
+        $select_to.append($defaultOption);
 
         try {
-            var data = await this.orm.call(model, "search_read", [domain, fields]);
+            //            var data = await this.orm.call(model, "search_read", [domain, fields]);
+            var data = await this.orm.call(model, "search_read", []);
             console.log(data);
             data.forEach(function (city) {
                 var $option = $('<option />').val(city.id).text(city.name);
@@ -112,28 +132,49 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
     _onChangeTransportType: function (event) {
         event.preventDefault();
         event.stopPropagation();
-        debugger;
         var TransportTypeElement = event.target;
         var value = TransportTypeElement.options[TransportTypeElement.selectedIndex].text;
         if (value === 'Air') {
             this.$show_for_air_div.show();
+            this.$show_for_air_all.show();
             this.$show_for_sea_div.hide();
+            this.$show_for_sea_all.hide();
             this.$show_for_inland_div.hide();
+            this.$show_for_inland_all.hide();
+            this.$show_from_cities_air_sea.show();
+            this.$show_from_cities_inland.hide();
             this._replaceSelect(this.$air_id);
         } else if (value === 'Sea') {
             this.$show_for_air_div.hide();
+            this.$show_for_air_all.hide();
             this.$show_for_sea_div.show();
+            this.$show_for_sea_all.show();
             this.$equipment_type_select.val('FCL');
             this.$equipment_type_select.trigger('change');
             this.$show_for_inland_div.hide();
+            this.$show_for_inland_all.hide();
+            this.$show_from_cities_air_sea.show();
+            this.$show_from_cities_inland.hide();
             this._replaceSelect(this.$sea_id);
-        } else {
+        } else if (value === 'In-land') {
             this.$show_for_inland_div.show();
+            this.$show_for_inland_all.show();
             this.$equipment_type_inland_select.val('FTL');
             this.$equipment_type_inland_select.trigger('change');
             this.$show_for_air_div.hide();
+            this.$show_for_air_all.hide();
             this.$show_for_sea_div.hide();
+            this.$show_for_sea_all.hide();
+            this.$show_from_cities_air_sea.hide();
+            this.$show_from_cities_inland.show();
             this._replaceSelect(this.$inland_id);
+        } else {
+            this.$show_for_air_div.hide();
+            this.$show_for_air_all.hide();
+            this.$show_for_inland_all.hide();
+            this.$show_for_sea_all.hide();
+            this.$show_from_cities_air_sea.show();
+            this.$show_from_cities_inland.hide();
         }
     },
     _onChangeEquipmentType: function (event) {
@@ -144,9 +185,12 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         if (value === 'FCL') {
             this.$show_for_fcl_sea_div.show();
             this.$show_for_lcl_sea_div.hide();
-        } if (value === 'LCL') {
+        } else if (value === 'LCL') {
             this.$show_for_fcl_sea_div.hide();
             this.$show_for_lcl_sea_div.show();
+        } else {
+            this.$show_for_fcl_sea_div.hide();
+            this.$show_for_lcl_sea_div.hide();
         }
     },
     _onChangeEquipmentTypeInland: function (event) {
@@ -157,9 +201,12 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         if (value === 'FTL') {
             this.$show_for_ftl_inland_div.show();
             this.$show_for_ltl_inland_div.hide();
-        } if (value === 'LTL') {
+        } else if (value === 'LTL') {
             this.$show_for_ftl_inland_div.hide();
             this.$show_for_ltl_inland_div.show();
+        } else {
+            this.$show_for_ftl_inland_div.hide();
+            this.$show_for_ltl_inland_div.hide();
         }
     },
     _onChangeByUnitCheckbox: function (event) {
@@ -198,14 +245,34 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$hide_for_by_unit_ltl_div.show();
         }
     },
-    _onAddRow: function (event) {
+    _onAddRow: async function (event) {
         event.preventDefault();
         event.stopPropagation();
         var dynamicTable = this.$('table[id="dynamicTable_by_unit"]');
         this.rowCount = dynamicTable.find('tr').length - 1;
         var rowCount = this.rowCount || 0;
+        var $select = $('<select></select>').attr('name', 'package_type_air[]').attr('class', 'form-control link-style');
+
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
+        try {
+            var data = await this.orm.call("package.type", "search_read", [domain, fields]);
+            data.forEach(function (container) {
+                var $option = $('<option />').val(container.id).text(container.name);
+                $select.append($option);
+            });
+        } catch (error) {
+            console.error("Error fetching container types:", error);
+            return;
+        }
         var newRow = '<tr>' +
         '<td>' + (rowCount + 1) + '</td>' +
+        '<td>' +
+        $select.prop('outerHTML') + // Convert the jQuery object to a string of HTML
+        '</td>' +
         '<td>' +
         '<input type="number" name="dimensions_l[]" class="form-control dimensions_l" />' +
         '</td>' +
@@ -239,14 +306,36 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         row.remove();
         this.rowCount = this.rowCount - 1;
     },
-    _onAddRowLCL: function (event) {
+    _onAddRowLCL: async function (event) {
         event.preventDefault();
         event.stopPropagation();
+        const domain = [['tag_type_ids', 'in', [2]]];
+        const fields = ['id', 'name'];
         var dynamicTable = this.$('table[id="dynamicTable_by_unit_lcl"]');
         this.rowCountLCL = dynamicTable.find('tr').length - 1;
         var rowCountLCL = this.rowCountLCL || 0;
+        var $select = $('<select></select>').attr('name', 'package_type_lcl[]').attr('class', 'form-control link-style');
+
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
+        try {
+            var data = await this.orm.call("package.type", "search_read", [domain, fields]);
+            data.forEach(function (container) {
+                var $option = $('<option />').val(container.id).text(container.name);
+                $select.append($option);
+            });
+        } catch (error) {
+            console.error("Error fetching container types:", error);
+            return;
+        }
         var newRow = '<tr>' +
         '<td>' + (rowCountLCL + 1) + '</td>' +
+        '<td>' +
+        $select.prop('outerHTML') + // Convert the jQuery object to a string of HTML
+        '</td>' +
         '<td>' +
         '<input type="number" name="dimensions_l_lcl[]" class="form-control dimensions_l_lcl" />' +
         '</td>' +
@@ -280,14 +369,36 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         row.remove();
         this.rowCountLCL = this.rowCountLCL - 1;
     },
-    _onAddRowLTL: function (event) {
+    _onAddRowLTL: async function (event) {
         event.preventDefault();
         event.stopPropagation();
+        const domain = [['tag_type_ids', 'in', [2]]];
+        const fields = ['id', 'name'];
         var dynamicTable = this.$('table[id="dynamicTable_by_unit_ltl"]');
         this.rowCountLTL = dynamicTable.find('tr').length - 1;
         var rowCountLTL = this.rowCountLTL || 0;
+        var $select = $('<select></select>').attr('name', 'package_type_ltl[]').attr('class', 'form-control link-style');
+
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
+        try {
+            var data = await this.orm.call("package.type", "search_read", [domain, fields]);
+            data.forEach(function (container) {
+                var $option = $('<option />').val(container.id).text(container.name);
+                $select.append($option);
+            });
+        } catch (error) {
+            console.error("Error fetching container types:", error);
+            return;
+        }
         var newRow = '<tr>' +
         '<td>' + (rowCountLTL + 1) + '</td>' +
+        '<td>' +
+        $select.prop('outerHTML') + // Convert the jQuery object to a string of HTML
+        '</td>' +
         '<td>' +
         '<input type="number" name="dimensions_l_ltl[]" class="form-control dimensions_l_ltl" />' +
         '</td>' +
@@ -329,6 +440,11 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         this.rowCountFCL = dynamicTable.find('tr').length - 1;
         var rowCountFCL = this.rowCountFCL || 0;
         var $select = $('<select></select>').attr('name', 'container_type[]').attr('class', 'form-control link-style');
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
 
         try {
             var data = await this.orm.call("container.type", "search_read", []);
@@ -375,6 +491,11 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         this.rowCountFTL = dynamicTable.find('tr').length - 1;
         var rowCountFTL = this.rowCountFTL || 0;
         var $select = $('<select></select>').attr('name', 'container_type_ftl_inland[]').attr('class', 'form-control link-style');
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
 
         try {
             var data = await this.orm.call("container.type", "search_read", []);
@@ -413,25 +534,25 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         row.remove();
         this.rowCountFTL = this.rowCountFTL - 1;
     },
-    _onInputChange: function (event) {
+    _onInputChange_air: function (event) {
         event.preventDefault();
         event.stopPropagation();
         var row = $(event.target).closest('tr');
-        this._updateRowTotal(row);
+        this._updateRowTotal_air(row);
     },
-    _updateRowTotal: function (row) {
+    _updateRowTotal_air: function (row) {
         var dimensions_l = parseFloat(row.find('.dimensions_l').val()) || 0;
         var dimensions_w = parseFloat(row.find('.dimensions_w').val()) || 0;
         var dimensions_h = parseFloat(row.find('.dimensions_h').val()) || 0;
         var quantity = parseFloat(row.find('.quantity').val()) || 0;
         var weight = parseFloat(row.find('.weight').val()) || 0;
-        var vm = dimensions_l * dimensions_w * dimensions_h;
-        var total = vm / 6000;
+        var vm = dimensions_l * dimensions_w * dimensions_h / 1000000;
+        var total = vm / 0.006;
         var gw = weight * quantity;
         if (gw > total){
             total = gw;
         }
-        row.find('.chw').val(total);
+        row.find('.chw').val(total.toFixed(2));
     },
     _onInputChange_lcl: function (event) {
         event.preventDefault();
@@ -445,13 +566,13 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var dimensions_h = parseFloat(row.find('.dimensions_h_lcl').val()) || 0;
         var quantity = parseFloat(row.find('.quantity_lcl').val()) || 0;
         var weight = parseFloat(row.find('.weight_lcl').val()) || 0;
-        var vm = dimensions_l * dimensions_w * dimensions_h;
-        var total = vm / 6000;
-        var gw = weight * quantity;
-        if (gw > total){
-            total = gw;
-        }
-        row.find('.cbm_lcl').val(total);
+        var total = dimensions_l * dimensions_w * dimensions_h / 1000000;
+//        var total = vm / 6000;
+//        var gw = weight * quantity;
+//        if (gw > total){
+//            total = gw;
+//        }
+        row.find('.cbm_lcl').val(total.toFixed(2));
     },
     _onInputChange_ltl: function (event) {
         event.preventDefault();
@@ -466,11 +587,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var quantity = parseFloat(row.find('.quantity_ltl').val()) || 0;
         var weight = parseFloat(row.find('.weight_ltl').val()) || 0;
         var vm = dimensions_l * dimensions_w * dimensions_h;
-        var total = vm / 6000;
-        var gw = weight * quantity;
-        if (gw > total){
-            total = gw;
-        }
+        var total = vm / 1000000; // divide by million to get cubic meters
+        var total = total.toFixed(2); // round to 2 decimal places
         row.find('.cbm_ltl').val(total);
     },
 });
