@@ -33,6 +33,9 @@
         'views/sale_order_view.xml',
         'views/request_quote.xml',
     ],
+    'images': [
+        '/eit_freight_sales/static/src/img/quote-bg.png',
+    ],
     'assets': {
         'web.assets_frontend': [
             '/eit_freight_sales/static/src/js/main.js'
