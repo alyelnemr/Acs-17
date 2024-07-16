@@ -90,17 +90,17 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         const element_to = this.$('select[name="to_port_cities"]');
         const model = 'port.cites';
         const domain = [];
-        const fields = ['id', 'name'];
+        const fields = ['id', 'display_name'];
         var $select_from = $('<select></select>')
             .attr('id', 'from_port_cities')
             .attr('name', 'from_port_cities')
             .attr('class', 'form-control link-style')
-            .append($('<option></option>').attr('value', '').text('Select...'));
+            .append($('<option></option>').attr('value', '').text('Select Port/Cities...'));
         var $select_to = $('<select></select>')
             .attr('id', 'to_port_cities')
             .attr('name', 'to_port_cities')
             .attr('class', 'form-control link-style')
-            .append($('<option></option>').attr('value', '').text('Select...'));
+            .append($('<option></option>').attr('value', '').text('Select Port/Cities...'));
         // Add "Select..." option
         var $defaultOption = $('<option></option>')
             .attr('value', '')
@@ -149,8 +149,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$show_for_air_all.hide();
             this.$show_for_sea_div.show();
             this.$show_for_sea_all.show();
-            this.$equipment_type_select.val('FCL');
-            this.$equipment_type_select.trigger('change');
+//            this.$equipment_type_select.val('FCL');
+//            this.$equipment_type_select.trigger('change');
             this.$show_for_inland_div.hide();
             this.$show_for_inland_all.hide();
             this.$show_from_cities_air_sea.show();
@@ -159,8 +159,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         } else if (value === 'In-land') {
             this.$show_for_inland_div.show();
             this.$show_for_inland_all.show();
-            this.$equipment_type_inland_select.val('FTL');
-            this.$equipment_type_inland_select.trigger('change');
+//            this.$equipment_type_inland_select.val('FTL');
+//            this.$equipment_type_inland_select.trigger('change');
             this.$show_for_air_div.hide();
             this.$show_for_air_all.hide();
             this.$show_for_sea_div.hide();

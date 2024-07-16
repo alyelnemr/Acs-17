@@ -37,7 +37,7 @@
                                  style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(50%) contrast(100%);"
                                  alt="Background Image"/>
                             <span style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; font-weight: bold;">
-                                <font style="font-size: 30px;" class="text-o-color-4">Find the best Freight Quote</font>
+                                <font style="font-size: 25px;" class="text-o-color-4">Find the best Freight Quote</font>
                             </span>
                             <h2 style="text-align: center; position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); color: white;">
                                 <span style="font-size: 16px;">Get a quick and easy quote now, enjoy ACS's competitive
@@ -491,9 +491,9 @@
                                                  class="icon" alt="Location Icon"/>
                                             <select id="from_port_cities" name="from_port_cities"
                                                     class="form-control link-style" required="required">
-                                                <option value="">Select...</option>
+                                                <option value="">Select Port/Cities...</option>
                                                 <t t-foreach="from_port_cities" t-as="item">
-                                                    <option t-esc="item.name" t-att-value="item.id"/>
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>
                                             </select>
                                         </div>
@@ -511,7 +511,7 @@
                                                     class="form-control link-style" required="required">
                                                 <option value="">Select...</option>
                                                 <t t-foreach="to_port_cities" t-as="item">
-                                                    <option t-esc="item.name" t-att-value="item.id"/>
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>
                                             </select>
                                         </div>
