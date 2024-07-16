@@ -491,9 +491,9 @@
                                                  class="icon" alt="Location Icon"/>
                                             <select id="from_port_cities" name="from_port_cities"
                                                     class="form-control link-style" required="required">
-                                                <option value="">Select...</option>
+                                                <option value="">Select Port/Cities...</option>
                                                 <t t-foreach="from_port_cities" t-as="item">
-                                                    <option t-esc="item.name" t-att-value="item.id"/>
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>
                                             </select>
                                         </div>
@@ -511,7 +511,7 @@
                                                     class="form-control link-style" required="required">
                                                 <option value="">Select...</option>
                                                 <t t-foreach="to_port_cities" t-as="item">
-                                                    <option t-esc="item.name" t-att-value="item.id"/>
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>
                                             </select>
                                         </div>
