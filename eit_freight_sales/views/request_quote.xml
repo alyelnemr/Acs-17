@@ -37,7 +37,7 @@
                                  style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(50%) contrast(100%);"
                                  alt="Background Image"/>
                             <span style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; font-weight: bold;">
-                                <font style="font-size: 30px;" class="text-o-color-4">Find the best Freight Quote</font>
+                                <font style="font-size: 25px;" class="text-o-color-4">Find the best Freight Quote</font>
                             </span>
                             <h2 style="text-align: center; position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); color: white;">
                                 <span style="font-size: 16px;">Get a quick and easy quote now, enjoy ACS's competitive
