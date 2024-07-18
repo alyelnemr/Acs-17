@@ -577,6 +577,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
 //        if (gw > total){
 //            total = gw;
 //        }
+        total = total * quantity;
         row.find('.cbm_lcl').val(total.toFixed(2));
     },
     _onInputChange_ltl: function (event) {
@@ -593,7 +594,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var weight = parseFloat(row.find('.weight_ltl').val()) || 0;
         var vm = dimensions_l * dimensions_w * dimensions_h;
         var total = vm / 1000000; // divide by million to get cubic meters
-        var total = total.toFixed(2); // round to 2 decimal places
+        total = total * quantity;
+        total = total.toFixed(2); // round to 2 decimal places
         row.find('.cbm_ltl').val(total);
     },
 });

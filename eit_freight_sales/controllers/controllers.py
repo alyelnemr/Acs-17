@@ -231,14 +231,16 @@ class FreightController(AuthSignupHome):
                 lead_vals['shipment_scope_id'] = equipment_type.id
                 if equipment_type.code == 'FTL':
                     lead_vals['container_type_ids'] = shipping_info_vals
+                else:
+                    lead_vals['non_air_package_type_ids'] = shipping_info_vals
             elif transport_type.code == 'SEA':
                 equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_sea)],
                                                                             limit=1)
                 lead_vals['shipment_scope_id'] = equipment_type.id
                 if equipment_type.code == 'FCL':
                     lead_vals['container_type_ids'] = shipping_info_vals
-            else:
-                lead_vals['non_air_package_type_ids'] = shipping_info_vals
+                else:
+                    lead_vals['non_air_package_type_ids'] = shipping_info_vals
         # lead_vals['container_lines_ids'] = shipping_info_vals
         crm_lead = request.env['crm.lead'].sudo().create(lead_vals)
 
