@@ -6,11 +6,53 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+<!--                <field name="show_partner" invisible="1"/>-->
             </xpath>
             <field name="property_account_position_id" position="after">
                 <field name="created_by"/>
                 <field name="excecuters" widget="many2many_tags"/>
             </field>
+            <xpath expr="//field[@name='state_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <!--                         <xpath expr="//field[@name='buyer_id']" position="attributes">-->
+            <!--                            <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>-->
+            <!--                        </xpath>-->
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='property_delivery_carrier_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='website_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='excecuters']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='industry_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+    <record id="view_partner_property_form" model="ir.ui.view">
+        <field name="name">res.partner.purchase.property.form.buyer</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="purchase.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='buyer_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+            </xpath>
         </field>
     </record>
 
@@ -21,6 +63,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+<!--                <field name="show_partner" column_invisible="1"/>-->
             </xpath>
         </field>
     </record>
@@ -44,6 +87,7 @@
         <field name="arch" type="xml">
             <field name="mobile" position="after">
                 <field name="partner_type_id"/>
+
             </field>
         </field>
     </record>
@@ -53,7 +97,8 @@
         <field name="inherit_id" ref="base_setup.res_partner_kanban_view"/>
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('oe_kanban_partner_categories')]" position="after">
-                <div class="oe_kanban_list_many2many">
+
+                <div  class="oe_kanban_list_many2many">
                     <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 </div>
             </xpath>
@@ -66,7 +111,9 @@
 
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
-        <field name="context">{'default_is_company': True,'search_default_type_company': True}</field>
+        <field name="context">{'default_is_company': True,'search_default_type_company':
+            True}
+        </field>
     </record>
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
         <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
@@ -74,9 +121,9 @@
         </field>
         <field name="domain">[('partner_type_id', 'in', [1])]</field>
     </record>
-     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
         <field name="domain">[('partner_type_id', 'in', [12,11,13,7,5,4,6])]</field>
-         <field name="context">{'search_default_type_company': True}
+        <field name="context">{'search_default_type_company': True}
         </field>
     </record>
 

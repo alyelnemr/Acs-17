@@ -11,6 +11,8 @@ class PortCitiesTemplate(models.Model):
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")
     country_id = fields.Many2one('res.country', string="Country", required=True)
+    country_group_ids = fields.Many2many('res.country.group', string='Country Group',
+                                         related="country_id.country_group_ids")
     display_name = fields.Char(string="Display Name", compute="compute_dispaly_name")
     type = fields.Selection([('air', 'Air'), ('sea', 'Sea'), ('island', 'Inland')], 'Is')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Active', readonly=True)
