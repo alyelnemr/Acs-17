@@ -3,12 +3,62 @@
     <!-- Template for Sign Up Form -->
     <template id="request_quote" name="Request Quote">
         <t t-call="website.layout">
-            <script type="text/javascript">
-
-            </script>
             <div id="wrap">
+                <style>
+                    .input-container {
+                    position: relative;
+                    width: 100%;
+                    }
+                    .input-container .icon {
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 20px;
+                    height: 20px;
+                    z-index: 1;
+                    }
+                    .input-container select {
+                    width: 100%;
+                    padding-left: 140px; /* Add padding to the left to make space for the icon */
+                    padding-right: 10px;
+                    height: 40px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    -webkit-appearance: none; /* Remove default appearance */
+                    -moz-appearance: none; /* Remove default appearance */
+                    appearance: none; /* Remove default appearance */
+                    background-color: white; /* Ensures the background remains white */
+                    }
+                    .select2-container--default .select2-selection--single {
+                    height: 40px;
+                    line-height: 40px;
+                    padding-left: 40px; /* Align text with the icon */
+                    }
+                    .select2-container .select2-selection--single .select2-selection__rendered {
+                    line-height: 40px; /* Align the selected text vertically */
+                    }
+                    .select2-container .select2-selection--single .select2-selection__arrow {
+                    height: 40px;
+                    }
+                </style>
                 <div class="oe_structure">
                     <div class="container">
+                        <div class="o_kanban_image me-1" style="position: relative; width: 65%; height: 270px;">
+                            <img src="/eit_freight_sales/static/src/img/quote-bg.png"
+                                 style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(50%) contrast(100%);"
+                                 alt="Background Image"/>
+                            <span style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; font-weight: bold;">
+                                <font style="font-size: 25px;" class="text-o-color-4">Find the best Freight Quote</font>
+                            </span>
+                            <h2 style="text-align: center; position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); color: white;">
+                                <span style="font-size: 16px;">Get a quick and easy quote now, enjoy ACS's competitive
+                                    freight rates and get your shipment going.
+                                </span>
+                            </h2>
+                        </div>
+
+
                         <form role="form" id="request_quote_form" action="/web/shipping-request" method="post">
                             <input type="hidden" name="csrf_token"
                                    t-att-value="request.csrf_token()"/>
@@ -17,24 +67,45 @@
                             <input type="hidden" name="inland_id" t-att-value="inland_id"/>
                             <br/>
                             <br/>
-                            <br/>
-                            <br/>
                             <div class="form-group">
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label for="transport_type">Transport type</label>
-                                    </div>
-                                    <div class="col-md-2">
                                         <select id="transport_type" name="transport_type"
-                                                class="form-control link-style">
+                                                class="form-control link-style" required="required">
+                                            <option value="">Select...</option>
                                             <t t-foreach="transport_type" t-as="item">
                                                 <option t-esc="item.name" t-att-value="item.id"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 show_for_sea" style="display: none;">
+                                        <label for="equipment_type_for_sea">Equipment Type</label>
+                                    </div>
+                                    <div class="col-md-3 show_for_sea" style="display: none;">
+                                        <select id="equipment_type_for_sea" name="equipment_type_for_sea"
+                                                class="form-control link-style">
+                                            <option value="">Select...</option>
+                                            <t t-foreach="equipment_type_for_sea" t-as="item">
+                                                <option t-esc="item.name" t-att-value="item.code"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 show_for_inland" style="display: none;">
+                                        <label for="equipment_type_for_inland">Equipment Type</label>
+                                        <select id="equipment_type_for_inland" name="equipment_type_for_inland"
+                                                class="form-control link-style">
+                                            <option value="">Select...</option>
+                                            <t t-foreach="equipment_type_for_inland" t-as="item">
+                                                <option t-esc="item.name" t-att-value="item.code"/>
                                             </t>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="row show_for_air" name="show_for_air_div" style="display: none;">
                                     <div class="form-group">
+                                        <br/>
+                                        <br/>
                                         <label for="by_unit_checkbox">By Unit</label>
                                         <input type="checkbox" name="by_unit_checkbox" t-att-value="by_unit"
                                                id="by_unit_checkbox"
@@ -42,10 +113,12 @@
                                     </div>
                                     <div class="row show_for_by_unit" name="show_for_by_unit_div">
                                         <div class="form-group">
-                                            <table id="dynamicTable_by_unit" class="table table-striped">
+                                            <table id="dynamicTable_by_unit" class="table table-striped"
+                                                   style="width: 85%">
                                                 <thead>
                                                     <tr>
                                                         <th>LOT</th>
+                                                        <th>Package Type</th>
                                                         <th>Dimensions L (CM)</th>
                                                         <th>Dimensions W (CM)</th>
                                                         <th>Dimensions H (CM)</th>
@@ -57,6 +130,16 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>1</td>
+                                                        <td>
+                                                            <select name="package_type_air[]"
+                                                                    class="form-control link-style">
+                                                                <option value="">Select...</option>
+                                                                <t t-foreach="package_type" t-as="item">
+                                                                    <option t-esc="item.name"
+                                                                            t-att-value="item.id"/>
+                                                                </t>
+                                                            </select>
+                                                        </td>
                                                         <td>
                                                             <input type="number" name="dimensions_l[]"
                                                                    class="form-control dimensions_l"/>
@@ -95,7 +178,7 @@
                                     <div class="row hide_for_by_unit" name="hide_for_by_unit_div"
                                          style="display: none;">
                                         <div class="form-group">
-                                            <table id="Table" class="table table-striped">
+                                            <table id="Table" class="table table-striped" style="width: 85%">
                                                 <thead>
                                                     <tr>
                                                         <th>Weight (KG)</th>
@@ -120,21 +203,11 @@
                                 </div>
                                 <br/>
                                 <div class="row show_for_sea" name="show_for_sea_div" style="display:none;">
-                                    <div class="col-md-2">
-                                        <label for="equipment_type_for_sea">Equipment Type</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select id="equipment_type_for_sea" name="equipment_type_for_sea"
-                                                class="form-control link-style">
-                                            <t t-foreach="equipment_type_for_sea" t-as="item">
-                                                <option t-esc="item.name" t-att-value="item.code"/>
-                                            </t>
-                                        </select>
-                                    </div>
                                     <div class="row show_for_fcl_sea" name="show_for_fcl_sea_div"
                                          style="display: none;">
                                         <div class="form-group">
-                                            <table id="dynamicTable_fcl_sea" class="table table-striped">
+                                            <table id="dynamicTable_fcl_sea" class="table table-striped"
+                                                   style="width: 85%">
                                                 <thead>
                                                     <tr>
                                                         <th>LOT</th>
@@ -149,6 +222,7 @@
                                                         <td>
                                                             <select name="container_type[]"
                                                                     class="form-control link-style">
+                                                                <option value="">Select...</option>
                                                                 <t t-foreach="container_type" t-as="item">
                                                                     <option t-esc="item.name" t-att-value="item.id"/>
                                                                 </t>
@@ -183,10 +257,12 @@
                                         </div>
                                         <div class="row show_for_by_unit_lcl" name="show_for_by_unit_lcl_div">
                                             <div class="form-group">
-                                                <table id="dynamicTable_by_unit_lcl" class="table table-striped">
+                                                <table id="dynamicTable_by_unit_lcl" class="table table-striped"
+                                                       style="width: 85%">
                                                     <thead>
                                                         <tr>
                                                             <th>LOT</th>
+                                                            <th>Package Type</th>
                                                             <th>Dimensions L (CM)</th>
                                                             <th>Dimensions W (CM)</th>
                                                             <th>Dimensions H (CM)</th>
@@ -198,6 +274,16 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>1</td>
+                                                            <td>
+                                                                <select name="package_type_lcl[]"
+                                                                        class="form-control link-style">
+                                                                    <option value="">Select...</option>
+                                                                    <t t-foreach="package_type" t-as="item">
+                                                                        <option t-esc="item.name"
+                                                                                t-att-value="item.id"/>
+                                                                    </t>
+                                                                </select>
+                                                            </td>
                                                             <td>
                                                                 <input type="number" name="dimensions_l_lcl[]"
                                                                        class="form-control dimensions_l_lcl"/>
@@ -236,7 +322,7 @@
                                         <div class="row hide_for_by_unit_lcl" name="hide_for_by_unit_lcl_div"
                                              style="display: none;">
                                             <div class="form-group">
-                                                <table id="Table_lcl" class="table table-striped">
+                                                <table id="Table_lcl" class="table table-striped" style="width: 85%">
                                                     <thead>
                                                         <tr>
                                                             <th>Weight (KG)</th>
@@ -261,21 +347,11 @@
                                     </div>
                                 </div>
                                 <div class="row show_for_inland" name="show_for_inland_div" style="display:none;">
-                                    <div class="col-md-2">
-                                        <label for="equipment_type_for_inland">Equipment Type</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select id="equipment_type_for_inland" name="equipment_type_for_inland"
-                                                class="form-control link-style">
-                                            <t t-foreach="equipment_type_for_inland" t-as="item">
-                                                <option t-esc="item.name" t-att-value="item.code"/>
-                                            </t>
-                                        </select>
-                                    </div>
                                     <div class="row show_for_ftl_inland" name="show_for_ftl_inland_div"
                                          style="display: none;">
                                         <div class="form-group">
-                                            <table id="dynamicTable_ftl_inland" class="table table-striped">
+                                            <table id="dynamicTable_ftl_inland" class="table table-striped"
+                                                   style="width: 85%">
                                                 <thead>
                                                     <tr>
                                                         <th>LOT</th>
@@ -290,6 +366,7 @@
                                                         <td>
                                                             <select name="container_type_ftl_inland[]"
                                                                     class="form-control link-style">
+                                                                <option value="">Select...</option>
                                                                 <t t-foreach="container_type" t-as="item">
                                                                     <option t-esc="item.name" t-att-value="item.id"/>
                                                                 </t>
@@ -324,10 +401,12 @@
                                         </div>
                                         <div class="row show_for_by_unit_ltl" name="show_for_by_unit_ltl_div">
                                             <div class="form-group">
-                                                <table id="dynamicTable_by_unit_ltl" class="table table-striped">
+                                                <table id="dynamicTable_by_unit_ltl" class="table table-striped"
+                                                       style="width: 85%">
                                                     <thead>
                                                         <tr>
                                                             <th>LOT</th>
+                                                            <th>Package Type</th>
                                                             <th>Dimensions L (CM)</th>
                                                             <th>Dimensions W (CM)</th>
                                                             <th>Dimensions H (CM)</th>
@@ -339,6 +418,16 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>1</td>
+                                                            <td>
+                                                                <select name="package_type_ltl[]"
+                                                                        class="form-control link-style">
+                                                                    <option value="">Select...</option>
+                                                                    <t t-foreach="package_type" t-as="item">
+                                                                        <option t-esc="item.name"
+                                                                                t-att-value="item.id"/>
+                                                                    </t>
+                                                                </select>
+                                                            </td>
                                                             <td>
                                                                 <input type="number" name="dimensions_l_ltl[]"
                                                                        class="form-control dimensions_l_ltl"/>
@@ -377,7 +466,7 @@
                                         <div class="row hide_for_by_unit_lcl" name="hide_for_by_unit_ltl_div"
                                              style="display: none;">
                                             <div class="form-group">
-                                                <table id="Table_lcl" class="table table-striped">
+                                                <table id="Table_lcl" class="table table-striped" style="width: 85%">
                                                     <thead>
                                                         <tr>
                                                             <th>Weight (KG)</th>
@@ -403,45 +492,61 @@
                                 </div>
                                 <br/>
                                 <div class="row">
-                                    <div class="col-md-2">
-                                        <label for="from_port_cities">From</label>
+                                    <div class="col-md-4">
+                                        <label for="from_port_cities" class="show_from_cities_air_sea"
+                                               style="display: none;">Port Of Loading
+                                        </label>
+                                        <label for="from_port_cities" class="show_from_cities_inland">Place Of Loading
+                                        </label>
+                                        <div class="input-container">
+                                            <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
+                                                 class="icon" alt="Location Icon"/>
+                                            <select id="from_port_cities" name="from_port_cities"
+                                                    class="form-control link-style" style="padding-left:30px"
+                                                    required="required">
+                                                <option value="" disabled="disabled" selected="selected"
+                                                        hidden="hidden"/>
+                                                <t t-foreach="from_port_cities" t-as="item">
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
+                                                </t>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <select id="from_port_cities" name="from_port_cities"
-                                                class="form-control link-style">
-                                            <t t-foreach="from_port_cities" t-as="item">
-                                                <option t-esc="item.name" t-att-value="item.id"/>
-                                            </t>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label for="to_port_cities">To</label>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select id="to_port_cities" name="to_port_cities"
-                                                class="form-control link-style">
-                                            <t t-foreach="to_port_cities" t-as="item">
-                                                <option t-esc="item.name" t-att-value="item.id"/>
-                                            </t>
-                                        </select>
+                                    <div class="col-md-4">
+                                        <label for="to_port_cities" class="show_from_cities_air_sea"
+                                               style="display: none;">Port Of Discharge
+                                        </label>
+                                        <label for="to_port_cities" class="show_from_cities_inland">Place Of Discharge
+                                        </label>
+                                        <div class="input-container">
+                                            <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
+                                                 class="icon" alt="Location Icon"/>
+                                            <select id="to_port_cities" name="to_port_cities"
+                                                    class="form-control link-style" style="padding-left:30px"
+                                                    required="required">
+                                                <option value="" disabled="disabled" selected="selected"
+                                                        hidden="hidden"/>
+                                                <t t-foreach="to_port_cities" t-as="item">
+                                                    <option t-esc="item.display_name" t-att-value="item.id"/>
+                                                </t>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label for="commodity">Commodity</label>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select id="commodity" name="commodity" class="form-control link-style">
+                                        <select id="commodity" name="commodity" class="form-control link-style"
+                                                required="required">
+                                            <option value="">Select...</option>
                                             <t t-foreach="commodity" t-as="item">
                                                 <option t-esc="item.name" t-att-value="item.id"/>
                                             </t>
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label for="cargo_readiness_date">Date</label>
-                                    </div>
-                                    <div class="col-md-2">
                                         <input type="date" id="cargo_readiness_date" name="cargo_readiness_date"
                                                required="required" class="form-control"/>
                                     </div>
@@ -449,50 +554,60 @@
                                 <br/>
                                 <br/>
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-5">
                                         <label for="commodity">Additional Information</label>
-                                    </div>
-                                    <div class="col-md-6">
                                         <textarea id="additional_information" name="additional_information"
                                                   class="form-control" rows="5"/>
                                     </div>
                                 </div>
                                 <br/>
-                                <div>
-                                    <h4>Contact Details</h4>
+                                <t t-if="is_public_user">
+                                    <div class="show_for_public_user">
+                                        <h4>Contact Details</h4>
+                                        <div style="background-color: #FFF5E1; width: 50%">
+                                            <div class="wv_u5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                     viewBox="0 0 20 20" fill="none">
+                                                    <path d="M18.8102 15.7836L11.7277 3.69729C11.1855 2.76757 9.81714 2.76757 9.27126 3.69729L2.1921 15.7836C1.64722 16.71 2.32588 17.8755 3.418 17.8755H17.583C18.6707 17.8755 19.3514 16.7134 18.8102 15.7836ZM9.70225 7.51578C9.70225 7.07582 10.0592 6.71888 10.4992 6.71888C10.9391 6.71888 11.2961 7.07748 11.2961 7.51578V11.7659C11.2961 12.2059 10.9391 12.5628 10.529 12.5628C10.119 12.5628 9.70225 12.2075 9.70225 11.7659V7.51578ZM10.4992 15.7504C9.92273 15.7504 9.45521 15.2829 9.45521 14.7065C9.45521 14.1301 9.9224 13.6626 10.4992 13.6626C11.0759 13.6626 11.5431 14.1301 11.5431 14.7065C11.5418 15.2823 11.0769 15.7504 10.4992 15.7504Z"
+                                                          fill="#FC7E1D">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <div class="DfMKG">
+                                                <p class="_vKQW">Please fill out the form below or sign in to your
+                                                    account. Your progress won't get lost.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary">Sign In</button>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                    </div>
+                                    <div class="row show_for_public_user">
+                                        <div class="col-md-4">
+                                            <label for="contact_name">Name</label>
+                                            <input type="text" id="contact_name" name="contact_name"
+                                                   class="form-control" required="required"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="contact_email">Email</label>
+                                            <input type="email" id="contact_email" name="contact_email"
+                                                   class="form-control" required="required"/>
+                                        </div>
+                                    </div>
                                     <br/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-1">
-                                        <label for="contact_name">Name</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" id="contact_name" name="contact_name" class="form-control"
-                                               required="required"/>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label for="contact_email">Email</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="email" id="contact_email" name="contact_email" class="form-control"
-                                               required="required"/>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="row">
-                                    <div class="col-md-1">
-                                        <label for="contact_name">Company</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" id="contact_company" name="contact_company"
-                                               class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contact_phone">Phone Number</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="contact_company">Company</label>
+                                            <input type="text" id="contact_company" name="contact_company"
+                                                   class="form-control"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="contact_phone">Phone</label>
+                                            <div class="input-group">
                                                 <select id="country_code" name="country_code" class="form-control"
-                                                        required="required">
+                                                        style="width: 13%;" required="required">
                                                     <!-- MENA -->
                                                     <option value="+20">+20 (Egypt)</option>
                                                     <option value="+212">+212 (Morocco)</option>
@@ -577,14 +692,13 @@
                                                     <option value="+597">+597 (Suriname)</option>
                                                     <option value="+598">+598 (Uruguay)</option>
                                                 </select>
-                                            </div>
-                                            <div class="col-md-3">
                                                 <input type="tel" id="contact_phone" name="contact_phone"
-                                                       class="form-control" required="required"/>
+                                                       class="form-control" style="width: 87%;" required="required"/>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </t>
+
                                 <div class="row">
                                 </div>
                             </div>
@@ -593,6 +707,11 @@
                             <button type="submit" class="btn btn-primary">Request a Quote</button>
                             <br/>
                             <br/>
+                            <p>By creating an account, you agree to our <a href="/tos" target="_blank" class="awyI_j">
+                                Terms of service
+                            </a> and
+                                <a href="/privacy" target="_blank" class="awyI_j">Privacy Policy</a>
+                            </p>
                             <br/>
                             <br/>
                         </form>

@@ -10,7 +10,7 @@
     'website': 'www.eit-hub.com',
     'category': 'Services/Freight',
     "depends": ["base", 'mail', 'account', 'product', 'hr_expense', 'sale_expense', 'purchase', 'sale', 'sale_project',
-                'contacts','crm','website_sale'],
+                'contacts', 'crm', 'website_sale'],
     "data": [
         'security/frieght_secuirity.xml',
         'security/ir.model.access.csv',

@@ -1,9 +1,7 @@
-import logging
 from odoo import http, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
-
-_logger = logging.getLogger(__name__)
+from odoo.exceptions import AccessError
 
 
 class FreightController(AuthSignupHome):
@@ -13,6 +11,8 @@ class FreightController(AuthSignupHome):
         air_id = request.env['transport.type'].sudo().search([('code', '=', 'AIR')], limit=1).id
         sea_id = request.env['transport.type'].sudo().search([('code', '=', 'SEA')], limit=1).id
         inland_id = request.env['transport.type'].sudo().search([('code', '=', 'LND')], limit=1).id
+        user = request.env.user
+        is_public_user = user._is_public()
         return request.render('eit_freight_sales.request_quote',
                               {
                                   'transport_type': request.env['transport.type'].sudo().search([]),
@@ -21,18 +21,22 @@ class FreightController(AuthSignupHome):
                                   'equipment_type_for_inland': request.env['shipment.scop'].sudo().search(
                                       [('type', '=', 'inland')]),
                                   'container_type': request.env['container.type'].sudo().search([]),
-                                  'from_port_cities': request.env['port.cites'].sudo().search([('active', '=', True)]),
-                                  'to_port_cities': request.env['port.cites'].sudo().search([('active', '=', True)]),
+                                  'package_type': request.env['package.type'].sudo().search(
+                                      [('tag_type_ids', 'in', [2])], order='name ASC'),
+                                  'from_port_cities': request.env['port.cites'].sudo().search([]),
+                                  'to_port_cities': request.env['port.cites'].sudo().search([]),
                                   'air_id': air_id,
                                   'sea_id': sea_id,
                                   'inland_id': inland_id,
+                                  'is_public_user': is_public_user,
                                   'commodity': request.env['commodity.data'].sudo().search([]),
+                                  'company': request.env['res.company'].sudo().search([])
                               })
 
     @http.route('/web/shipping-request', type='http', auth="public", methods=['POST'], website=True)
     def shipping_request(self, **kwargs):
         # Extract form data
-        transport_type_id = kwargs.get('transport_type')
+        transport_type_id = kwargs.get('transport_type') or ''
         dimensions_l = request.httprequest.form.getlist('dimensions_l[]')
         dimensions_w = request.httprequest.form.getlist('dimensions_w[]')
         dimensions_h = request.httprequest.form.getlist('dimensions_h[]')
@@ -52,11 +56,15 @@ class FreightController(AuthSignupHome):
         equipment_type_for_sea = kwargs.get('equipment_type_for_sea')
         equipment_type_for_inland = kwargs.get('equipment_type_for_inland')
         container_type_id = request.httprequest.form.getlist('container_type[]')
+        container_type_ftl_inland_id = request.httprequest.form.getlist('container_type_ftl_inland[]')
         dimensions_l_lcl = request.httprequest.form.getlist('dimensions_l_lcl[]')
         dimensions_w_lcl = request.httprequest.form.getlist('dimensions_w_lcl[]')
         dimensions_h_lcl = request.httprequest.form.getlist('dimensions_h_lcl[]')
         quantity_lcl = request.httprequest.form.getlist('quantity_lcl[]')
         weight_lcl = request.httprequest.form.getlist('weight_lcl[]')
+        package_type_air_id = request.httprequest.form.getlist('package_type_air[]') or ''
+        package_type_ltl_id = request.httprequest.form.getlist('package_type_ltl[]') or ''
+        package_type_lcl_id = request.httprequest.form.getlist('package_type_lcl[]') or ''
         dimensions_l_ltl = request.httprequest.form.getlist('dimensions_l_ltl[]')
         dimensions_w_ltl = request.httprequest.form.getlist('dimensions_w_ltl[]')
         dimensions_h_ltl = request.httprequest.form.getlist('dimensions_h_ltl[]')
@@ -82,8 +90,6 @@ class FreightController(AuthSignupHome):
         lead_vals = {
             'transport_type_id': int(transport_type_id),
             'additional_information': additional_information,
-            'from_port_cities_id': int(from_port_cities_id),
-            'to_port_cities_id': int(to_port_cities_id),
             'pol_id': int(from_port_cities_id),
             'pod_id': int(to_port_cities_id),
             'commodity_id': int(commodity_id),
@@ -91,6 +97,7 @@ class FreightController(AuthSignupHome):
             'email_from': contact_email,
             'partner_name': contact_company,
             'phone': f"{country_code} {contact_phone}",
+            'type': 'opportunity',
         }
         shipping_info_vals = []
 
@@ -98,53 +105,56 @@ class FreightController(AuthSignupHome):
         if transport_type.code == 'LND':
             equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_inland)],
                                                                         limit=1)
-            lead_vals['equipment_type_id'] = equipment_type.id
+            lead_vals['shipment_scope_id'] = equipment_type.id
             if equipment_type.code == 'FTL':
-                for i in range(len(container_type_id)):
+                for i in range(len(container_type_ftl_inland_id)):
                     shipping_info_vals.append((0, 0, {
-                        'container_type_id': int(container_type_id[i]),
-                        'quantity': int(quantity_ftl[i]) if quantity_ftl[i] else 0.0,
-                        'weight': float(weight_ftl[i]) if weight_ftl[i] else 0.0,
+                        'container_type_id': int(container_type_ftl_inland_id[i]) if container_type_ftl_inland_id[
+                            i] else False,
+                        'qty': int(quantity_ftl[i]) if quantity_ftl[i] else 0.0,
+                        'gw_kg': float(weight_ftl[i]) if weight_ftl[i] else 0.0,
                     }))
             elif equipment_type.code == 'LTL':
                 lead_vals['by_unit'] = by_unit_ltl
                 if by_unit_ltl:
-                    for i in range(len(dimensions_l_ltl)):
+                    for i in range(len(package_type_ltl_id)):
                         shipping_info_vals.append((0, 0, {
-                            'dimensions_l': float(dimensions_l_ltl[i]) if dimensions_l_ltl[i] else 0.0,
-                            'dimensions_w': float(dimensions_w_ltl[i]) if dimensions_w_ltl[i] else 0.0,
-                            'dimensions_h': float(dimensions_h_ltl[i]) if dimensions_h_ltl[i] else 0.0,
-                            'quantity': int(quantity_ltl[i]) if quantity_ltl[i] else 0.0,
-                            'weight': float(weight_ltl[i]) if weight_ltl[i] else 0.0,
+                            'package_type_id': int(package_type_ltl_id[i]) if package_type_ltl_id[i] else False,
+                            'length_cm': float(dimensions_l_ltl[i]) if dimensions_l_ltl[i] else 0.0,
+                            'width_cm': float(dimensions_w_ltl[i]) if dimensions_w_ltl[i] else 0.0,
+                            'height_cm': float(dimensions_h_ltl[i]) if dimensions_h_ltl[i] else 0.0,
+                            'qty': int(quantity_ltl[i]) if quantity_ltl[i] else 0.0,
+                            'gw_kg': float(weight_ltl[i]) if weight_ltl[i] else 0.0,
                             'cbm': float(cbm_ltl[i]) if cbm_ltl[i] else 0.0,
                         }))
                 else:
                     for i in range(len(weight_for_volume_ltl)):
                         shipping_info_vals.append((0, 0, {
-                            'weight': float(weight_for_volume_ltl[i]) if weight_for_volume_ltl[i] else 0.0,
+                            'gw_kg': float(weight_for_volume_ltl[i]) if weight_for_volume_ltl[i] else 0.0,
                             'volume': float(volume_for_volume_ltl[i]) if volume_for_volume_ltl[i] else 0.0,
                         }))
         elif transport_type.code == 'SEA':
             equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_sea)],
                                                                         limit=1)
-            lead_vals['equipment_type_id'] = equipment_type.id
+            lead_vals['shipment_scope_id'] = equipment_type.id
             if equipment_type.code == 'FCL':
                 for i in range(len(container_type_id)):
                     shipping_info_vals.append((0, 0, {
                         'container_type_id': int(container_type_id[i]),
-                        'quantity': int(quantity_for_volume_fcl[i]) if quantity_for_volume_fcl[i] else 0.0,
-                        'weight': float(weight_for_volume_fcl[i]) if weight_for_volume_fcl[i] else 0.0,
+                        'qty': int(quantity_for_volume_fcl[i]) if quantity_for_volume_fcl[i] else 0.0,
+                        'gw_kg': float(weight_for_volume_fcl[i]) if weight_for_volume_fcl[i] else 0.0,
                     }))
             elif equipment_type.code == 'LCL':
                 lead_vals['by_unit'] = by_unit_lcl
                 if by_unit_lcl:
-                    for i in range(len(dimensions_l_lcl)):
+                    for i in range(len(package_type_lcl_id)):
                         shipping_info_vals.append((0, 0, {
-                            'dimensions_l': float(dimensions_l_lcl[i]) if dimensions_l_lcl[i] else 0.0,
-                            'dimensions_w': float(dimensions_w_lcl[i]) if dimensions_w_lcl[i] else 0.0,
-                            'dimensions_h': float(dimensions_h_lcl[i]) if dimensions_h_lcl[i] else 0.0,
-                            'quantity': int(quantity_lcl[i]) if quantity_lcl[i] else 0.0,
-                            'weight': float(weight_lcl[i]) if weight_lcl[i] else 0.0,
+                            'package_type_id': int(package_type_lcl_id[i]) if package_type_lcl_id[i] else False,
+                            'length_cm': float(dimensions_l_lcl[i]) if dimensions_l_lcl[i] else 0.0,
+                            'width_cm': float(dimensions_w_lcl[i]) if dimensions_w_lcl[i] else 0.0,
+                            'height_cm': float(dimensions_h_lcl[i]) if dimensions_h_lcl[i] else 0.0,
+                            'qty': int(quantity_lcl[i]) if quantity_lcl[i] else 0.0,
+                            'gw_kg': float(weight_lcl[i]) if weight_lcl[i] else 0.0,
                             'cbm': float(cbm_lcl[i]) if cbm_lcl[i] else 0.0,
                         }))
                 else:
@@ -156,19 +166,20 @@ class FreightController(AuthSignupHome):
         elif transport_type.code == 'AIR':
             lead_vals['by_unit'] = by_unit
             if by_unit:
-                for i in range(len(dimensions_l)):
+                for i in range(len(package_type_air_id)):
                     shipping_info_vals.append((0, 0, {
-                        'dimensions_l': float(dimensions_l[i]) if dimensions_l[i] else 0.0,
-                        'dimensions_w': float(dimensions_w[i]) if dimensions_w[i] else 0.0,
-                        'dimensions_h': float(dimensions_h[i]) if dimensions_h[i] else 0.0,
-                        'quantity': int(quantity[i]) if quantity[i] else 0.0,
-                        'weight': float(weight[i]) if weight[i] else 0.0,
+                        'package_type_id': int(package_type_air_id[i]) if package_type_air_id[i] else False,
+                        'length_cm': float(dimensions_l[i]) if dimensions_l[i] else 0.0,
+                        'width_cm': float(dimensions_w[i]) if dimensions_w[i] else 0.0,
+                        'height_cm': float(dimensions_h[i]) if dimensions_h[i] else 0.0,
+                        'qty': int(quantity[i]) if quantity[i] else 0.0,
+                        'gw_kg': float(weight[i]) if weight[i] else 0.0,
                         'chw': float(chw[i]) if chw[i] else 0.0,
                     }))
             else:
                 for i in range(len(weight_for_volume)):
                     shipping_info_vals.append((0, 0, {
-                        'weight': float(weight_for_volume[i]) if weight_for_volume[i] else 0.0,
+                        'gw_kg': float(weight_for_volume[i]) if weight_for_volume[i] else 0.0,
                         'volume': float(volume_for_volume[i]) if volume_for_volume[i] else 0.0,
                     }))
 
@@ -183,8 +194,48 @@ class FreightController(AuthSignupHome):
                 'phone': f'{country_code} {contact_phone}'
             })
         lead_vals['partner_id'] = partner.id
-        lead_vals['shipping_info_ids'] = shipping_info_vals
+        if transport_type.code == 'AIR':
+            lead_vals['air_package_type_ids'] = shipping_info_vals
+        else:
+            if transport_type.code == 'LND':
+                equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_inland)],
+                                                                            limit=1)
+                lead_vals['shipment_scope_id'] = equipment_type.id
+                if equipment_type.code == 'FTL':
+                    lead_vals['container_type_ids'] = shipping_info_vals
+            elif transport_type.code == 'SEA':
+                equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_sea)],
+                                                                            limit=1)
+                lead_vals['shipment_scope_id'] = equipment_type.id
+                if equipment_type.code == 'FCL':
+                    lead_vals['container_type_ids'] = shipping_info_vals
+            else:
+                lead_vals['non_air_package_type_ids'] = shipping_info_vals
+        # lead_vals['container_lines_ids'] = shipping_info_vals
         crm_lead = request.env['crm.lead'].sudo().create(lead_vals)
+
+        is_public_user = request.env.user._is_public()
+        if is_public_user and not partner.user_id and partner.email:
+            existing_user = request.env['res.users'].sudo().search([('partner_id', '=', partner.id)], limit=1)
+            if not existing_user:
+                user = request.env['res.users'].sudo().create({
+                    'name': contact_name,
+                    'login': contact_email,
+                    'password': 'password',
+                    'email': contact_email,
+                    'partner_id': partner.id,
+                    'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],
+                })
+                # Generate a signup token for the user
+                try:
+                    user.sudo().action_reset_password()
+                except AccessError:
+                    pass
+
+                # Send the password reset email
+                template = request.env.ref('auth_signup.mail_template_user_signup_account_created')
+                if template:
+                    template.sudo().send_mail(user.id, force_send=True)
 
         return request.redirect('/thank-you')
 

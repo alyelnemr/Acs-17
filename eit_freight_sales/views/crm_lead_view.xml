@@ -158,7 +158,7 @@
                                 <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
-                                <field name="cbm" readonly="1"/>
+                                <field name="cbm" readonly="0"/>
                                 <field name="vm" readonly="1" column_invisible="1"/>
                                 <field name="length_cm"/>
                                 <field name="width_cm"/>
@@ -169,7 +169,7 @@
                     </group>
 
                     <!-- For FCL or FTL Shipment Scope -->
-                    <group invisible="not is_fcl_or_ftl or type == 'lead'">
+                    <group invisible="not is_fcl_or_ftl">
                         <field name="container_type_ids">
                             <tree editable="bottom">
                                 <field name="container_type_id" options="{'no_create': True, 'no_edit': True}"/>
@@ -182,9 +182,10 @@
 
                     <group>
                         <field name="non_air_package_type_ids" widget="one2many"
-                               invisible="not is_lcl_or_ltl or type == 'lead'">
+                               invisible="not is_lcl_or_ltl">
                             <tree editable="bottom">
                                 <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="container_type_id" options="{'no_create': True, 'no_edit': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                                 <field name="cbm" readonly="1"/>
@@ -248,17 +249,17 @@
                     <div>
                         Transport Type :
                         <span class="o_text_overflow" t-if="record.transport_type_id.value"
-                              t-esc="record.transport_type_id.value"></span>
+                              t-esc="record.transport_type_id.value"/>
                     </div>
                     <div>
                         POL :
                         <span class="o_text_overflow" t-if="record.pol_id.value"
-                              t-esc="record.pol_id.value"></span>
+                              t-esc="record.pol_id.value"/>
                     </div>
                     <div>
                         POD :
                         <span class="o_text_overflow" t-if="record.pod_id.value"
-                              t-esc="record.pod_id.value"></span>
+                              t-esc="record.pod_id.value"/>
                     </div>
                 </xpath>
             </field>
@@ -300,51 +301,6 @@
                 </field>
             </field>
         </record>
- <record id="view_crm_lead_shipping_info_form_inherit" model="ir.ui.view">
-        <field name="name">crm.lead.form.inherit.shipping</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <group string="Shipping Information" name="shipping_info">
-                    <field name="transport_type_id"/>
-                    <field name="from_port_cities_id"/>
-                    <field name="to_port_cities_id"/>
-                    <field name="commodity_id"/>
-                    <field name="cargo_readiness_date"/>
-                    <field name="additional_information"/>
-                    <field name="by_unit"/>
-                    <field name="equipment_type_id"/>
-                    <field name="shipping_info_ids">
-                        <tree editable="bottom">
-                            <field name="dimensions_l"/>
-                            <field name="dimensions_w"/>
-                            <field name="dimensions_h"/>
-                            <field name="quantity"/>
-                            <field name="weight"/>
-                            <field name="chw"/>
-                            <field name="volume"/>
-                            <field name="container_type_id"/>
-                            <field name="cbm"/>
-                        </tree>
-                        <form>
-                            <group>
-                                <field name="dimensions_l"/>
-                                <field name="dimensions_w"/>
-                                <field name="dimensions_h"/>
-                                <field name="quantity"/>
-                                <field name="weight"/>
-                                <field name="chw"/>
-                                <field name="volume"/>
-                                <field name="container_type_id"/>
-                                <field name="cbm"/>
-                            </group>
-                        </form>
-                    </field>
-                </group>
-            </xpath>
-        </field>
-    </record>
 
     </data>
 </odoo>
