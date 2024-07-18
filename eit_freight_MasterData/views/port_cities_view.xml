@@ -28,6 +28,7 @@
                 ('country_id.code', 'ilike', self)]"/>
                 <group expand="1" string="Group By">
                     <filter string="Country" name='country' context="{'group_by':'country_id'}"/>
+                    <!--                    <filter string="Country Group" name="country_group" context="{'group_by':'country_group_ids.name'}"/>-->
                 </group>
                 <separator/>
                 <filter name="air" string="Air" domain="[('type_id.name', '=', 'Air')]"/>
@@ -50,6 +51,7 @@
                         <field name="code"/>
                         <field name="name"/>
                         <field name="country_id" options='{"no_open": True, "no_create": True}'/>
+                        <field name="country_group_ids" widget="many2many_tags"/>
                     </group>
                     <group>
                         <field name="type_id" widget="many2many_checkboxes"/>
@@ -75,15 +77,103 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="country_id"/>
+                <field name="country_group_ids" widget="many2many_tags"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
+        </field>
+    </record>
+    <record id="view_port_cites_graph" model="ir.ui.view">
+        <field name="name">port.cites.graph</field>
+        <field name="model">port.cites</field>
+        <field name="arch" type="xml">
+<!--            <graph string="Ports &amp; Cities" type="bar">-->
+<!--                <field name="name"/>-->
+<!--                <field name="country_id" type="row"/>-->
+<!--                <field name="create_date" interval="year"/>-->
+<!--            </graph>-->
+            <graph string="Ports &amp; Cities" sample="1">
+                <field name="country_id"/>
+                <field name="create_date" interval="year"/>
+            </graph>
+        </field>
+    </record>
+
+    <!--    <record id="port_pivout" model="ir.ui.view">-->
+    <!--        <field name="name">Ports &amp; Cities</field>-->
+    <!--        <field name="model">port.cites</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <pivot string="Ports &amp; Cities" sample="1">-->
+    <!--                <field name="country_id"/>-->
+    <!--                &lt;!&ndash;                <field name="country_group_ids" type="measure"/>&ndash;&gt;-->
+    <!--                &lt;!&ndash;                <field name="type_id" type="measure"/>&ndash;&gt;-->
+    <!--            </pivot>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+    <record id="port_kanban" model="ir.ui.view">
+        <field name="name">Ports &amp; Cities</field>
+        <field name="model">port.cites</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="country_group_ids"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <!-- Port/Cities Name -->
+                            <div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                            </div>
+                            <hr class="mt4 mb4"/>
+                            <div class="row">
+                                <!-- Code -->
+                                <div t-if="record.code.raw_value" class="col-6 text-center">
+                                    <strong>Code:</strong>
+                                    <span>
+                                        <field name="code"/>
+                                    </span>
+                                </div>
+                                <!-- Country -->
+                                <div t-if="record.country_id.raw_value" class="col-6 text-center">
+                                    <strong>Country:</strong>
+                                    <span>
+                                        <field name="country_id"/>
+                                    </span>
+                                </div>
+                                <!-- Country Group -->
+                                <div t-if="record.country_group_ids.raw_value" class="col-6 text-center">
+                                    <span>
+                                        <field name="country_group_ids" widget="many2many_tags"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="port_view_cohort" model="ir.ui.view">
+        <field name="name">Ports &amp; Cities</field>
+        <field name="model">port.cites</field>
+        <field name="arch" type="xml">
+            <cohort string="Ports &amp; Cities" date_start="create_date" date_stop="write_date" interval="month"
+                    mode="churn"
+                    sample="1">
+            </cohort>
         </field>
     </record>
 
     <record model="ir.actions.act_window" id="action_port_cities">
         <field name="name">Ports &amp; Cities</field>
         <field name="res_model">port.cites</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban,cohort,graph,pivot</field>
     </record>
 
     <!--    port and cities-->
