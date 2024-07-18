@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                <field name="show_partner" invisible="1"/>
+<!--                <field name="show_partner" invisible="1"/>-->
             </xpath>
             <field name="property_account_position_id" position="after">
                 <field name="created_by"/>
@@ -63,7 +63,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                <field name="show_partner" column_invisible="1"/>
+<!--                <field name="show_partner" column_invisible="1"/>-->
             </xpath>
         </field>
     </record>
@@ -87,7 +87,7 @@
         <field name="arch" type="xml">
             <field name="mobile" position="after">
                 <field name="partner_type_id"/>
-                <field name="show_partner"/>
+
             </field>
         </field>
     </record>
@@ -112,7 +112,7 @@
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
         <field name="context">{'default_is_company': True,'search_default_type_company':
-            True,'default_show_partner':True}
+            True}
         </field>
     </record>
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
