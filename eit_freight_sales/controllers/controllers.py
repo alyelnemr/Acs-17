@@ -15,6 +15,8 @@ class FreightController(AuthSignupHome):
         inland_id = request.env['transport.type'].sudo().search([('code', '=', 'LND')], limit=1).id
         user = request.env.user
         is_public_user = user._is_public()
+        package_type = request.env['package.type'].sudo().search([('tag_type_ids', 'in', [2])], order='name ASC')
+        filtered_package_type = package_type.filtered(lambda r: r.tag_type_ids.ids == [2])
         return request.render('eit_freight_sales.request_quote',
                               {
                                   'transport_type': request.env['transport.type'].sudo().search([]),
@@ -23,10 +25,10 @@ class FreightController(AuthSignupHome):
                                   'equipment_type_for_inland': request.env['shipment.scop'].sudo().search(
                                       [('type', '=', 'inland')]),
                                   'container_type': request.env['container.type'].sudo().search([]),
-                                  'package_type': request.env['package.type'].sudo().search(
-                                      [('tag_type_ids', 'in', [2])], order='name ASC'),
+                                  'package_type': filtered_package_type,
                                   'from_port_cities': request.env['port.cites'].sudo().search([]),
                                   'to_port_cities': request.env['port.cites'].sudo().search([]),
+                                  'service_needed': request.env['service.scope'].sudo().search([]),
                                   'air_id': air_id,
                                   'sea_id': sea_id,
                                   'inland_id': inland_id,
@@ -92,6 +94,7 @@ class FreightController(AuthSignupHome):
         lead_vals = {
             'transport_type_id': int(transport_type_id),
             'additional_information': additional_information,
+            'description': additional_information,
             'pol_id': int(from_port_cities_id),
             'pod_id': int(to_port_cities_id),
             'commodity_id': int(commodity_id),
@@ -163,7 +166,7 @@ class FreightController(AuthSignupHome):
                 else:
                     for i in range(len(weight_for_volume_lcl)):
                         shipping_info_vals.append((0, 0, {
-                            'weight': float(weight_for_volume_lcl[i]) if weight_for_volume_lcl[i] else 0.0,
+                            'gw_kg': float(weight_for_volume_lcl[i]) if weight_for_volume_lcl[i] else 0.0,
                             'volume': float(volume_for_volume_lcl[i]) if volume_for_volume_lcl[i] else 0.0,
                         }))
         elif transport_type.code == 'AIR':

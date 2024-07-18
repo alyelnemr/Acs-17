@@ -7,6 +7,9 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
     selector: '#request_quote_form',
 
     events: {
+        'submit': '_onSubmit',
+        'change #from_port_cities': '_onChangeFromCities',
+        'change #to_port_cities': '_onChangeToCities',
         'change #transport_type': '_onChangeTransportType',
         'change #equipment_type_for_sea': '_onChangeEquipmentType',
         'change #equipment_type_for_inland': '_onChangeEquipmentTypeInland',
@@ -22,6 +25,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         'click #addRow_ftl': '_onAddRowFTL',
         'click #removeRow_ftl': '_onRemoveRowFTL',
         'click #addRow_ltl': '_onAddRowLTL',
+        'click #addRow_service_needed': '_onAddRowServiceNeeded',
         'click #removeRow_ltl': '_onRemoveRowLTL',
         'input .dimensions_l': '_onInputChange_air',
         'input .dimensions_h': '_onInputChange_air',
@@ -95,23 +99,23 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             .attr('name', 'from_port_cities')
             .attr('class', 'form-control link-style')
             .attr('style', 'padding-left: 30px;')
-//            .append($('<option></option>')
-//                .attr('value', '').text('Select Port/Cities...')
-//                .attr('disabled', 'disabled')
-//                .attr('selected', 'selected')
-//                .attr('hidden', 'hidden')
-//            );
+        //            .append($('<option></option>')
+        //                .attr('value', '').text('Select Port/Cities...')
+        //                .attr('disabled', 'disabled')
+        //                .attr('selected', 'selected')
+        //                .attr('hidden', 'hidden')
+        //            );
         var $select_to = $('<select></select>')
             .attr('id', 'to_port_cities')
             .attr('name', 'to_port_cities')
             .attr('class', 'form-control link-style')
             .attr('style', 'padding-left: 30px;')
         // Add "Select..." option
-//        var $defaultOption = $('<option></option>')
-//            .attr('value', '')
-//            .text('Select...');
-//        $select_from.append($defaultOption);
-//        $select_to.append($defaultOption);
+        //        var $defaultOption = $('<option></option>')
+        //            .attr('value', '')
+        //            .text('Select...');
+        //        $select_from.append($defaultOption);
+        //        $select_to.append($defaultOption);
 
         try {
             //            var data = await this.orm.call(model, "search_read", [domain, fields]);
@@ -154,8 +158,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$show_for_air_all.hide();
             this.$show_for_sea_div.show();
             this.$show_for_sea_all.show();
-//            this.$equipment_type_select.val('FCL');
-//            this.$equipment_type_select.trigger('change');
+            //            this.$equipment_type_select.val('FCL');
+            //            this.$equipment_type_select.trigger('change');
             this.$show_for_inland_div.hide();
             this.$show_for_inland_all.hide();
             this.$show_from_cities_air_sea.show();
@@ -164,8 +168,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         } else if (value === 'In-land') {
             this.$show_for_inland_div.show();
             this.$show_for_inland_all.show();
-//            this.$equipment_type_inland_select.val('FTL');
-//            this.$equipment_type_inland_select.trigger('change');
+            //            this.$equipment_type_inland_select.val('FTL');
+            //            this.$equipment_type_inland_select.trigger('change');
             this.$show_for_air_div.hide();
             this.$show_for_air_all.hide();
             this.$show_for_sea_div.hide();
@@ -196,6 +200,34 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         } else {
             this.$show_for_fcl_sea_div.hide();
             this.$show_for_lcl_sea_div.hide();
+        }
+    },
+    _onChangeFromCities: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var $selectElementFrom = $('#from_port_cities');
+        var $selectElementFromLabel = $('.select_from_port_cities_required');
+
+        // Prevent form submission if Select2 field is not selected
+        if ($selectElementFrom.val() === 1 || $selectElementFrom.val() === '1') {
+            event.preventDefault();
+            $selectElementFromLabel.addClass('select2-required');
+        } else {
+            $selectElementFromLabel.removeClass('select2-required');
+        }
+    },
+    _onChangeToCities: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var $selectElementTo = $('#to_port_cities');
+        var $selectElementToLabel = $('.select_to_port_cities_required');
+
+        // Prevent form submission if Select2 field is not selected
+        if ($selectElementTo.val() === 1 || $selectElementTo.val() === '1') {
+            event.preventDefault();
+            $selectElementToLabel.addClass('select2-required');
+        } else {
+            $selectElementToLabel.removeClass('select2-required');
         }
     },
     _onChangeEquipmentTypeInland: function (event) {
@@ -256,6 +288,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var dynamicTable = this.$('table[id="dynamicTable_by_unit"]');
         this.rowCount = dynamicTable.find('tr').length - 1;
         var rowCount = this.rowCount || 0;
+        const domain = [['tag_type_ids', '=', [2]]];
+        const fields = ['id', 'name', 'tag_type_ids'];
         var $select = $('<select></select>').attr('name', 'package_type_air[]').attr('class', 'form-control link-style');
 
         // Add "Select..." option
@@ -264,7 +298,10 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             .text('Select...');
         $select.append($defaultOption);
         try {
-            var data = await this.orm.call("package.type", "search_read", [domain, fields]);
+            var all_data = await this.orm.call("package.type", "search_read", [domain, fields]);
+            var data = all_data.filter(function(container) {
+                return container.tag_type_ids.length === 1 && container.tag_type_ids[0] === 2;
+            });
             data.forEach(function (container) {
                 var $option = $('<option />').val(container.id).text(container.name);
                 $select.append($option);
@@ -553,7 +590,8 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var weight = parseFloat(row.find('.weight').val()) || 0;
         var vm = dimensions_l * dimensions_w * dimensions_h / 1000000;
         var total = vm / 0.006;
-        var gw = weight * quantity;
+        total = total * quantity;
+        var gw = weight ;
         if (gw > total){
             total = gw;
         }
@@ -572,11 +610,11 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var quantity = parseFloat(row.find('.quantity_lcl').val()) || 0;
         var weight = parseFloat(row.find('.weight_lcl').val()) || 0;
         var total = dimensions_l * dimensions_w * dimensions_h / 1000000;
-//        var total = vm / 6000;
-//        var gw = weight * quantity;
-//        if (gw > total){
-//            total = gw;
-//        }
+        //        var total = vm / 6000;
+        //        var gw = weight * quantity;
+        //        if (gw > total){
+        //            total = gw;
+        //        }
         total = total * quantity;
         row.find('.cbm_lcl').val(total.toFixed(2));
     },
@@ -597,5 +635,63 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         total = total * quantity;
         total = total.toFixed(2); // round to 2 decimal places
         row.find('.cbm_ltl').val(total);
+    },
+    _onAddRowServiceNeeded: async function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const domain = [['active', '=', true]];
+        const fields = ['id', 'name'];
+        var dynamicTable = this.$('table[id="Table_service_needed"]');
+        this.rowCountLTL = dynamicTable.find('tr').length - 1;
+        var rowCountLTL = this.rowCountLTL || 0;
+        var $select = $('<select></select>').attr('name', 'service_needed[]').attr('class', 'form-control link-style');
+
+        // Add "Select..." option
+        var $defaultOption = $('<option></option>')
+            .attr('value', '')
+            .text('Select...');
+        $select.append($defaultOption);
+        try {
+            var data = await this.orm.call("service.scope", "search_read", [domain, fields]);
+            data.forEach(function (container) {
+                var $option = $('<option />').val(container.id).text(container.name);
+                $select.append($option);
+            });
+        } catch (error) {
+            console.error("Error fetching Service Needed:", error);
+            return;
+        }
+        var newRow = '<tr>' +
+        '<td>' + (rowCountLTL + 1) + '</td>' +
+        '<td>' +
+        $select.prop('outerHTML') + // Convert the jQuery object to a string of HTML
+        '</td>' +
+        '</tr>';
+        dynamicTable.append(newRow);
+        this.rowCountLTL = rowCountLTL + 1;
+    },
+    _onSubmit: function (event) {
+        debugger;
+        var self = this;
+        var $form = $(event.currentTarget);
+        var $selectElementFrom = $('#from_port_cities');
+        var $selectElementTo = $('#to_port_cities');
+        var $selectElementFromLabel = $('.select_from_port_cities_required');
+        var $selectElementToLabel = $('.select_to_port_cities_required');
+
+        // Prevent form submission if Select2 field is not selected
+        if ($selectElementFrom.val() === 1 || $selectElementFrom.val() === '1') {
+            event.preventDefault();
+            $selectElementFromLabel.addClass('select2-required');
+        } else {
+            $selectElementFromLabel.removeClass('select2-required');
+        }
+        // Prevent form submission if Select2 field is not selected
+        if ($selectElementTo.val() === 1 || $selectElementTo.val() === '1') {
+            event.preventDefault();
+            $selectElementToLabel.addClass('select2-required');
+        } else {
+            $selectElementToLabel.removeClass('select2-required');
+        }
     },
 });
