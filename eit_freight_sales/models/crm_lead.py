@@ -21,7 +21,7 @@ class CrmLead(models.Model):
     product_id_domain = fields.Char(compute="_compute_product_id_domain", readonly=True, store=False)
     name = fields.Char(
         'Opportunity', index='trigram', required=False,
-        compute='_compute_name', readonly=False, store=True)
+        compute='_compute_name', readonly=True, store=True)
     partner_id = fields.Many2one(domain="[('partner_type_id', 'in', [1]),('is_company', '=', True)]")
     equipment_type_id = fields.Many2one(comodel_name='shipment.scop', string='Equipment Type')
     additional_information = fields.Text(string='Additional Information')
@@ -63,9 +63,9 @@ class CrmLead(models.Model):
     service_needed_ids = fields.Many2many('service.scope', string="Service Needed", store=True)
     opp_id = fields.Char(
         string='OPP ID', index=True, readonly=True, store=True)
-    name = fields.Char(readonly=True)
     pickup_address = fields.Char(string="Pickup Address")
     pickup_address2 = fields.Text(string="Delivery Address")
+    is_from_website = fields.Boolean(string="Is From Web", default=False)
 
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
@@ -105,10 +105,12 @@ class CrmLead(models.Model):
 
     def compute_opportunity_source(self):
         for rec in self:
-            if rec.type == "opportunity":
+            if rec.is_from_website:
+                rec.opportunity_source = "Website"
+            elif rec.type == "opportunity":
                 if not rec.opportunity_source:
                     rec.opportunity_source = "OPP"
-            if rec.type == "lead":
+            elif rec.type == "lead":
                 if not rec.opportunity_source:
                     rec.opportunity_source = "Lead"
 

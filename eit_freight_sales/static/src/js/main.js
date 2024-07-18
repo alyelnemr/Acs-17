@@ -118,7 +118,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             var data = await this.orm.call(model, "search_read", []);
             console.log(data);
             data.forEach(function (city) {
-                var $option = $('<option />').val(city.id).text(city.name);
+                var $option = $('<option />').val(city.id).text(city.display_name);
                 var $option2 = $('<option />').val(city.id).text(city.display_name);
                 $select_to.append($option);
                 $select_from.append($option2);

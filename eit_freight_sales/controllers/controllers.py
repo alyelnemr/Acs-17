@@ -1,3 +1,5 @@
+import base64
+
 from odoo import http, _
 from odoo.http import request
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
@@ -98,6 +100,7 @@ class FreightController(AuthSignupHome):
             'partner_name': contact_company,
             'phone': f"{country_code} {contact_phone}",
             'type': 'opportunity',
+            'is_from_website': True,
         }
         shipping_info_vals = []
 
@@ -185,14 +188,39 @@ class FreightController(AuthSignupHome):
 
         # Create a new CRM opportunity record and link the shipping info
         # Search for an existing partner or create a new one
-        partner = request.env['res.partner'].sudo().search([('email', '=', contact_email)], limit=1)
-        if not partner:
-            partner = request.env['res.partner'].sudo().create({
-                'name': contact_name,
-                'email': contact_email,
-                'company_name': contact_company,
-                'phone': f'{country_code} {contact_phone}'
-            })
+
+        is_public_user = request.env.user._is_public()
+        partner = request.env.user.partner_id if not is_public_user else None
+        if is_public_user and contact_email:
+            partner = request.env['res.partner'].sudo().search([('email', '=', contact_email)], limit=1)
+            if not partner:
+                partner = request.env['res.partner'].sudo().create({
+                    'name': contact_name,
+                    'email': contact_email,
+                    'company_name': contact_company,
+                    'phone': f'{country_code} {contact_phone}'
+                })
+            existing_user = request.env['res.users'].sudo().search([('partner_id', '=', partner.id)], limit=1)
+            if not existing_user:
+                user = request.env['res.users'].sudo().create({
+                    'name': contact_name,
+                    'login': contact_email,
+                    'password': 'password',
+                    'email': contact_email,
+                    'partner_id': partner.id,
+                    'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],
+                })
+                # Generate a signup token for the user
+                try:
+                    user.sudo().action_reset_password()
+                except AccessError:
+                    pass
+
+                # Send the password reset email
+                template = request.env.ref('auth_signup.mail_template_user_signup_account_created')
+                if template:
+                    template.sudo().send_mail(user.id, force_send=True)
+
         lead_vals['partner_id'] = partner.id
         if transport_type.code == 'AIR':
             lead_vals['air_package_type_ids'] = shipping_info_vals
@@ -214,28 +242,31 @@ class FreightController(AuthSignupHome):
         # lead_vals['container_lines_ids'] = shipping_info_vals
         crm_lead = request.env['crm.lead'].sudo().create(lead_vals)
 
-        is_public_user = request.env.user._is_public()
-        if is_public_user and not partner.user_id and partner.email:
-            existing_user = request.env['res.users'].sudo().search([('partner_id', '=', partner.id)], limit=1)
-            if not existing_user:
-                user = request.env['res.users'].sudo().create({
-                    'name': contact_name,
-                    'login': contact_email,
-                    'password': 'password',
-                    'email': contact_email,
-                    'partner_id': partner.id,
-                    'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],
-                })
-                # Generate a signup token for the user
-                try:
-                    user.sudo().action_reset_password()
-                except AccessError:
-                    pass
+        # Handle file upload
+        uploaded_file = request.httprequest.files.get('file_upload')
+        attachment_id = False
+        if uploaded_file:
+            file_name = uploaded_file.filename
+            file_content = uploaded_file.read()
+            attachment_id = request.env['ir.attachment'].sudo().create({
+                'name': file_name,
+                'type': 'binary',
+                'datas': base64.b64encode(file_content),
+                'store_fname': file_name,
+                'res_model': 'crm.lead',
+                'res_id': crm_lead.id,
+                'public': True,
+            }).id
 
-                # Send the password reset email
-                template = request.env.ref('auth_signup.mail_template_user_signup_account_created')
-                if template:
-                    template.sudo().send_mail(user.id, force_send=True)
+        # Attach the uploaded file to the lead
+        if attachment_id:
+            crm_lead.sudo().message_post(
+                body="attachments from online request a quote",
+                subject="File Upload",
+                message_type='comment',
+                subtype_id=request.env.ref('mail.mt_comment').id,
+                attachment_ids=[attachment_id]
+            )
 
         return request.redirect('/thank-you')
 
