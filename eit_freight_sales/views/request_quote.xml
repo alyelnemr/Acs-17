@@ -16,10 +16,11 @@
                     transform: translateY(-50%);
                     width: 20px;
                     height: 20px;
+                    z-index: 1;
                     }
                     .input-container select {
                     width: 100%;
-                    padding-left: 40px; /* Add padding to the left to make space for the icon */
+                    padding-left: 140px; /* Add padding to the left to make space for the icon */
                     padding-right: 10px;
                     height: 40px;
                     border: 1px solid #ccc;
@@ -28,6 +29,17 @@
                     -moz-appearance: none; /* Remove default appearance */
                     appearance: none; /* Remove default appearance */
                     background-color: white; /* Ensures the background remains white */
+                    }
+                    .select2-container--default .select2-selection--single {
+                    height: 40px;
+                    line-height: 40px;
+                    padding-left: 40px; /* Align text with the icon */
+                    }
+                    .select2-container .select2-selection--single .select2-selection__rendered {
+                    line-height: 40px; /* Align the selected text vertically */
+                    }
+                    .select2-container .select2-selection--single .select2-selection__arrow {
+                    height: 40px;
                     }
                 </style>
                 <div class="oe_structure">
@@ -92,8 +104,8 @@
                                 </div>
                                 <div class="row show_for_air" name="show_for_air_div" style="display: none;">
                                     <div class="form-group">
-                                        <br />
-                                        <br />
+                                        <br/>
+                                        <br/>
                                         <label for="by_unit_checkbox">By Unit</label>
                                         <input type="checkbox" name="by_unit_checkbox" t-att-value="by_unit"
                                                id="by_unit_checkbox"
@@ -490,8 +502,10 @@
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
                                                  class="icon" alt="Location Icon"/>
                                             <select id="from_port_cities" name="from_port_cities"
-                                                    class="form-control link-style" required="required">
-                                                <option value="">Select Port/Cities...</option>
+                                                    class="form-control link-style" style="padding-left:30px"
+                                                    required="required">
+                                                <option value="" disabled="disabled" selected="selected"
+                                                        hidden="hidden"/>
                                                 <t t-foreach="from_port_cities" t-as="item">
                                                     <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>
@@ -508,8 +522,10 @@
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
                                                  class="icon" alt="Location Icon"/>
                                             <select id="to_port_cities" name="to_port_cities"
-                                                    class="form-control link-style" required="required">
-                                                <option value="">Select Port/Cities...</option>
+                                                    class="form-control link-style" style="padding-left:30px"
+                                                    required="required">
+                                                <option value="" disabled="disabled" selected="selected"
+                                                        hidden="hidden"/>
                                                 <t t-foreach="to_port_cities" t-as="item">
                                                     <option t-esc="item.display_name" t-att-value="item.id"/>
                                                 </t>

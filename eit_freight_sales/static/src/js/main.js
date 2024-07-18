@@ -85,7 +85,6 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         return def;
     },
     _replaceSelect: async function (type_id) {
-        debugger;
         const element_from = this.$('select[name="from_port_cities"]');
         const element_to = this.$('select[name="to_port_cities"]');
         const model = 'port.cites';
@@ -95,18 +94,24 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             .attr('id', 'from_port_cities')
             .attr('name', 'from_port_cities')
             .attr('class', 'form-control link-style')
-            .append($('<option></option>').attr('value', '').text('Select Port/Cities...'));
+            .attr('style', 'padding-left: 30px;')
+//            .append($('<option></option>')
+//                .attr('value', '').text('Select Port/Cities...')
+//                .attr('disabled', 'disabled')
+//                .attr('selected', 'selected')
+//                .attr('hidden', 'hidden')
+//            );
         var $select_to = $('<select></select>')
             .attr('id', 'to_port_cities')
             .attr('name', 'to_port_cities')
             .attr('class', 'form-control link-style')
-            .append($('<option></option>').attr('value', '').text('Select Port/Cities...'));
+            .attr('style', 'padding-left: 30px;')
         // Add "Select..." option
-        var $defaultOption = $('<option></option>')
-            .attr('value', '')
-            .text('Select...');
-        $select_from.append($defaultOption);
-        $select_to.append($defaultOption);
+//        var $defaultOption = $('<option></option>')
+//            .attr('value', '')
+//            .text('Select...');
+//        $select_from.append($defaultOption);
+//        $select_to.append($defaultOption);
 
         try {
             //            var data = await this.orm.call(model, "search_read", [domain, fields]);
