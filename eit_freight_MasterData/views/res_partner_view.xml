@@ -73,7 +73,7 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="sales_team.res_partner_view_team"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='sales_purchases']//field[@name='team_id' and @groups='base.group_no_one' and @kanban_view_ref='555']"
+            <xpath expr="//page[@name='sales_purchases']//field[@name='team_id' and @groups='base.group_no_one']"
                    position="replace">
                 <field name="team_id" invisible="1"/>
                 <field name="team_id" groups="base.group_no_one" kanban_view_ref="555"
