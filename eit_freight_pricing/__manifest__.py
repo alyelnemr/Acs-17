@@ -14,7 +14,7 @@
     'category': 'Services/Freight',
     'version': '17.0',
     'depends': ['base', 'purchase', 'eit_freight_MasterData', 'account', 'base_setup', 'product', 'base_setup',
-                'mail', 'website_sale'],
+                'mail', 'website_sale','hr_expense'],
 
     'data': [
         'security/ir.model.access.csv',

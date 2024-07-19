@@ -6,7 +6,7 @@ from odoo import fields, _, models, api
 class ServiceScope(models.Model):
     _name = "service.scope"
     _description = 'Service Scope Data'
-    _order = 'id asc, name asc'
+    _order = 'code asc'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")
