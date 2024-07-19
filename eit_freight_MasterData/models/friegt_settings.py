@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 class FriegtType(models.Model):
     _name = "transport.type"
     _description = 'Transport Type Data'
-    _order = 'id desc'
+    _order = 'id asc'
 
     name = fields.Char(string="Name")
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status', readonly=True)
