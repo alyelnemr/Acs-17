@@ -496,10 +496,13 @@
                                 <br/>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="from_port_cities" class="show_from_cities_air_sea select_from_port_cities_required"
+                                        <label for="from_port_cities"
+                                               class="show_from_cities_air_sea select_from_port_cities_required"
                                                style="display: none;">Port Of Loading
                                         </label>
-                                        <label for="from_port_cities" class="show_from_cities_inland select_from_port_cities_required">Place Of Loading
+                                        <label for="from_port_cities"
+                                               class="show_from_cities_inland select_from_port_cities_required">Place Of
+                                            Loading
                                         </label>
                                         <div class="input-container">
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
@@ -517,10 +520,13 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="to_port_cities" class="show_from_cities_air_sea select_to_port_cities_required"
+                                        <label for="to_port_cities"
+                                               class="show_from_cities_air_sea select_to_port_cities_required"
                                                style="display: none;">Port Of Discharge
                                         </label>
-                                        <label for="to_port_cities" class="show_from_cities_inland select_to_port_cities_required">Place Of Discharge
+                                        <label for="to_port_cities"
+                                               class="show_from_cities_inland select_to_port_cities_required">Place Of
+                                            Discharge
                                         </label>
                                         <div class="input-container">
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
@@ -557,6 +563,40 @@
                                     </div>
                                 </div>
                                 <br/>
+                                <div class="row" name="service_needed_div">
+                                    <div class="form-group">
+                                        <table id="Table_service_needed" class="table table-striped" style="width: 30%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th style="width: auto;">Service Required</th>
+                                                    <th/>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>
+                                                        <select name="service_needed[]"
+                                                                class="form-control link-style">
+                                                            <option value="">Select...</option>
+                                                            <t t-foreach="service_needed" t-as="item">
+                                                                <option t-esc="item.name"
+                                                                        t-att-value="item.id"/>
+                                                            </t>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <button id="removeRow_service" class="btn btn-danger removeRow">
+                                                            Remove
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <button id="addRow_service_needed" class="btn btn-primary">Add Service</button>
+                                    </div>
+                                </div>
                                 <br/>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -570,34 +610,6 @@
                                     </div>
                                 </div>
                                 <br/>
-                                <div class="row" name="service_needed_div">
-                                    <div class="form-group">
-                                        <table id="Table_service_needed" class="table table-striped" style="width: 20%">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Service Needed</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>
-                                                        <select name="service_needed[]"
-                                                                class="form-control link-style" required="required">
-                                                            <option value="">Select...</option>
-                                                            <t t-foreach="service_needed" t-as="item">
-                                                                <option t-esc="item.name"
-                                                                        t-att-value="item.id"/>
-                                                            </t>
-                                                        </select>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <button id="addRow_service_needed" class="btn btn-primary">Add New Line</button>
-                                    </div>
-                                </div>
                                 <t t-if="is_public_user">
                                     <div class="show_for_public_user">
                                         <h4>Contact Details</h4>

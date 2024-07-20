@@ -41,6 +41,7 @@ class FreightController(AuthSignupHome):
     def shipping_request(self, **kwargs):
         # Extract form data
         transport_type_id = kwargs.get('transport_type') or ''
+        service_needed = request.httprequest.form.getlist('service_needed[]')
         dimensions_l = request.httprequest.form.getlist('dimensions_l[]')
         dimensions_w = request.httprequest.form.getlist('dimensions_w[]')
         dimensions_h = request.httprequest.form.getlist('dimensions_h[]')
@@ -94,7 +95,6 @@ class FreightController(AuthSignupHome):
         lead_vals = {
             'transport_type_id': int(transport_type_id),
             'additional_information': additional_information,
-            'description': additional_information,
             'pol_id': int(from_port_cities_id),
             'pod_id': int(to_port_cities_id),
             'commodity_id': int(commodity_id),
@@ -137,7 +137,7 @@ class FreightController(AuthSignupHome):
                     for i in range(len(weight_for_volume_ltl)):
                         shipping_info_vals.append((0, 0, {
                             'gw_kg': float(weight_for_volume_ltl[i]) if weight_for_volume_ltl[i] else 0.0,
-                            'volume': float(volume_for_volume_ltl[i]) if volume_for_volume_ltl[i] else 0.0,
+                            'cbm': float(volume_for_volume_ltl[i]) if volume_for_volume_ltl[i] else 0.0,
                         }))
         elif transport_type.code == 'SEA':
             equipment_type = request.env['shipment.scop'].sudo().search([('code', '=', equipment_type_for_sea)],
@@ -166,26 +166,30 @@ class FreightController(AuthSignupHome):
                 else:
                     for i in range(len(weight_for_volume_lcl)):
                         shipping_info_vals.append((0, 0, {
-                            'gw_kg': float(weight_for_volume_lcl[i]) if weight_for_volume_lcl[i] else 0.0,
-                            'volume': float(volume_for_volume_lcl[i]) if volume_for_volume_lcl[i] else 0.0,
+                            'weight': float(weight_for_volume_lcl[i]) if weight_for_volume_lcl[i] else 0.0,
+                            'cbm': float(volume_for_volume_lcl[i]) if volume_for_volume_lcl[i] else 0.0,
                         }))
         elif transport_type.code == 'AIR':
             lead_vals['by_unit'] = by_unit
             if by_unit:
                 for i in range(len(package_type_air_id)):
+                    length_cm = float(dimensions_l[i]) if dimensions_l[i] else 0.0
+                    width_cm = float(dimensions_w[i]) if dimensions_w[i] else 0.0
+                    height_cm = float(dimensions_h[i]) if dimensions_h[i] else 0.0
                     shipping_info_vals.append((0, 0, {
                         'package_type_id': int(package_type_air_id[i]) if package_type_air_id[i] else False,
-                        'length_cm': float(dimensions_l[i]) if dimensions_l[i] else 0.0,
-                        'width_cm': float(dimensions_w[i]) if dimensions_w[i] else 0.0,
-                        'height_cm': float(dimensions_h[i]) if dimensions_h[i] else 0.0,
+                        'length_cm': length_cm,
+                        'width_cm': width_cm,
+                        'height_cm': height_cm,
                         'qty': int(quantity[i]) if quantity[i] else 0.0,
+                        'cbm': length_cm * width_cm * height_cm / 1000,
                         'gw_kg': float(weight[i]) if weight[i] else 0.0,
                         'chw': float(chw[i]) if chw[i] else 0.0,
                     }))
             else:
                 for i in range(len(weight_for_volume)):
                     shipping_info_vals.append((0, 0, {
-                        'gw_kg': float(weight_for_volume[i]) if weight_for_volume[i] else 0.0,
+                        'weight': float(weight_for_volume[i]) if weight_for_volume[i] else 0.0,
                         'volume': float(volume_for_volume[i]) if volume_for_volume[i] else 0.0,
                     }))
 
@@ -245,6 +249,9 @@ class FreightController(AuthSignupHome):
                 else:
                     lead_vals['non_air_package_type_ids'] = shipping_info_vals
         # lead_vals['container_lines_ids'] = shipping_info_vals
+        # Convert service_needed to the correct format
+        service_needed_ids = [int(item) for item in service_needed]
+        lead_vals['service_needed_ids'] = [(6, 0, service_needed_ids)]
         crm_lead = request.env['crm.lead'].sudo().create(lead_vals)
 
         # Handle file upload

@@ -17,6 +17,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         'change #by_unit_lcl_checkbox': '_onChangeByUnitLCLCheckbox',
         'change #by_unit_ltl_checkbox': '_onChangeByUnitLTLCheckbox',
         'click #addRow': '_onAddRow',
+        'click #removeRow_service': '_onRemoveRowService',
         'click #removeRow': '_onRemoveRow',
         'click #addRow_fcl': '_onAddRowFCL',
         'click #removeRow_fcl': '_onRemoveRowFCL',
@@ -340,6 +341,14 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         dynamicTable.append(newRow);
         this.rowCount = rowCount + 1;
     },
+    _onRemoveRowService: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var removeButton = $(event.target);
+        var row = removeButton.closest('tr');
+        row.remove();
+        this.rowCount = this.rowCount - 1;
+    },
     _onRemoveRow: function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -588,12 +597,11 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var dimensions_h = parseFloat(row.find('.dimensions_h').val()) || 0;
         var quantity = parseFloat(row.find('.quantity').val()) || 0;
         var weight = parseFloat(row.find('.weight').val()) || 0;
-        var vm = dimensions_l * dimensions_w * dimensions_h / 1000000;
-        var total = vm / 0.006;
+        var cbm = dimensions_l * dimensions_w * dimensions_h / 1000000;
+        var total = cbm / 0.006;
         total = total * quantity;
-        var gw = weight ;
-        if (gw > total){
-            total = gw;
+        if (weight > total){
+            total = weight;
         }
         row.find('.chw').val(total.toFixed(2));
     },
@@ -665,6 +673,9 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         '<td>' + (rowCountLTL + 1) + '</td>' +
         '<td>' +
         $select.prop('outerHTML') + // Convert the jQuery object to a string of HTML
+        '</td>' +
+        '<td>' +
+        '<button id="removeRow_service" class="btn btn-danger removeRow_ftl">Remove</button>' +
         '</td>' +
         '</tr>';
         dynamicTable.append(newRow);
