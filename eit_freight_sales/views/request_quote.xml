@@ -640,7 +640,7 @@
                                                     class="form-control link-style select_from_port_cities"
                                                     style="padding-left:30px"
                                                     required="required">
-                                                <option value="" disabled="disabled" selected="selected"
+                                                <option value="0" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="from_port_cities" t-as="item">
                                                     <option t-esc="item.display_name" t-att-value="item.id"/>
@@ -664,7 +664,7 @@
                                                     class="form-control link-style select_to_port_cities"
                                                     style="padding-left:30px"
                                                     required="required">
-                                                <option value="" disabled="disabled" selected="selected"
+                                                <option value="0" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="to_port_cities" t-as="item">
                                                     <option t-esc="item.display_name" t-att-value="item.id"/>

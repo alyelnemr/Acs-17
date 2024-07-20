@@ -713,14 +713,14 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var $selectElementToLabel = $('.select_to_port_cities_required');
 
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementFrom.val() === 1 || $selectElementFrom.val() === '1') {
+        if ($selectElementFrom.val() === 0 || $selectElementFrom.val() === '0') {
             event.preventDefault();
             $selectElementFromLabel.addClass('select2-required');
         } else {
             $selectElementFromLabel.removeClass('select2-required');
         }
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementTo.val() === 1 || $selectElementTo.val() === '1') {
+        if ($selectElementTo.val() === 0 || $selectElementTo.val() === '0') {
             event.preventDefault();
             $selectElementToLabel.addClass('select2-required');
         } else {
