@@ -638,8 +638,7 @@
                                                  class="icon" alt="Location Icon"/>
                                             <select id="from_port_cities" name="from_port_cities"
                                                     class="form-control link-style select_from_port_cities"
-                                                    style="padding-left:30px"
-                                                    required="required">
+                                                    style="padding-left:30px">
                                                 <option value="" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="from_port_cities" t-as="item">
@@ -662,8 +661,7 @@
                                                  class="icon" alt="Location Icon"/>
                                             <select id="to_port_cities" name="to_port_cities"
                                                     class="form-control link-style select_to_port_cities"
-                                                    style="padding-left:30px"
-                                                    required="required">
+                                                    style="padding-left:30px">
                                                 <option value="" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="to_port_cities" t-as="item">

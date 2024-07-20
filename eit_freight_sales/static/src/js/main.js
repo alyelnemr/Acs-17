@@ -155,7 +155,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$show_for_inland_all.hide();
             this.$show_from_cities_air_sea.show();
             this.$show_from_cities_inland.hide();
-            this._replaceSelect(this.$air_id);
+//            this._replaceSelect(this.$air_id);
         } else if (value === 'Sea') {
             this.$show_for_air_div.hide();
             this.$show_for_air_all.hide();
@@ -167,7 +167,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$show_for_inland_all.hide();
             this.$show_from_cities_air_sea.show();
             this.$show_from_cities_inland.hide();
-            this._replaceSelect(this.$sea_id);
+//            this._replaceSelect(this.$sea_id);
         } else if (value === 'In-land') {
             this.$show_for_inland_div.show();
             this.$show_for_inland_all.show();
@@ -179,7 +179,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
             this.$show_for_sea_all.hide();
             this.$show_from_cities_air_sea.hide();
             this.$show_from_cities_inland.show();
-            this._replaceSelect(this.$inland_id);
+//            this._replaceSelect(this.$inland_id);
         } else {
             this.$show_for_air_div.hide();
             this.$show_for_air_all.hide();
@@ -212,7 +212,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var $selectElementFromLabel = $('.select_from_port_cities_required');
 
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementFrom.val() === 1 || $selectElementFrom.val() === '1') {
+        if ($selectElementFrom.val() === null || $selectElementFrom.val() === '' || $selectElementFrom.val() === undefined) {
             event.preventDefault();
             $selectElementFromLabel.addClass('select2-required');
         } else {
@@ -226,7 +226,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var $selectElementToLabel = $('.select_to_port_cities_required');
 
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementTo.val() === 1 || $selectElementTo.val() === '1') {
+        if ($selectElementTo.val() === null || $selectElementTo.val() === '' || $selectElementTo.val() === undefined) {
             event.preventDefault();
             $selectElementToLabel.addClass('select2-required');
         } else {
@@ -713,14 +713,14 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         var $selectElementToLabel = $('.select_to_port_cities_required');
 
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementFrom.val() === 0 || $selectElementFrom.val() === '0') {
+        if ($selectElementFrom.val() === null || $selectElementFrom.val() === '' || $selectElementFrom.val() === undefined) {
             event.preventDefault();
             $selectElementFromLabel.addClass('select2-required');
         } else {
             $selectElementFromLabel.removeClass('select2-required');
         }
         // Prevent form submission if Select2 field is not selected
-        if ($selectElementTo.val() === 0 || $selectElementTo.val() === '0') {
+        if ($selectElementTo.val() === null || $selectElementTo.val() === '' || $selectElementTo.val() === undefined) {
             event.preventDefault();
             $selectElementToLabel.addClass('select2-required');
         } else {
