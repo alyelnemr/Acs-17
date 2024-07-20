@@ -28,7 +28,7 @@ class FreightController(AuthSignupHome):
                                   'package_type': filtered_package_type,
                                   'from_port_cities': request.env['port.cites'].sudo().search([]),
                                   'to_port_cities': request.env['port.cites'].sudo().search([]),
-                                  'service_needed': request.env['service.scope'].sudo().search([]),
+                                  'service_needed_list': request.env['service.scope'].sudo().search([]),
                                   'air_id': air_id,
                                   'sea_id': sea_id,
                                   'inland_id': inland_id,

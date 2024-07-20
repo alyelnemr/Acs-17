@@ -68,7 +68,8 @@ class CrmLead(models.Model):
                                         domain="[('partner_type_id.name', '=', 'Shipping Line'), ('is_company', '=', True)]",
                                         store=True,
                                         )
-    service_needed_ids = fields.Many2many('service.scope', string="Service Needed", store=True)
+    service_needed_ids = fields.Many2many('service.scope', string="Service Required", store=True)
+    invoice_amount_for_insurance = fields.Monetary(string="Invoice Amount for Insurance", store=True)
     opp_id = fields.Char(
         string='OPP ID', index=True, readonly=True, store=True)
     pickup_address = fields.Char(string="Pickup Address")

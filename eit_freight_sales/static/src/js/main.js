@@ -16,6 +16,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         'change #by_unit_checkbox': '_onChangeByUnitCheckbox',
         'change #by_unit_lcl_checkbox': '_onChangeByUnitLCLCheckbox',
         'change #by_unit_ltl_checkbox': '_onChangeByUnitLTLCheckbox',
+        'change input[name="service_needed[]"]': '_onInsuranceCheckbox',
         'click #addRow': '_onAddRow',
         'click #removeRow_service': '_onRemoveRowService',
         'click #removeRow': '_onRemoveRow',
@@ -65,6 +66,7 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         this.$show_for_ltl_inland_div = this.$('div[name="show_for_ltl_inland_div"]');
         this.$show_for_by_unit_div = this.$('div[name="show_for_by_unit_div"]');
         this.$hide_for_by_unit_div = this.$('div[name="hide_for_by_unit_div"]');
+        this.$insurance_textbox_div = this.$('div[name="insurance_textbox_div"]');
         this.$show_for_by_unit_lcl_div = this.$('div[name="show_for_by_unit_lcl_div"]');
         this.$hide_for_by_unit_lcl_div = this.$('div[name="hide_for_by_unit_lcl_div"]');
         this.$show_for_by_unit_ltl_div = this.$('div[name="show_for_by_unit_ltl_div"]');
@@ -340,6 +342,15 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         '</tr>';
         dynamicTable.append(newRow);
         this.rowCount = rowCount + 1;
+    },
+    _onInsuranceCheckbox: function (event) {
+        debugger;
+        var checkbox = event.currentTarget;
+        if (checkbox.checked && checkbox.dataset.name.toLowerCase() === 'insurance') {
+            this.$insurance_textbox_div.show();
+        } else {
+            this.$insurance_textbox_div.hide();
+        }
     },
     _onRemoveRowService: function (event) {
         event.preventDefault();
@@ -685,6 +696,17 @@ publicWidget.registry.MyHostel = publicWidget.Widget.extend({
         debugger;
         var self = this;
         var $form = $(event.currentTarget);
+        var $selectedServices = this.$('input[name="service_needed[]"]:checked');
+        var $insurance_amount = $('#insurance_details');
+        if ($selectedServices.val() === '9') {
+            if ($insurance_amount.val() === '' || $insurance_amount.val() === '0' || $insurance_amount.val() === 0) {
+                event.preventDefault();
+                $insurance_amount.addClass('select2-required');
+            } else {
+                $insurance_amount.removeClass('select2-required');
+            }
+        }
+
         var $selectElementFrom = $('#from_port_cities');
         var $selectElementTo = $('#to_port_cities');
         var $selectElementFromLabel = $('.select_from_port_cities_required');

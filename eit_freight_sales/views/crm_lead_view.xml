@@ -237,7 +237,12 @@
                             </group>
                         </group>
                         <group>
-                            <field name="service_needed_ids"/>
+                            <group>
+                                <field name="service_needed_ids" widget="many2many_tags"/>
+                            </group>
+                            <group invisible="not invoice_amount_for_insurance > 0">
+                                <field name="invoice_amount_for_insurance" widget="monetary"/>
+                            </group>
                         </group>
                         <group>
                             <field name="additional_information"/>
@@ -245,7 +250,9 @@
                     </page>
                 </xpath>
 
-
+                <xpath expr="//notebook/page[@name='internal_notes']" position="attributes">
+                    <attribute name="invisible">type == 'opportunity'</attribute>
+                </xpath>
             </field>
         </record>
 
