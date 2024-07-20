@@ -5,6 +5,34 @@
         <t t-call="website.layout">
             <div id="wrap">
                 <style>
+                    .modern-link {
+                    font-size: 16px;
+                    color: #007bff;
+                    text-decoration: none;
+                    transition: color 0.3s, border-bottom 0.3s;
+                    border-bottom: 2px solid transparent;
+                    display: inline-flex;
+                    align-items: center;
+                    white-space: nowrap; /* Prevents shrinking of text */
+                    }
+
+                    .modern-link:hover {
+                    color: #0056b3;
+                    border-bottom: 2px solid #0056b3;
+                    }
+
+                    .modern-link:active {
+                    color: #003f7f;
+                    border-bottom: 2px solid #003f7f;
+                    }
+
+                    .modern-link svg {
+                    margin-right: 3px; /* Space between icon and text */
+                    width: 16px; /* Adjust size as needed */
+                    height: 16px; /* Adjust size as needed */
+                    fill: currentColor; /* Icon color matches text color */
+                    }
+
                     .input-with-currency {
                     position: relative;
                     display: inline-block;
@@ -705,30 +733,53 @@
                                     </div>
                                 </div>
                                 <br/>
+                                <br/>
+                                <table style="width: 30%; margin: auto;">
+                                    <tr>
+                                        <td>
+                                            <form>
+                                                <div style="display: flex; justify-content: flex-end;">
+                                                    <button type="submit" class="btn btn-primary">Request Quote</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                                <br/>
+                                <br/>
                                 <t t-if="is_public_user">
                                     <div class="show_for_public_user">
                                         <h4>Contact Details</h4>
                                         <div style="background-color: #FFF5E1; width: 50%">
-                                            <div class="wv_u5">
+                                            <div>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                      viewBox="0 0 20 20" fill="none">
                                                     <path d="M18.8102 15.7836L11.7277 3.69729C11.1855 2.76757 9.81714 2.76757 9.27126 3.69729L2.1921 15.7836C1.64722 16.71 2.32588 17.8755 3.418 17.8755H17.583C18.6707 17.8755 19.3514 16.7134 18.8102 15.7836ZM9.70225 7.51578C9.70225 7.07582 10.0592 6.71888 10.4992 6.71888C10.9391 6.71888 11.2961 7.07748 11.2961 7.51578V11.7659C11.2961 12.2059 10.9391 12.5628 10.529 12.5628C10.119 12.5628 9.70225 12.2075 9.70225 11.7659V7.51578ZM10.4992 15.7504C9.92273 15.7504 9.45521 15.2829 9.45521 14.7065C9.45521 14.1301 9.9224 13.6626 10.4992 13.6626C11.0759 13.6626 11.5431 14.1301 11.5431 14.7065C11.5418 15.2823 11.0769 15.7504 10.4992 15.7504Z"
                                                           fill="#FC7E1D">
                                                     </path>
                                                 </svg>
-                                            </div>
-                                            <div class="DfMKG">
-                                                <p class="_vKQW">Please fill out the form below or sign in to your
+                                                <p>Please fill out the form below or sign in to your
                                                     account. Your progress won't get lost.
+                                                    <br/>
                                                 </p>
+                                                <a href="/web/login" class="modern-link">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                        <path d="M10 17l5-5-5-5v10z"/>
+                                                        <path d="M16 17h-2v-1h2v-2H7v-2h9v-2h-2V7h2c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1z"/>
+                                                        <path d="M20 20H4V4h12V2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16v-2z"/>
+                                                    </svg>
+                                                    Sign In
+                                                </a>
+                                            </div>
+                                            <div>
                                             </div>
                                         </div>
-                                        <a href="/web/login" class="btn btn-primary">Sign In</a>
-                                        <br/>
-                                        <br/>
+
                                         <br/>
                                     </div>
                                     <div class="row show_for_public_user">
+                                        <h6>Sign Up</h6>
                                         <div class="col-md-4">
                                             <label for="contact_name">Name</label>
                                             <input type="text" id="contact_name" name="contact_name"
@@ -853,9 +904,6 @@
                                 <div class="row">
                                 </div>
                             </div>
-                            <br/>
-                            <br/>
-                            <button type="submit" class="btn btn-primary">Request a Quote</button>
                             <br/>
                             <br/>
                             <br/>
