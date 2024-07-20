@@ -197,6 +197,13 @@ class CrmLead(models.Model):
         # vals['date_deadline'] = date.today() + timedelta(days=15)
         return super(CrmLead, self).create(vals)
 
+    def name_get(self):
+        result = []
+        for record in self:
+            name = f"{record.partner_name}, {record.contact_name}"
+            result.append((record.id, name))
+        return result
+
     @api.model
     def _generate_opp_id(self):
         current_year = datetime.now().year
