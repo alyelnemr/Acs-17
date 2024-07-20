@@ -204,6 +204,15 @@ class CrmLead(models.Model):
             result.append((record.id, name))
         return result
 
+    def write(self, vals):
+        if 'name' not in vals:
+            contact_name = ', ' + vals.get('contact_name') if vals.get('contact_name') else ''
+            partner_name = vals.get('partner_name') if vals.get('partner_name') else self.partner_name
+            contact_name = contact_name if vals.get('contact_name') else (
+                ', ' + self.contact_name if self.contact_name else '')
+            vals['name'] = partner_name + contact_name
+        return super(CrmLead, self).write(vals)
+
     @api.model
     def _generate_opp_id(self):
         current_year = datetime.now().year
