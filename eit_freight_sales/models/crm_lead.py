@@ -10,6 +10,12 @@ from datetime import date
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
+    def _default_date_deadline(self):
+        return (datetime.today() + timedelta(weeks=2)).date()
+
+    date_deadline = fields.Date('Expected Closing',
+                                help="Estimate of the date on which the opportunity will be won.",
+                                default=_default_date_deadline)
     opportunity_source = fields.Char(string="Opportunity Source", compute="compute_opportunity_source")
     transport_type_id = fields.Many2one('transport.type', string="Transport Type", store=True)
     is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland',
@@ -21,7 +27,7 @@ class CrmLead(models.Model):
     product_id_domain = fields.Char(compute="_compute_product_id_domain", readonly=True, store=False)
     name = fields.Char(
         'Opportunity', index='trigram', required=False,
-        compute='_compute_name', readonly=False, store=True)
+        compute='_compute_name', readonly=True, store=True)
     partner_id = fields.Many2one(domain="[('partner_type_id', 'in', [1]),('is_company', '=', True)]")
     equipment_type_id = fields.Many2one(comodel_name='shipment.scop', string='Equipment Type')
     additional_information = fields.Text(string='Additional Information')
@@ -51,6 +57,8 @@ class CrmLead(models.Model):
     attachment = fields.Binary(string="Attachment", attachment=True, help="Upload your MSDS")
     incoterms_id = fields.Many2one('account.incoterms', string="Incoterms", store=True,
                                    )
+    pickup = fields.Boolean(string="Pickup Address", related="incoterms_id.pickup")
+    delivery = fields.Boolean(string="Delivery Address", related="incoterms_id.delivery")
     transit_time_duration = fields.Integer(string="Transit Time", store=True)
     free_time_duration = fields.Integer(string="Free Time", store=True)
     target_rate = fields.Monetary(string="Target Rate", store=True)
@@ -60,12 +68,13 @@ class CrmLead(models.Model):
                                         domain="[('partner_type_id.name', '=', 'Shipping Line'), ('is_company', '=', True)]",
                                         store=True,
                                         )
-    service_needed_ids = fields.Many2many('service.scope', string="Service Needed", store=True)
+    service_needed_ids = fields.Many2many('service.scope', string="Service Required", store=True)
+    invoice_amount_for_insurance = fields.Monetary(string="Invoice Amount for Insurance", store=True)
     opp_id = fields.Char(
         string='OPP ID', index=True, readonly=True, store=True)
-    name = fields.Char(readonly=True)
     pickup_address = fields.Char(string="Pickup Address")
-    pickup_address2 = fields.Text(string="Delivery Address")
+    delivery_address = fields.Char(string="Delivery Address")
+    is_from_website = fields.Boolean(string="Is From Web", default=False)
 
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
@@ -105,10 +114,12 @@ class CrmLead(models.Model):
 
     def compute_opportunity_source(self):
         for rec in self:
-            if rec.type == "opportunity":
+            if rec.is_from_website:
+                rec.opportunity_source = "Website"
+            elif rec.type == "opportunity":
                 if not rec.opportunity_source:
                     rec.opportunity_source = "OPP"
-            if rec.type == "lead":
+            elif rec.type == "lead":
                 if not rec.opportunity_source:
                     rec.opportunity_source = "Lead"
 
@@ -177,9 +188,30 @@ class CrmLead(models.Model):
     @api.model
     def create(self, vals):
         if not vals.get('name'):
-            vals['name'] = self._generate_opp_id()
-        vals['date_deadline'] = date.today() + timedelta(days=30)
+            if vals.get('type') == 'opportunity':
+                vals['name'] = self._generate_opp_id()
+            else:
+                contact_name = ', ' + vals['contact_name'] if vals['contact_name'] else ''
+                vals['name'] = vals['partner_name'] if vals['partner_name'] else '' + contact_name if vals[
+                    'contact_name'] else ''
+        # vals['date_deadline'] = date.today() + timedelta(days=15)
         return super(CrmLead, self).create(vals)
+
+    def name_get(self):
+        result = []
+        for record in self:
+            name = f"{record.partner_name}, {record.contact_name}"
+            result.append((record.id, name))
+        return result
+
+    def write(self, vals):
+        if 'name' not in vals:
+            contact_name = ', ' + vals.get('contact_name') if vals.get('contact_name') else ''
+            partner_name = vals.get('partner_name') if vals.get('partner_name') else self.partner_name
+            contact_name = contact_name if vals.get('contact_name') else (
+                ', ' + self.contact_name if self.contact_name else '')
+            vals['name'] = partner_name + contact_name
+        return super(CrmLead, self).write(vals)
 
     @api.model
     def _generate_opp_id(self):
