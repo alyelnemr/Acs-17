@@ -733,19 +733,19 @@
                                     </div>
                                 </div>
                                 <br/>
-                                <br/>
-                                <table style="width: 30%; margin: auto;">
-                                    <tr>
-                                        <td>
-                                            <form>
-                                                <div style="display: flex; justify-content: flex-end;">
-                                                    <button type="submit" class="btn btn-primary">Request Quote</button>
-                                                </div>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <br/>
+                                <t t-if="not is_public_user">
+                                    <table style="width: 30%; margin: auto;">
+                                        <tr>
+                                            <td>
+                                                <form>
+                                                    <div style="display: flex; justify-content: flex-end;">
+                                                        <button type="submit" class="btn btn-primary">Request Quote</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
                                 <br/>
                                 <br/>
                                 <t t-if="is_public_user">
@@ -899,11 +899,24 @@
                                     </a> and
                                         <a href="/privacy" target="_blank" class="awyI_j">Privacy Policy</a>
                                     </p>
+                                    <table style="width: 30%; margin: auto;">
+                                        <tr>
+                                            <td>
+                                                <form>
+                                                    <div style="display: flex; justify-content: flex-end;">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </t>
 
                                 <div class="row">
                                 </div>
                             </div>
+                            <br/>
+                            <br/>
                             <br/>
                             <br/>
                             <br/>
