@@ -16,7 +16,7 @@ class InheritResUsers(models.Model):
 
     def compute_is_hide_archive_user(self):
         for rec in self:
-            if rec.has_group('eit_freight_MasterData.group_freight_user'):
+            if rec.has_group('frieght.group_freight_user'):
                 rec.is_hide_archive_user = True
 
             else:
@@ -24,8 +24,8 @@ class InheritResUsers(models.Model):
 
     def compute_is_hide_archive_manager(self):
         for rec in self:
-            if rec.has_group('eit_freight_MasterData.group_freight_manager') and rec.has_group(
-                    'eit_freight_MasterData.group_freight_user'):
+            if rec.has_group('frieght.group_freight_manager') and rec.has_group(
+                    'frieght.group_freight_user'):
                 rec.is_hide_archive_manager = True
 
             else:
@@ -33,9 +33,9 @@ class InheritResUsers(models.Model):
 
     def compute_is_hide_archive_admin(self):
         for rec in self:
-            if rec.has_group('eit_freight_MasterData.group_freight_manager') and rec.has_group(
-                    'eit_freight_MasterData.group_freight_admin') and rec.has_group(
-                'eit_freight_MasterData.group_freight_user'):
+            if rec.has_group('frieght.group_freight_manager') and rec.has_group(
+                    'frieght.group_freight_admin') and rec.has_group(
+                'frieght.group_freight_user'):
                 rec.is_hide_archive_admin = True
             else:
                 rec.is_hide_archive_admin = False

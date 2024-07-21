@@ -10,7 +10,10 @@ access_opt_documents,opt.documents,model_opt_documents,,1,1,1,1
 access_commodity_data_values,commodity.data.values,model_commodity_data_values,,1,1,1,1
 access_clearence_stages,clearence.stages,model_clearence_stages,,1,1,1,1
 access_opt_payable,opt.payable,model_opt_payable,,1,1,1,1
+access_project_document_line,project.document.line,model_project_document_line,,1,1,1,1
 access_opt_recieveble,opt.recieveble,model_opt_recieveble,,1,1,1,1
 access_frieght_serviice_stages,frieght_serviice_stages,model_frieght_serviice_stages,,1,1,1,1
+access_project_task,projec.task_manager,model_project_task,project.group_project_manager,1,1,1,1
+access_project_task,projec.task,model_project_task,project.group_project_user,1,0,0,0
 
 
