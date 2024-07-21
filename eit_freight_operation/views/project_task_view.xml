@@ -232,7 +232,7 @@
                 <page string="Partners">
                     <field name="opt_partners_lines" readonly="stage_id == 3">
                         <tree editable="bottom">
-                            <field name="partner_type_id" column_invisible="1"/>
+                            <!-- <field name="partner_type_id" column_invisible="1"/> -->
                             <field name="partner_id"/>
                             <field name="phone"/>
                             <field name="email"/>
