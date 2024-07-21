@@ -24,4 +24,5 @@ class CrmLeadNonAirPackageType(models.Model):
     @api.onchange('length_cm', 'width_cm', 'height_cm')
     def _compute_cbm(self):
         for rec in self:
-            rec.cbm = (rec.length_cm * rec.width_cm * rec.height_cm) / 1000
+            cbm = (rec.length_cm * rec.width_cm * rec.height_cm) / 1000000
+            rec.cbm = cbm * rec.qty

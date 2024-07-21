@@ -5,10 +5,62 @@
         <t t-call="website.layout">
             <div id="wrap">
                 <style>
+                    .modern-link {
+                    font-size: 16px;
+                    color: #007bff;
+                    text-decoration: none;
+                    transition: color 0.3s, border-bottom 0.3s;
+                    border-bottom: 2px solid transparent;
+                    display: inline-flex;
+                    align-items: center;
+                    white-space: nowrap; /* Prevents shrinking of text */
+                    }
+
+                    .modern-link:hover {
+                    color: #0056b3;
+                    border-bottom: 2px solid #0056b3;
+                    }
+
+                    .modern-link:active {
+                    color: #003f7f;
+                    border-bottom: 2px solid #003f7f;
+                    }
+
+                    .modern-link svg {
+                    margin-right: 3px; /* Space between icon and text */
+                    width: 16px; /* Adjust size as needed */
+                    height: 16px; /* Adjust size as needed */
+                    fill: currentColor; /* Icon color matches text color */
+                    }
+
+                    .input-with-currency {
+                    position: relative;
+                    display: inline-block;
+                    }
+
+                    .rounded-input {
+                    padding-right: 20px; /* Space for the currency symbol */
+                    border-radius: 10px; /* Rounded border */
+                    background-color: #f0f0f0; /* Light gray background */
+                    border: 1px solid #ccc; /* Light gray border */
+                    padding: 10px;
+                    box-sizing: border-box;
+                    }
+
+                    .currency-symbol {
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    pointer-events: none;
+                    font-size: 16px; /* Adjust the font size as needed */
+                    }
+
                     .input-container {
                     position: relative;
                     width: 100%;
                     }
+
                     .input-container .icon {
                     position: absolute;
                     left: 10px;
@@ -18,6 +70,7 @@
                     height: 20px;
                     z-index: 1;
                     }
+
                     .input-container select {
                     width: 100%;
                     padding-left: 140px; /* Add padding to the left to make space for the icon */
@@ -30,18 +83,98 @@
                     appearance: none; /* Remove default appearance */
                     background-color: white; /* Ensures the background remains white */
                     }
+
                     .select2-container--default .select2-selection--single {
                     height: 40px;
                     line-height: 40px;
                     padding-left: 40px; /* Align text with the icon */
                     }
+
                     .select2-container .select2-selection--single .select2-selection__rendered {
                     line-height: 40px; /* Align the selected text vertically */
                     }
+
                     .select2-container .select2-selection--single .select2-selection__arrow {
                     height: 40px;
                     }
+
+                    .select2-required {
+                    border: 2px solid red !important;
+                    background-color: #f8d7da;
+                    }
+
+                    .checkbox-container {
+                    display: inline-flex; /* Display checkboxes inline */
+                    align-items: center;
+                    margin-bottom: 10px;
+                    padding: 10px;
+                    border: 2px solid lightgray; /* Light gray colored frame */
+                    border-radius: 16px; /* More rounded corners */
+                    background-color: #f9f9f9; /* Friendly background color */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+                    width: auto; /* Adjust width */
+                    margin-right: 10px; /* Space between checkboxes */
+                    }
+
+                    .service-checkbox input[type="checkbox"] {
+                    display: none;
+                    }
+
+                    .service-checkbox input[type="checkbox"] + label {
+                    position: relative;
+                    padding-left: 35px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-family: Arial, sans-serif;
+                    color: #333;
+                    transition: color 0.3s ease;
+                    }
+
+                    .service-checkbox input[type="checkbox"] + label::before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid #333;
+                    border-radius: 10px; /* More rounded corners */
+                    background-color: #fff;
+                    transition: background-color 0.3s ease, border-color 0.3s ease;
+                    }
+
+                    .service-checkbox input[type="checkbox"]:checked + label::before {
+                    background-color: #007bff;
+                    border-color: #007bff;
+                    }
+
+                    .service-checkbox input[type="checkbox"] + label::after {
+                    content: "";
+                    position: absolute;
+                    left: 16px;
+                    top: 50%;
+                    transform: translateY(-50%) scale(0);
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 2px;
+                    background-color: #fff;
+                    transition: transform 0.3s ease;
+                    }
+
+                    .service-checkbox input[type="checkbox"]:checked + label::after {
+                    transform: translateY(-50%) scale(1);
+                    }
+
+                    .service-checkbox input[type="checkbox"] + label:hover {
+                    color: #007bff;
+                    }
+
+                    .service-checkbox input[type="checkbox"] + label:hover::before {
+                    border-color: #007bff;
+                    }
                 </style>
+
                 <div class="oe_structure">
                     <div class="container">
                         <div class="o_kanban_image me-1" style="position: relative; width: 65%; height: 270px;">
@@ -59,7 +192,8 @@
                         </div>
 
 
-                        <form role="form" id="request_quote_form" action="/web/shipping-request" method="post">
+                        <form role="form" id="request_quote_form" action="/web/shipping-request" method="post"
+                              enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token"
                                    t-att-value="request.csrf_token()"/>
                             <input type="hidden" name="air_id" t-att-value="air_id"/>
@@ -79,10 +213,8 @@
                                             </t>
                                         </select>
                                     </div>
-                                    <div class="col-md-1 show_for_sea" style="display: none;">
+                                    <div class="col-md-4 show_for_sea" style="display: none;">
                                         <label for="equipment_type_for_sea">Equipment Type</label>
-                                    </div>
-                                    <div class="col-md-3 show_for_sea" style="display: none;">
                                         <select id="equipment_type_for_sea" name="equipment_type_for_sea"
                                                 class="form-control link-style">
                                             <option value="">Select...</option>
@@ -123,7 +255,7 @@
                                                         <th>Dimensions W (CM)</th>
                                                         <th>Dimensions H (CM)</th>
                                                         <th>QTY</th>
-                                                        <th>Weight (KG)</th>
+                                                        <th style="width: auto;">Total Weight (KG)</th>
                                                         <th>CHW</th>
                                                     </tr>
                                                 </thead>
@@ -267,7 +399,7 @@
                                                             <th>Dimensions W (CM)</th>
                                                             <th>Dimensions H (CM)</th>
                                                             <th>QTY</th>
-                                                            <th>Weight (KG)</th>
+                                                            <th style="width: auto;">Total Weight (KG)</th>
                                                             <th>CBM</th>
                                                         </tr>
                                                     </thead>
@@ -411,7 +543,7 @@
                                                             <th>Dimensions W (CM)</th>
                                                             <th>Dimensions H (CM)</th>
                                                             <th>QTY</th>
-                                                            <th>Weight (KG)</th>
+                                                            <th style="width: auto;">Total Weight (KG)</th>
                                                             <th>CBM</th>
                                                         </tr>
                                                     </thead>
@@ -493,17 +625,20 @@
                                 <br/>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="from_port_cities" class="show_from_cities_air_sea"
+                                        <label for="from_port_cities"
+                                               class="show_from_cities_air_sea select_from_port_cities_required"
                                                style="display: none;">Port Of Loading
                                         </label>
-                                        <label for="from_port_cities" class="show_from_cities_inland">Place Of Loading
+                                        <label for="from_port_cities"
+                                               class="show_from_cities_inland select_from_port_cities_required">Place Of
+                                            Loading
                                         </label>
                                         <div class="input-container">
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
                                                  class="icon" alt="Location Icon"/>
                                             <select id="from_port_cities" name="from_port_cities"
-                                                    class="form-control link-style" style="padding-left:30px"
-                                                    required="required">
+                                                    class="form-control link-style select_from_port_cities"
+                                                    style="padding-left:30px">
                                                 <option value="" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="from_port_cities" t-as="item">
@@ -513,17 +648,20 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="to_port_cities" class="show_from_cities_air_sea"
+                                        <label for="to_port_cities"
+                                               class="show_from_cities_air_sea select_to_port_cities_required"
                                                style="display: none;">Port Of Discharge
                                         </label>
-                                        <label for="to_port_cities" class="show_from_cities_inland">Place Of Discharge
+                                        <label for="to_port_cities"
+                                               class="show_from_cities_inland select_to_port_cities_required">Place Of
+                                            Discharge
                                         </label>
                                         <div class="input-container">
                                             <img src="https://img.icons8.com/ios-filled/50/000000/marker.png"
                                                  class="icon" alt="Location Icon"/>
                                             <select id="to_port_cities" name="to_port_cities"
-                                                    class="form-control link-style" style="padding-left:30px"
-                                                    required="required">
+                                                    class="form-control link-style select_to_port_cities"
+                                                    style="padding-left:30px">
                                                 <option value="" disabled="disabled" selected="selected"
                                                         hidden="hidden"/>
                                                 <t t-foreach="to_port_cities" t-as="item">
@@ -546,45 +684,100 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="cargo_readiness_date">Date</label>
+                                        <label for="cargo_readiness_date">Cargo Readiness Date</label>
                                         <input type="date" id="cargo_readiness_date" name="cargo_readiness_date"
                                                required="required" class="form-control"/>
                                     </div>
                                 </div>
                                 <br/>
                                 <br/>
+                                <div class="row" name="service_needed_div">
+                                    <div class="services-title">Associated Services</div>
+                                    <div class="form-group" style="width: 70%;">
+                                        <t t-foreach="service_needed_list" t-as="service">
+                                            <div class="checkbox-container">
+                                                <input type="checkbox" t-att-id="service.id" name="service_needed[]"
+                                                       t-att-value="service.id"
+                                                       t-att-data-name="service.name"
+                                                       t-att-class="{'insurance-checkbox': service.name == 'Insurance'}"/>
+                                                <label t-att-for="service.id">
+                                                    <t t-esc="service.name"/>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div id="insurance_textbox_div" name="insurance_textbox_div" style="display: none;">
+                                    <label for="insurance-details">Invoice Amount:</label>
+                                    <div class="input-with-currency">
+                                        <input type="text" id="insurance_details" name="insurance-details"
+                                               placeholder="Invoice Amount"/>
+                                        <span class="currency-symbol" data-currency-name="USD">USD</span>
+                                    </div>
+                                </div>
+
+                                <br/>
+                                <br/>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <label for="commodity">Additional Information</label>
                                         <textarea id="additional_information" name="additional_information"
                                                   class="form-control" rows="5"/>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label for="file_upload">Upload File</label>
+                                        <input type="file" id="file_upload" name="file_upload" class="form-control"/>
+                                    </div>
                                 </div>
+                                <br/>
+                                <t t-if="not is_public_user">
+                                    <table style="width: 30%; margin: auto;">
+                                        <tr>
+                                            <td>
+                                                <form>
+                                                    <div style="display: flex; justify-content: flex-end;">
+                                                        <button type="submit" class="btn btn-primary">Request Quote</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
+                                <br/>
                                 <br/>
                                 <t t-if="is_public_user">
                                     <div class="show_for_public_user">
                                         <h4>Contact Details</h4>
                                         <div style="background-color: #FFF5E1; width: 50%">
-                                            <div class="wv_u5">
+                                            <div>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                      viewBox="0 0 20 20" fill="none">
                                                     <path d="M18.8102 15.7836L11.7277 3.69729C11.1855 2.76757 9.81714 2.76757 9.27126 3.69729L2.1921 15.7836C1.64722 16.71 2.32588 17.8755 3.418 17.8755H17.583C18.6707 17.8755 19.3514 16.7134 18.8102 15.7836ZM9.70225 7.51578C9.70225 7.07582 10.0592 6.71888 10.4992 6.71888C10.9391 6.71888 11.2961 7.07748 11.2961 7.51578V11.7659C11.2961 12.2059 10.9391 12.5628 10.529 12.5628C10.119 12.5628 9.70225 12.2075 9.70225 11.7659V7.51578ZM10.4992 15.7504C9.92273 15.7504 9.45521 15.2829 9.45521 14.7065C9.45521 14.1301 9.9224 13.6626 10.4992 13.6626C11.0759 13.6626 11.5431 14.1301 11.5431 14.7065C11.5418 15.2823 11.0769 15.7504 10.4992 15.7504Z"
                                                           fill="#FC7E1D">
                                                     </path>
                                                 </svg>
-                                            </div>
-                                            <div class="DfMKG">
-                                                <p class="_vKQW">Please fill out the form below or sign in to your
+                                                <p>Please fill out the form below or sign in to your
                                                     account. Your progress won't get lost.
+                                                    <br/>
                                                 </p>
+                                                <a href="/web/login" class="modern-link">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                        <path d="M10 17l5-5-5-5v10z"/>
+                                                        <path d="M16 17h-2v-1h2v-2H7v-2h9v-2h-2V7h2c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1z"/>
+                                                        <path d="M20 20H4V4h12V2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16v-2z"/>
+                                                    </svg>
+                                                    Sign In
+                                                </a>
+                                            </div>
+                                            <div>
                                             </div>
                                         </div>
-                                        <button class="btn btn-primary">Sign In</button>
-                                        <br/>
-                                        <br/>
+
                                         <br/>
                                     </div>
                                     <div class="row show_for_public_user">
+                                        <h6>Sign Up</h6>
                                         <div class="col-md-4">
                                             <label for="contact_name">Name</label>
                                             <input type="text" id="contact_name" name="contact_name"
@@ -697,6 +890,24 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <br/>
+                                    <p>By creating an account, you agree to our <a href="/tos" target="_blank"
+                                                                                   class="awyI_j">
+                                        Terms of service
+                                    </a> and
+                                        <a href="/privacy" target="_blank" class="awyI_j">Privacy Policy</a>
+                                    </p>
+                                    <table style="width: 30%; margin: auto;">
+                                        <tr>
+                                            <td>
+                                                <form>
+                                                    <div style="display: flex; justify-content: flex-end;">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </t>
 
                                 <div class="row">
@@ -704,14 +915,7 @@
                             </div>
                             <br/>
                             <br/>
-                            <button type="submit" class="btn btn-primary">Request a Quote</button>
                             <br/>
-                            <br/>
-                            <p>By creating an account, you agree to our <a href="/tos" target="_blank" class="awyI_j">
-                                Terms of service
-                            </a> and
-                                <a href="/privacy" target="_blank" class="awyI_j">Privacy Policy</a>
-                            </p>
                             <br/>
                             <br/>
                         </form>
