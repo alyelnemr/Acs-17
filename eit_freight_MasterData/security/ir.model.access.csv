@@ -22,7 +22,6 @@ access_commodity_data_custom_import,commodity.data.custom.import,model_commodity
 access_commodity_data_custom_export,commodity.data.custom.export,model_commodity_data_custom_export,group_freight_admin,1,1,1,1
 access_partner_type,partner.type,model_partner_type,group_freight_admin,1,1,0,0
 access_freight_conditions,freight.conditions,model_freight_conditions,group_freight_admin,1,1,1,1
-access_terminal_port,terminal.port,model_terminal_port,group_freight_admin,1,1,1,1
 
 access_commodity_group_ma,commodity.group_mn,model_commodity_group,group_freight_manager,1,1,1,0
 access_port_cites_manager,port.cites.manager,model_port_cites,group_freight_manager,1,1,1,0
@@ -47,7 +46,6 @@ access_commodity_data_custom_import_manager,commodity.data.custom.import.manager
 access_commodity_data_custom_export_manager,commodity.data.custom.export.manager,model_commodity_data_custom_export,group_freight_manager,1,1,1,0
 access_partner_type_manager,partner.type.manager,model_partner_type,group_freight_manager,1,0,0,0
 access_freight_conditions_maafer,freight.conditions.nmanager,model_freight_conditions,group_freight_manager,1,1,1,0
-access_terminal_port_manger,terminal.port.manager,model_terminal_port,group_freight_manager,1,1,1,0
 
 access_commodity_group_us,commodity.group.us,model_commodity_group,group_freight_user,1,0,0,0
 access_port_cites_user,port.cites.user,model_port_cites,group_freight_user,1,0,0,0
@@ -71,8 +69,7 @@ access_commodity_data_approval_export_userr,commodity.data.approval.export.user,
 access_commodity_data_custom_import_user,commodity.data.custom.import.user,model_commodity_data_custom_import,group_freight_user,1,0,0,0
 access_commodity_data_custom_export_userr,commodity.data.custom.export.user,model_commodity_data_custom_export,group_freight_user,1,0,0,0
 access_partner_type_user,partner.type.user,model_partner_type,group_freight_user,1,0,0,0
-access_freight_conditions_user,freight.conditions.user,model_freight_conditions,group_freight_user,1,0,0,0
-access_terminal_port_user,terminal.port.user,model_terminal_port,group_freight_user,1,0,0,0
+access_freight_conditions_user,freight.conditions.user,model_freight_conditions,group_freight_manager,1,0,0,0
 
 access_port_type,port.type,model_port_type,group_freight_user,1,1,1,1
 access_package_tag_type,package.tag.type,model_package_tag_type,,1,1,1,1

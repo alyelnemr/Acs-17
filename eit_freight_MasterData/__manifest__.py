@@ -2,7 +2,7 @@
     "name": "Freight MasterData",
     "version": "17.0.1.0.1",
     'summary': """
-       Freight Forwarding Master Data""",
+        This module includes freight master data that integrates and leads all Odoo modules to the freight industry""",
     'description': """
     This module is provided to handle all kinds of freight operations and integrated with the customer portal on the website to follow the shipments
     """,
@@ -10,7 +10,7 @@
     'website': 'www.eit-hub.com',
     'category': 'Services/Freight',
     "depends": ["base", 'mail', 'account', 'product', 'hr_expense', 'sale_expense', 'purchase', 'sale', 'sale_project',
-                'contacts', 'crm', 'website_sale', 'contacts'],
+                'contacts','crm','website_sale'],
     "data": [
         'security/frieght_secuirity.xml',
         'security/ir.model.access.csv',
@@ -24,9 +24,6 @@
         'views/account_incoterms_view.xml',
         'views/purchase_order_view.xml',
         'views/product_template_view.xml',
-        'views/ir_module_view.xml',
-        'views/hr_expense_view.xml',
-        'views/hr_employee_view.xml',
         'data/demo.xml',
         'data/contaniner_type_demo.xml',
         'data/package.type.csv',

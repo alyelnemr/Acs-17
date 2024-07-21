@@ -6,79 +6,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                <!--                <field name="show_partner" invisible="1"/>-->
             </xpath>
             <field name="property_account_position_id" position="after">
                 <field name="created_by"/>
                 <field name="excecuters" widget="many2many_tags"/>
             </field>
-            <xpath expr="//field[@name='state_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='category_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//group[@name='sale']/field[@name='user_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-                <attribute name="widget">selection</attribute>
-            </xpath>
-            <!--                         <xpath expr="//field[@name='buyer_id']" position="attributes">-->
-            <!--                            <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>-->
-            <!--                        </xpath>-->
-            <!--            <xpath expr="//group[@name='sale']/field[@name='team_id']" position="attributes">-->
-            <!--                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>-->
-            <!--                  <attribute name="widget">selection</attribute>-->
-            <!--            </xpath>-->
-            <xpath expr="//field[@name='team_id']" position="attributes">
-                <!--                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>-->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-                <attribute name="widget">selection</attribute>
-            </xpath>
-            <xpath expr="//field[@name='property_delivery_carrier_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='website_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='excecuters']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='industry_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
-                <field name="partner_type_id_1" widget="many2many_tags"/>
-
-            </xpath>
-
-
-        </field>
-    </record>
-    <record id="view_partner_property_form" model="ir.ui.view">
-        <field name="name">res.partner.purchase.property.form.buyer</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="purchase.view_partner_property_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='buyer_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-                <attribute name="widget">selection</attribute>
-            </xpath>
-        </field>
-    </record>
-    <record id="view_partner_property_form_team" model="ir.ui.view">
-        <field name="name">res.partner.purchase.property.form.team</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="sales_team.res_partner_view_team"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[@name='sales_purchases']//field[@name='team_id' and @groups='base.group_no_one']"
-                   position="replace">
-                <field name="team_id" invisible="1"/>
-                <field name="team_id" groups="base.group_no_one" kanban_view_ref="555"
-                       options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
-            </xpath>
         </field>
     </record>
 
@@ -88,8 +20,7 @@
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-                <field name="partner_type_id" widget="many2many_avatar_user" options="{'color_field': 'color'}"/>
-<!--                <field name="show_partner" column_invisible="0"/>-->
+                <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
             </xpath>
         </field>
     </record>
@@ -105,137 +36,48 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="res_partner_kanban_view_new">
-        <field name="name">res.partner.kanban.new</field>
+    <record id="res_partner_kanban_view_inheirt" model="ir.ui.view">
+        <field name="name">res.partner.view.kanban.innheirt</field>
         <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="priority" eval="10"/>
         <field name="arch" type="xml">
-            <kanban sample="1">
-                <field name="id"/>
-                <field name="color"/>
-                <field name="display_name"/>
-                <field name="title"/>
-                <field name="email"/>
-                <field name="parent_id"/>
-                <field name="is_company"/>
-                <field name="function"/>
-                <field name="phone"/>
-                <field name="street"/>
-                <field name="street2"/>
-                <field name="zip"/>
-                <field name="city"/>
-                <field name="country_id"/>
-                <field name="mobile"/>
-                <field name="state_id"/>
-                <field name="category_id"/>
-                <field name="avatar_128"/>
-                <field name="type"/>
-                <field name="active"/>
+            <field name="mobile" position="after">
                 <field name="partner_type_id"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_res_partner_kanban">
-                            <t t-if="!record.is_company.raw_value">
-                                <t t-set="avatar_image"
-                                   t-value="kanban_image('res.partner', 'avatar_128', record.id.raw_value)"/>
-                                <div class="o_kanban_image_fill_left d-none d-md-block">
-                                    <img t-attf-src="#{avatar_image}" t-att-alt="record.id.value"/>
-                                    <img class="o_kanban_image_inner_pic" t-if="record.parent_id.raw_value"
-                                         t-att-alt="record.parent_id.value"
-                                         t-att-src="kanban_image('res.partner', 'avatar_128', record.parent_id.raw_value)"/>
-                                </div>
-                                <div class="o_kanban_image d-md-none d-block">
-                                    <img t-attf-src="#{avatar_image}" t-att-alt="record.id.value"/>
-                                    <img class="o_kanban_image_inner_pic" t-if="record.parent_id.raw_value"
-                                         t-att-alt="record.parent_id.value"
-                                         t-att-src="kanban_image('res.partner', 'avatar_128', record.parent_id.raw_value)"/>
-                                </div>
-                            </t>
-                            <t t-else="">
-                                <div class="o_kanban_image_fill_left d-none d-md-block o_kanban_image_full">
-                                    <img t-attf-src="#{kanban_image('res.partner', 'avatar_128', record.id.raw_value)}"
-                                         role="img" t-att-alt="record.id.value"/>
-                                </div>
-                                <div class="o_kanban_image d-md-none d-block o_kanban_image_full">
-                                    <img t-attf-src="#{kanban_image('res.partner', 'avatar_128', record.id.raw_value)}"
-                                         role="img" t-att-alt="record.id.value"/>
-                                </div>
-                            </t>
-                            <div class="ribbon ribbon-top-right" invisible="active">
-                                <span class="text-bg-danger">Archived</span>
-                            </div>
-                            <div class="oe_kanban_details d-flex flex-column justify-content-between">
-                                <div>
-                                    <strong class="o_kanban_record_title oe_partner_heading">
-                                        <field name="display_name"/>
-                                    </strong>
-                                    <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
-                                    <div class="oe_kanban_list_many2many">
-                                        <field name="partner_type_id" widget="many2many_tags"
-                                               options="{'color_field': 'color'}"/>
-                                    </div>
-                                    <ul>
-                                        <li t-if="record.parent_id.raw_value and !record.function.raw_value">
-                                            <field name="parent_id"/>
-                                        </li>
-                                        <li t-elif="!record.parent_id.raw_value and record.function.raw_value">
-                                            <field name="function"/>
-                                        </li>
-                                        <li t-elif="record.parent_id.raw_value and record.function.raw_value">
-                                            <field name="function"/>
-                                            at
-                                            <field name="parent_id"/>
-                                        </li>
-                                        <li t-if="record.city.raw_value or record.country_id.raw_value">
-                                            <t t-if="record.city.raw_value">
-                                                <field name="city"/>
-                                                <t t-if="record.country_id.raw_value">,</t>
-                                            </t>
-                                            <t t-if="record.country_id.raw_value">
-                                                <field name="country_id"/>
-                                            </t>
-                                        </li>
-                                        <li t-if="record.email.raw_value" class="o_text_overflow">
-                                            <field name="email"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="o_kanban_record_bottom">
-                                    <div class="oe_kanban_bottom_left"/>
-                                    <div class="oe_kanban_bottom_right"/>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
+            </field>
+        </field>
+    </record>
+    <record id="res_partner_kanban_view_inherit" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inheriit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_setup.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_kanban_partner_categories')]" position="after">
+                <div class="oe_kanban_list_many2many">
+                    <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                </div>
+            </xpath>
+            <!--             <field name="property_account_position_id" position="after">-->
+            <!--                 <field name="created_by"/>-->
+            <!--             </field>-->
+            <!--            view_partner_property_form-->
         </field>
     </record>
 
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
-        <field name="context">{'default_is_company': True,'search_default_type_company':
-            True}
-        </field>
-        <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
-                ]"/>
+        <field name="context">{'default_is_company': True,'search_default_type_company': True}</field>
     </record>
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
         <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
             'default_is_company': True, 'default_customer_rank': 1}
         </field>
         <field name="domain">[('partner_type_id', 'in', [1])]</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
-                ]"/>
     </record>
-    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
         <field name="domain">[('partner_type_id', 'in', [12,11,13,7,5,4,6])]</field>
-        <field name="context">{'search_default_type_company': True}
+         <field name="context">{'search_default_type_company': True}
         </field>
-        <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
-                ]"/>
     </record>
 
 </odoo>
