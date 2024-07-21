@@ -88,7 +88,7 @@
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-                <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="partner_type_id" widget="many2many_avatar_user" options="{'color_field': 'color'}"/>
 <!--                <field name="show_partner" column_invisible="0"/>-->
             </xpath>
         </field>
