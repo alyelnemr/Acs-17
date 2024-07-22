@@ -9,13 +9,13 @@
                 <attribute name="invisible">True</attribute>
                 <attribute name="string">Operations</attribute>
             </xpath>
-            <xpath expr="//field[@name='partner_id']" position="attributes">
+            <!-- <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="domain">[("partner_type_id", "=", [1])]</attribute>
                 <attribute name="force_save">1</attribute>
                 <attribute name="options">{"no_create_edit":true}</attribute>
                 <attribute name="readonly">id != False</attribute>
                 <attribute name="required">True</attribute>
-            </xpath>
+            </xpath> -->
             <xpath expr="//field[@name='date_start']" position="attributes">
                 <attribute name="invisible">True</attribute>
             </xpath>
