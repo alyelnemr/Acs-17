@@ -6,7 +6,7 @@ from odoo import fields, _, models, api
 class ServiceScope(models.Model):
     _name = "service.scope"
     _description = 'Service Scope Data'
-    _order = 'code asc'
+    _order = 'id desc'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")
@@ -24,7 +24,7 @@ class ServiceScope(models.Model):
 class ClearenceType(models.Model):
     _name = "clearence.type"
     _description = 'Clearance Type Data'
-    _order = 'id asc, name asc'
+    _order = 'id desc'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")

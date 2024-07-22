@@ -158,7 +158,7 @@ class CommodityDataCustomImport(models.Model):
 class PartnerType(models.Model):
     _name = "partner.type"
     _description = 'Partner Type Data'
-    _order = 'code asc'
+    _order = 'id desc'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")

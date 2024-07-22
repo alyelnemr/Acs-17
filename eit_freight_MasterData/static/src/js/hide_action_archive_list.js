@@ -46,9 +46,9 @@ patch(ListController.prototype, {
 
         let filteredAction = action;
 
-//        if (this.modelInList) {
-//            filteredAction = filteredAction.filter((item) => item.key === "archive" && item.key === "unarchive");
-//        }
+        if (this.modelInList) {
+            filteredAction = filteredAction.filter((item) => item.key !== "archive" && item.key !== "unarchive");
+        }
 
         if (this.is_hide_archive_user && !this.is_hide_archive_manager) {
             filteredAction = filteredAction.filter((item) =>
@@ -60,12 +60,10 @@ patch(ListController.prototype, {
         }
 
         if (this.is_hide_archive_manager && !this.is_hide_archive_admin) {
-        if (this.modelInList) {
-         filteredAction = filteredAction.filter((item) =>
+            filteredAction = filteredAction.filter((item) =>
                 item.key !== "export" &&
                 item.key !== "duplicate"
             );
-        }
         }
 
         actionMenus.action = filteredAction;

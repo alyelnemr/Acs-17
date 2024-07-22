@@ -335,9 +335,7 @@
                         <group>
                             <field name="name"/>
                             <field name="Terms"/>
-                        </group>
-                        <group>
-                              <field name="active" widget="boolean_toggle"/>
+                            <field name="active" widget="boolean_toggle"/>
                         </group>
                     </group>
                 </sheet>
@@ -350,7 +348,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-<!--                <field name="Terms" invisible="1"/>-->
+                <field name="Terms"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
