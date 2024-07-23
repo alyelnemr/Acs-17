@@ -50,7 +50,7 @@
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
-                <field name="partner_type_id_1" widget="many2many_tags"/>
+                <field name="partner_type_id" widget="many2many_tags"/>
 
             </xpath>
 

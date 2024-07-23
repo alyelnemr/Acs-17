@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="project_task_stage_user_restriction" model="ir.rule">
+            <field name="name">Project Task Stage User Restriction</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="domain_force">['|', ('stage_id', '!=', 'project.project_stage_3'), ('stage_id', '=', False)]</field>
+        </record>
+    </data>
+</odoo>

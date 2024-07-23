@@ -11,12 +11,44 @@
                     <field widget="statinfo" name="sale_count" string="Bookings"/>
                 </button>
             </xpath>
+            <!-- <xpath expr="//div[@class='oe_title pe-0']/h1" position="replace">
+                    <h1 class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex w-100">
+                            <field name="priority" widget="priority_switch" class="me-3"/>
+                            <field name="name" options="{'line_breaks': False}" widget="text" class="o_task_name text-truncate w-md-75 w-100 pe-2" placeholder="Task Title..."/>
+                        </div>
+                        <div class="d-flex justify-content-end o_state_container" invisible="not active">
+                            <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                        </div>
+                        <div class="d-flex justify-content-start o_state_container w-100 w-md-50 w-lg-25" invisible="active">
+                            <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                        </div>
+                    </h1>
+                </xpath> -->
+            <!-- <xpath expr="//div[@class='o_task_state_widget']/.." position="replace">
+                <div class="d-flex justify-content-end o_state_container" invisible="not active">
+                    <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[@class='o_task_state_widget']/.." position="replace">
+                <div class="d-flex justify-content-start o_state_container" invisible="active">
+                    <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                </div>
+            </xpath> -->
             <xpath expr="//form[1]" position="attributes">
                 <attribute name="create">false</attribute>
             </xpath>
 
             <xpath expr="//field[@name='user_ids']" position="attributes">
                 <attribute name="string">Opt. Executors</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='user_ids']" position="attributes">
+                <attribute name="options">{"no_open":true,"no_quick_create":true,"no_create_edit":true}</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='partner_id']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">True</attribute>
             </xpath>
             <xpath expr="//form[1]/sheet[1]/div[not(@name)][1]/h1[1]/div[1]/field[@name='name']" position="attributes">
                 <attribute name="force_save">1</attribute>
@@ -30,24 +62,39 @@
             <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='project_id']" position="attributes">
                 <attribute name="invisible">True</attribute>
             </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='sale_line_id'][2]" position="attributes">
+                <attribute name="options">{"no_create_edit":true,"no_open":true}</attribute>
+                <attribute name="string">Booking Item</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/label[1]" position="attributes">
+                <attribute name="string">Expected Arrival</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='tag_ids']" position="attributes">
+                <attribute name="options">{"color_field": "color", "no_create_edit": true, "no_create": true}</attribute>
+            </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="transport_type_id" readonly="id != False"/>
-                <field name="clearence_type_id" readonly="id != False"/>
+                <field name="transport_type_id" readonly="id != False or stage_id == 3" required="True" options="{'no_open': True, 'no_create': True}"/>
+                <field name="clearence_type_id" readonly="id != False or stage_id == 3" required="True" options="{'no_open': True, 'no_create': True}"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
-                <field name="customer_ref"/>
+                <field name="customer_ref" options="{'line_breaks': False}"/>
                 <field name="dyn_filter_par" invisible="1"/>
-                <field name="shipment_scope_id"
+                <!-- <field name="shipment_scope_id"
+                        domain="dyn_filter_par"
+                        string="Shipment Scope"
+                        invisible="transport_type_id in (1) or transport_type_id not in (2, 3)"
+                        options="{'no_open': True, 'no_create': True}"/> -->
+            </xpath>
+
+            <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+                <group string="SHIPMENT DETAILS">
+                    <group>
+                        <field name="shipment_scope_id"
                         domain="dyn_filter_par"
                         string="Shipment Scope"
                         invisible="transport_type_id in (1) or transport_type_id not in (2, 3)"
                         options="{'no_open': True, 'no_create': True}"/>
-            </xpath>
-
-            <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
-                <group string="Bill Of Landing Info.">
-                    <group>
-                        <field name="master_bl"/>
+                        <field name="master_bl" options="{'line_breaks': False}"/>
                         <field name="commodity_equip"/>
                         <field name="temperature" invisible="commodity_equip != 'reefer'"/>
                         <field name="un_number" invisible="commodity_equip != 'imo'"/>
@@ -57,6 +104,7 @@
                         <field name="port_id" options="{'no_open': True, 'no_create': True}"/>
                         <field name="port_id_pod" options="{'no_open': True, 'no_create': True}"/>
                         <field name="incoterm_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="services" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}"/>
                     </group>
                 </group>
             </xpath>
@@ -64,6 +112,113 @@
             <xpath expr="//page[@name='extra_info']" position="attributes">
                 <attribute name="invisible">True</attribute>
             </xpath>
+
+            <!-- Start Form Readonly for CLosed Stage -->
+            <xpath expr="//form[1]/sheet[1]/div[not(@name)][1]/h1[1]/div[1]/field[@name='name']" position="attributes">
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='tag_ids']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/div[1]/field[@name='date_deadline']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='customer_ref']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='master_bl']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='commodity_equip']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[2]/group[2]/field[@name='port_id']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='port_id_pod']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[2]/group[2]/field[@name='incoterm_id']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='services']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <!-- <xpath expr="//field[@name='opt_partners_lines']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath> -->
+            <!-- <xpath expr="//field[@name='master_bl_in']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath> -->
+            <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='booking_no']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath> -->
+            <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='pol']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='pod']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[2]/field[@name='pickup_address']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath> -->
+            <!-- <xpath expr="//field[@name='delivery_address']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vessel_id']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='voyage']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='etd']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='atd']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='eta']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='ata']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='transit_time']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='shippment_order_no']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath>
+            <xpath expr="//field[@name='house_bl_id']" position="attributes">
+                <attribute name="force_save">1</attribute>
+                <attribute name="readonly">stage_id == 3</attribute>
+            </xpath> -->
+
+            <!-- End Form Readonly for CLosed Stage -->
 
             <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                 <attribute name="invisible">True</attribute>
@@ -74,17 +229,21 @@
             </xpath>
 
             <xpath expr="//page[@name='description_page']" position="after">
-                <page string="Opt. Partners">
-                    <field name="opt_partners_lines">
+                <page string="Partners">
+                    <field name="opt_partners_lines" readonly="stage_id == 3">
                         <tree editable="bottom">
-                            <field name="partner_type_id"/>
-                            <field name="partner_id" widget="many2many_tags"/>
-                            <field name="company_id" invisible="1"/>
+                            <field name="partner_type_id" column_invisible="1"/>
+                            <field name="partner_id"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="sales_person"/>
+                            <!-- <field name="activity_ids" optional="show" widget="list_activity"/> -->
+                            <field name="country_id"/>
                         </tree>
                     </field>
                 </page>
-                <page string="Container" invisible="shipment_scope_id in [2,4]">
-                    <field name="shiiping_container_ids">
+                <page string="Containers" invisible="(not transport_type_id and not shipment_scope_id) or (transport_type_id in (2) and shipment_scope_id not in (1)) or (transport_type_id in (1)) or (transport_type_id in (3) and shipment_scope_id not in (2))">
+                    <field name="shiiping_container_ids" readonly="stage_id == 3">
                         <kanban>
                             <field name="container_type"/>
                             <field name="name"/>
@@ -132,52 +291,87 @@
                             <sheet>
                                 <group>
                                     <group>
-                                        <field name="name"/>
-                                        <field name="container_id"/>
-                                        <field name="container_type"/>
-                                        <field name="tare_weight"/>
+                                        <field name="name" required="True"/>
+                                        <field name="is_save_container" invisible="0"/>
+                                        <button name="save_container" type="object" string="Save Container" class="btn-secondary" style="width: 250px;" invisible="is_save_container == False"/>
+                                        
                                     </group>
                                     <group>
-                                        <field name="net_wt"/>
-                                        <field name="vol_cbm"/>
-                                        <field name="gross_weight"/>
-                                        <field name="vkm"/>
-                                        <field name="temperature" invisible="container_type not in ['reefer']"/>
-                                        <field name="un_number" invisible="container_type not in ['dry']"/>
+                                        <field name="container_id"/>
+                                        <field name="container_type"/>
+                                        <!-- <field name="tare_weight"/>
+                                        <field name="net_wt" string="Net"/>
+                                        <field name="vol_cbm" string="CBM"/>
+                                        <field name="gross_weight" string="Gross"/>
+                                        <field name="vkm" string="VGM"/> -->
+                                        <field name="temperature" invisible="container_type != 'reefer'"/>
+                                        <!-- <field name="un_number" invisible="container_type not in ('dry')"/> -->
                                     </group>
                                 </group>
                                 <group>
                                     <group>
-                                        <field name="description"/>
+                                        <!-- <field name="description" /> -->
+                                        <field name="carrier_seal" options="{'line_breaks': False}"/>
                                     </group>
                                     <group>
-                                        <field name="carrier_seal"/>
+                                        <!-- <field name="carrier_seal"/> -->
+                                    </group>
+                                </group>
+                                <!-- <h4>VOL WEIGHT (Kg)</h4> -->
+                                <div class="row">
+                                    <div class="col-2">
+                                        <label for="net_wt" string="Net Weight (KG)"/>
+                                        <field name="net_wt"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <label for="gross_weight" string="Gross Weight (KG)"/>
+                                        <field name="gross_weight"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <label for="tare_weight" string="Tare Weight (KG)"/>
+                                        <field name="tare_weight"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <label for="vkm" string="VGM"/>
+                                        <field name="vkm"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <label for="vol_cbm" string="CBM"/>
+                                        <field name="vol_cbm"/>
+                                    </div>
+                                </div>
+                                <group>
+                                    <group>
+                                        <field name="loading_instruction" string="Notes"/>
                                     </group>
                                 </group>
                                 <notebook>
-                                    <page string="Packages">
+                                    <page string="Container Details">
                                         <field name="pacchage_line_ids">
                                             <tree editable="bottom">
-                                                <field name="commodity_data_id"/>
-                                                <field name="package_type_id"/>
-                                                <field name="quantity"/>
+                                                <field name="commodity_data_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                <field name="package_type_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                <field name="quantity" string="Qty"/>
                                                 <field name="gw"/>
                                                 <field name="cbm"/>
                                             </tree>
                                         </field>
 
                                     </page>
+                                    <!-- <page string="Loading Instruction">
+                                        <field name="loading_instruction"/>
+                                    </page> -->
                                 </notebook>
 
                             </sheet>
                         </form>
                     </field>
                 </page>
-                <page string="Package" invisible="shipment_scope_id in [1,3]">
-                    <field name="shippinng_package_ids">
+                <page string="Packages" invisible="(not transport_type_id and not shipment_scope_id) or (transport_type_id in (2) and shipment_scope_id not in (2)) or (transport_type_id in (3) and shipment_scope_id not in (4))">
+                    <field name="shippinng_package_ids" string="Package" readonly="stage_id == 3">
                         <kanban>
                             <field name="package_type_id"/>
-                            <field name="commodity_id"/>
+                            <field name="commodity_id" />
                             <field name="quantity"/>
                             <field name="volume"/>
                             <field name="net_wight"/>
@@ -253,23 +447,23 @@
                             <sheet>
                                 <group>
                                     <group>
-                                        <field name="package_type_id"/>
-                                        <field name="commodity_id"/>
-                                        <field name="quantity"/>
-                                        <field name="imo"/>
-                                        <field name="ref" invisible="parent.transport_type_id != 1"/>
-                                        <field name="temperature" invisible="not ref"/>
-                                        <field name="un_number" widget="many2many_binary" invisible="not imo"/>
+                                        <field name="package_type_id" required="True" options="{'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                        <field name="commodity_id" options="{'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                        <field name="quantity" string="Qty"/>
+                                        <field name="imo" invisible="1"/>
+                                        <field name="ref" invisible="1"/>
+                                        <field name="temperature" invisible="1"/>
+                                        <field name="un_number" widget="many2many_binary" invisible="1"/>
                                     </group>
                                     <group>
                                         <field name="length"/>
                                         <field name="width"/>
                                         <field name="height"/>
-                                        <field name="volume"/>
-                                        <field name="volume_wt" invisible="parent.transport_type_id != 1"/>
+                                        <field name="volume" string="CBM"/>
+                                        <field name="volume_wt" invisible="1"/>
                                         <field name="chw" invisible="parent.transport_type_id != 1"/>
-                                        <field name="net_wight"/>
-                                        <field name="gross_weight"/>
+                                        <field name="net_wight" invisible="1"/>
+                                        <field name="gross_weight" string="Weight"/>
                                     </group>
 
                                 </group>
@@ -281,32 +475,32 @@
                 <page string="B/L Information">
                     <group>
                         <group>
-                            <field name="master_bl_in"/>
-                            <field name="booking_no"/>
-                            <field name="pol"/>
-                            <field name="pod"/>
+                            <field name="master_bl_in" readonly="stage_id == 3"/>
+                            <field name="booking_no" readonly="stage_id == 3"/>
+                            <field name="pol" readonly="stage_id == 3"/>
+                            <field name="pod" readonly="stage_id == 3"/>
                         </group>
                         <group>
-                            <field name="pickup_address"/>
-                            <field name="delivery_address"/>
-                            <field name="vessel_id"/>
-                            <field name="voyage"/>
+                            <field name="pickup_address" readonly="stage_id == 3"/>
+                            <field name="delivery_address" readonly="stage_id == 3"/>
+                            <field name="vessel_id" readonly="stage_id == 3"/>
+                            <field name="voyage" readonly="stage_id == 3"/>
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="etd"/>
-                            <field name="atd"/>
-                            <field name="eta"/>
-                            <field name="ata"/>
-                            <field name="transit_time"/>
+                            <field name="etd" readonly="stage_id == 3"/>
+                            <field name="atd" readonly="stage_id == 3"/>
+                            <field name="eta" readonly="stage_id == 3"/>
+                            <field name="ata" readonly="stage_id == 3"/>
+                            <field name="transit_time" readonly="stage_id == 3"/>
                         </group>
                         <group>
-                            <field name="shippment_order_no"/>
+                            <field name="shippment_order_no" readonly="stage_id == 3"/>
                         </group>
                     </group>
                     <group string="House B/L">
-                        <field name="house_bl_id">
+                        <field name="house_bl_id" readonly="stage_id == 3">
                             <tree editable="bottom">
                                 <field name="hbl_no"/>
                                 <field name="road_no"/>
@@ -573,7 +767,7 @@
                     </field>
                 </page>
                 <page string="Services" invisible="not service_ids">
-                    <field name="service_ids">
+                    <field name="service_ids" readonly="stage_id == 3">
                         <kanban>
                             <field name="service_scope_id"/>
                             <field name="routing_types"/>
@@ -948,6 +1142,10 @@
                 <attribute name="string">Executors</attribute>
             </xpath>
 
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='project_id']" position="after">
                 <field name="transport_type_id" optional="show" string="Type"/>
                 <field name="master_bl" optional="show"/>
@@ -964,16 +1162,24 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='milestone_id']" position="after">
-                <!-- <field name="transport_type_id" optional="show" string="Type"/> -->
+                <field name="transport_type_id" optional="show" string="Type"/>
                 <field name="master_bl" display="full"/>
                 <field name="port_id" display="full"/>
                 <field name="port_id_pod" display="full"/>
             </xpath>
 
-            <xpath expr="//field[@name='milestone_id']" position="after">
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='state']" position="attributes">
+                <attribute name="options">{'dynamic': False}</attribute>
+            </xpath>
+
+            <!-- <xpath expr="//field[@name='milestone_id']" position="after">
                 <field name="transport_type_id" display="full"/>
             </xpath>
-            <!-- <xpath expr="//field[@name='tag_ids']" position="after">
+            <xpath expr="//field[@name='tag_ids']" position="after">
                 <div t-if="transport_type_id">
                     <span><strong>Type: </strong></span>
                     <field name="transport_type_id" optional="show" string="Type"/>
@@ -992,9 +1198,9 @@
                 <div t-if="port_id_pod">
                     <span><strong>POD: </strong></span>
                     <field name="port_id_pod" display="full"/>
-                </div> -->
+                </div>
     
-            <!-- </xpath> -->
+            </xpath> -->
         </field>
     </record>
 
@@ -1077,7 +1283,7 @@
     </record>
 
     <record id="project.menu_projects" model="ir.ui.menu">
-        <field name="name">Opt Profiles</field>
+        <field name="name">Customer Profiles</field>
         <field name="sequence">2</field>
     </record>
 
@@ -1091,6 +1297,10 @@
 
     <record id="project.menu_project_management" model="ir.ui.menu">
         <field name="active">False</field>
+    </record>
+
+    <record id="project.action_view_all_task" model="ir.actions.act_window">
+        <field name="name">Operations</field>
     </record>
 
 <!-- Inactive Projects Menu under configuration -->
