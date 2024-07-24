@@ -40,7 +40,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="action_requset_price">
-        <field name="name">Request price</field>
+        <field name="name">CRM Requests</field>
         <field name="res_model">request.price</field>
         <field name="view_mode">kanban,tree,form</field>
         <!--        <field name="context">{'search_default_my_request':1}</field>-->
@@ -55,7 +55,7 @@
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
             ]"/>
         <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
-        <field name="context">{"default_purchase_type": "pricing",'search_default_my_Orders':1}</field>
+        <field name="context">{"default_purchase_type": "pricing"}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No purchase order found. Let's create one!
@@ -92,7 +92,7 @@
     <record id="action_product_pricing" model="ir.actions.act_window">
         <field name="name">Pricing</field>
         <field name="res_model">product.template</field>
-        <field name="view_mode">tree,kanban,form,pivot,graph,activity</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph,activity</field>
         <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('eit_freight_pricing.product_template_tree_view_pricing2')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('eit_freight_pricing.product_template_form_view_pricing2')}),
@@ -113,6 +113,59 @@
         </field>
     </record>
 
+    <record id="website_sale.action_product_pages_list" model="ir.actions.act_window">
+        <field name="domain">[('detailed_type','=', 'pricing')]</field>
+    </record>
+
+    <record id="view_product_pages_tree_inherit" model="ir.ui.view">
+        <field name="name">website.sale.product.pages.tree.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_pages_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="create">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="string">Sale (USD)</attribute>
+                <attribute name="widget" delete="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_product_pages_kanban_inherit" model="ir.ui.view">
+        <field name="name">website.sale.product.pages.kanban.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_pages_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="create">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_report_action_dashboard_in" model="ir.actions.act_window">
+        <field name="name">eBookings Dashboard</field>
+        <field name="res_model">sale.report</field>
+        <field name="view_mode">graph</field>
+        <field name="domain">[('website_id', '!=', False)]</field>
+        <field name="context">
+            {
+            'search_default_confirmed': 1,
+            'search_default_groupby_order_date':1
+            }
+        </field>
+        <field name="search_view_id" ref="website_sale.sale_report_view_search_website"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                You don't have any order from the website
+            </p>
+        </field>
+    </record>
+    <record id="action_port_citiies" model="ir.actions.act_window">
+        <field name="name">Destinations</field>
+        <field name="res_model">port.cites</field>
+        <field name="view_mode">cohort,graph,pivot</field>
+    </record>
+
 
     <!--    <record id="action_pricing_type_tree_view" model="ir.actions.act_window.view">-->
     <!--        <field eval="1" name="sequence"/>-->
@@ -129,6 +182,7 @@
 
     <menuitem name="Pricing" id="menu_freight_pricing"
               web_icon="eit_freight_pricing,static/description/icon.png"
+              groups="group_prcing_user,group_pricing_manager,group_pricing_admin"
     />
 
     <menuitem name="Pricing" id="sub_menu_freight_pricing"
@@ -138,7 +192,7 @@
     <menuitem name="My Pricing" id="sub_menu_freight_pricing1"
               parent="sub_menu_freight_pricing" sequence="1" action="action_product_pricing"
     />
-    <menuitem name="My Purchase" id="sub_menu_freight_pricing2"
+    <menuitem name="Freight Purchase" id="sub_menu_freight_pricing2"
               parent="sub_menu_freight_pricing" sequence="3" action="purchase_form_action_pricing"
     />
 
@@ -146,8 +200,11 @@
     <!--              parent="menu_freight_pricing" sequence="2"-->
     <!--    />-->
 
-    <menuitem name="Request price" id="sub_menu_freight_requset"
-              parent="sub_menu_freight_pricing" sequence="2" action="action_requset_price"
+    <menuitem name="CRM Requests" id="sub_menu_freight_requset"
+              parent="sub_menu_freight_pricing" sequence="4" action="action_requset_price"
+    />
+    <menuitem name="Vendors" id="sub_menu_freight_vendor"
+              parent="sub_menu_freight_pricing" sequence="5" action="account.res_partner_action_supplier"
     />
     <!--     <menuitem name="My Activity" id="sub_menu_freight_requset4"-->
     <!--              parent="sub_menu_freight_pricing" sequence="4" action="action_purchase_my_activity"-->
@@ -157,7 +214,13 @@
     />
 
     <menuitem name="eBookings" id="sub_menu_freight_ecommorec_sale"
-              parent="menu_freight_pricing" sequence="2" action="action_ecomerse_sale"
+              parent="sub_menu_freight_ecommorec" sequence="1" action="action_ecomerse_sale"
+    />
+    <menuitem name="Product Pages" id="sub_menu_freight_ecommorec_Product_Pagees"
+              parent="sub_menu_freight_ecommorec" sequence="2" action="website_sale.action_product_pages_list"
+    />
+    <menuitem name="Abandoned Carts" id="sub_menu_freight_ecommorec_abontant"
+              parent="sub_menu_freight_ecommorec" sequence="3" action="website_sale.action_view_abandoned_tree"
     />
 
 
@@ -187,7 +250,7 @@
 
 
     <menuitem name="Reporting" id="sub_menu_freight_rep"
-              parent="menu_freight_pricing" sequence="6"
+              parent="menu_freight_pricing" sequence="6"  groups="group_pricing_admin"
     />
 
     <menuitem name="Routing" id="sub_menu_freight_rep_rot"
@@ -200,10 +263,16 @@
     <menuitem name="Pricing Analysis" id="sub_menu_freight_rep_pur"
               parent="sub_menu_freight_rep" sequence="2" action="action_pricing_analysis"
     />
+    <menuitem name="eBookings" id="sub_menu_freight_sale_pur"
+              parent="sub_menu_freight_rep" sequence="3" action="sale_report_action_dashboard_in"
+    />
+    <menuitem name="Destinations" id="sub_menu_freight_dest"
+              parent="sub_menu_freight_rep" sequence="4" action="action_port_citiies"
+    />
 
 
     <menuitem name="Configuration" id="sub_menu_freight_conf"
-              parent="menu_freight_pricing" sequence="7"
+              parent="menu_freight_pricing" sequence="7" groups="group_pricing_admin"
     />
 
     <!--    <menuitem name="Settings" id="sub_menu_freight_config_sett"-->
@@ -231,11 +300,47 @@
     <menuitem name="Attributes" id="sub_menu_freight_attribute_product"
               parent="sub_menu_freight_conf" sequence="8" action="product.attribute_action"
     />
+    <menuitem id="menu_ecommerce_settings"
+        name="eCommerce"
+        parent="sub_menu_freight_conf"
+        sequence="9">
+
+        <menuitem id="menu_ecommerce_payment_providers"
+                  name="Payment Providers"
+                  action="payment.action_payment_provider"
+                  sequence="10"
+        />
+        <menuitem id="menu_ecommerce_payment_methods"
+                  action="payment.action_payment_method"
+                  name="Payment Methods"
+                  sequence="20"
+        />
+        <menuitem id="menu_ecommerce_payment_tokens"
+                  action="payment.action_payment_token"
+                  groups="base.group_no_one"
+                  sequence="30"
+        />
+        <menuitem id="menu_ecommerce_payment_transactions"
+                  action="payment.action_payment_transaction"
+                  groups="base.group_no_one"
+                  sequence="40"
+        />
+        <menuitem id="menu_ecommerce_delivery"
+                  action="delivery.action_delivery_carrier_form"
+                  sequence="90"
+        />
+        <menuitem id="menu_delivery_zip_prefix"
+                  action="delivery.action_delivery_zip_prefix_list"
+                  groups="base.group_no_one"
+                  sequence="100"
+        />
+
+    </menuitem>
 
     <record id="website_sale.product_template_action_website" model="ir.actions.act_window">
         <field name="name">Pricing</field>
         <field name="res_model">product.template</field>
-        <field name="view_mode">tree,kanban,form,pivot,graph,activity</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph,activity</field>
         <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('eit_freight_pricing.product_template_tree_view_pricing2')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('eit_freight_pricing.product_template_form_view_pricing2')}),
@@ -263,6 +368,19 @@
     <!--     <record id="purchase.purchase_rfq" model="ir.actions.act_window">-->
     <!--        <field name="domain">[('purchase_type', '=', 'purchase')]</field>-->
     <!--    </record>-->
+
+    <record model="ir.ui.menu" id="website_sale.menu_ecommerce">
+        <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="website_sale.menu_product_pages">
+        <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="website_sale.menu_report_sales">
+        <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="website_sale.menu_ecommerce_settings">
+        <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
+    </record>
 
 
 </odoo>
