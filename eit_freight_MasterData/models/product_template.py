@@ -7,27 +7,6 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-    _order = 'id desc'
-
-    invoice_type = fields.Selection(
-        string='Invoice Type',
-        selection=[('invoice', 'Invoice'),
-                   ('statement', 'Statement '),
-                   ])
-    calculation_type = fields.Selection(
-        string='Calculation Type',
-        selection=[('invoice', 'Chargeable Weight'),
-                   ('gross_weight ', 'Gross Weight'),
-                   ('fixed_charge ', 'Fixed Charge'),
-                   ('container ', 'Container'),
-                   ('teu ', 'TEU'),
-                   ('volume ', 'Volume'),
-                   ('days ', 'Days'),
-                   ])
-
-
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
@@ -38,13 +17,11 @@ class ProductTemplate(models.Model):
         selection_add=[('charge_type', 'Charge Type')])
     is_sale_purchase = fields.Boolean()
 
-
-    @api.model
     def create(self, values):
         res = super(ProductTemplate, self).create(values)
-
         if res.detailed_type == 'charge_type' and res.is_sale_purchase:
-            raise UserError(_('Please add the Charge Type from the MasterData App \n Master Data >> Service Setting Menu >> Charge Type'))
+            raise UserError(
+                _('Please add the Charge Type from the MasterData App \n Master Data >> Service Setting Menu >> Charge Type'))
 
         return res
 

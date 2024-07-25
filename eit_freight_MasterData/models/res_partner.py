@@ -5,7 +5,6 @@ class InheritResPartner(models.Model):
     _inherit = "res.partner"
 
     partner_type_id = fields.Many2many('partner.type', string="Partner Type", required=True)
-    created_by = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Created by", readonly=True)
     excecuters = fields.Many2many('res.users', string="Executors")
     partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type", compute="compute_partner_type_id_1")
 
@@ -20,11 +19,6 @@ class InheritResPartner(models.Model):
                     rec.partner_type_id_1 = None
             else:
                 rec.partner_type_id_1 = None
-
-    def show_partner_llllll(self):
-        part = self.search([('show_partner', '=', False)])
-        for p in part:
-            p.show_partner = True
 
     def show_partner_reset(self):
         part = self.search([('show_partner', '=', True)])

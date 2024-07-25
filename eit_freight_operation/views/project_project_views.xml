@@ -39,8 +39,8 @@
 
             <xpath expr="//group[@name='extra_settings']" position="inside">
                 <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='settings']/group[1]/group[1]/field[@name='sale_line_id'][2]" position="move"/>
-                <field name="created_by" readonly="True"/>
-                <field name="created_on" readonly="True"/>
+                <field name="create_uid" readonly="True"/>
+                <field name="create_date" readonly="True"/>
             </xpath>
 
             <!-- <xpath expr="//field[@name='documents_folder_id']" position="attributes">

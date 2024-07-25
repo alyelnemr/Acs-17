@@ -37,7 +37,7 @@
                         <group>
                             <field name="req_id" widget="many2many_checkboxes"/>
                             <field name="vat"/>
-                            <field name="tag_id" widget="many2many_tags" />
+                            <field name="tag_id"  />
                             <field name="active1" widget="boolean_toggle"/>
 
                         </group>
@@ -82,12 +82,12 @@
                         <page string="Tracking">
                             <group>
                                 <group>
-                                    <field name="created_by"/>
-                                    <field name="created_on"/>
+                                    <field name="create_uid"/>
+                                    <field name="create_date"/>
                                 </group>
                                 <group>
-                                    <field name="updated_by"/>
-                                    <field name="updated_on"/>
+                                    <field name="write_uid"/>
+                                    <field name="write_date"/>
                                 </group>
                             </group>
                         </page>
@@ -112,7 +112,7 @@
                 <field name="group_id"/>
                 <field name="tax"/>
                 <field name="vat"/>
-                <field name="tag_id" widget="many2many_tags"/>
+                <field name="tag_id"/>
                 <field name="active1" widget="boolean_toggle"/>
             </tree>
         </field>

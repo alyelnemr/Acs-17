@@ -9,7 +9,7 @@
                 <!--                <field name="show_partner" invisible="1"/>-->
             </xpath>
             <field name="property_account_position_id" position="after">
-                <field name="created_by"/>
+                <field name="create_uid"/>
                 <field name="excecuters" widget="many2many_tags"/>
             </field>
             <xpath expr="//field[@name='state_id']" position="attributes">
@@ -37,12 +37,6 @@
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
                 <attribute name="widget">selection</attribute>
             </xpath>
-            <xpath expr="//field[@name='property_delivery_carrier_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='website_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
             <xpath expr="//field[@name='excecuters']" position="attributes">
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
             </xpath>
@@ -51,6 +45,14 @@
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
                 <field name="partner_type_id" widget="many2many_tags"/>
+
+            </xpath>
+            <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']" position="attributes">
+                <attribute name="context">{'default_partner_type_id': partner_type_id, 'default_parent_id': id,
+                    'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id':
+                    state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_lang': lang,
+                    'default_user_id': user_id, 'default_type': 'other'}
+                </attribute>
 
             </xpath>
 
@@ -88,20 +90,9 @@
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-                <field name="partner_type_id" widget="many2many_avatar_user" options="{'color_field': 'color'}"/>
-<!--                <field name="show_partner" column_invisible="0"/>-->
+                <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <!--                <field name="show_partner" column_invisible="0"/>-->
             </xpath>
-        </field>
-    </record>
-
-    <record id="res_partner_view_search_inherit_partner" model="ir.ui.view">
-        <field name="name">res.partner.view.search.inherit.partner</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_res_partner_filter"/>
-        <field name="arch" type="xml">
-            <filter name="salesperson" position="after">
-                <filter name="partner_type" string="Partner Type" context="{'group_by': 'partner_type_id'}"/>
-            </filter>
         </field>
     </record>
 
@@ -169,7 +160,7 @@
                                         <field name="display_name"/>
                                     </strong>
                                     <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
-                                    <div class="oe_kanban_list_many2many">
+                                    <div class="oe_kanban_list_many2many" t-if="record.partner_type_id.raw_value != 1">
                                         <field name="partner_type_id" widget="many2many_tags"
                                                options="{'color_field': 'color'}"/>
                                     </div>
@@ -211,6 +202,33 @@
         </field>
     </record>
 
+    <record id="res_partner_view_search_inherit_for_vendor" model="ir.ui.view">
+        <field name="name">res.partner.view.search.inherit.partner</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Search Partner">
+                <field name="name"
+                       filter_domain="['|', '|', '|', '|', ('complete_name', 'ilike', self), ('ref', '=', self), ('email', 'ilike', self), ('vat', 'ilike', self), ('company_registry', 'ilike', self)]"/>
+                <field name="parent_id" domain="[('is_company', '=', True)]" operator="child_of"/>
+                <field name="email" filter_domain="[('email', 'ilike', self)]"/>
+                <field name="phone" filter_domain="['|', ('phone', 'ilike', self), ('mobile', 'ilike', self)]"/>
+                <field name="category_id" string="Tag" operator="child_of"/>
+                <field name="user_id"/>
+                <separator/>
+                <filter string="Individuals" name="type_person" domain="[('is_company', '=', False)]"/>
+                <filter string="Companies" name="type_company" domain="[('is_company', '=', True)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter name="salesperson" string="Salesperson" domain="[]" context="{'group_by' : 'user_id'}"/>
+                    <filter name="partner_type" string="Partner Type" context="{'group_by': 'partner_type_id'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'parent_id'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
         <field name="context">{'default_is_company': True,'search_default_type_company':
@@ -219,23 +237,56 @@
         <field name="view_ids" eval="[(5, 0, 0),
                     (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
+        <field name="search_view_id" ref="eit_freight_MasterData.res_partner_view_search_inherit_for_vendor"/>
     </record>
+
+
+    <record id="res_partner_view_search_inherit_for_customer" model="ir.ui.view">
+        <field name="name">res.partner.view.search.inherit.partner</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Search Partner">
+                <field name="name"
+                       filter_domain="['|', '|', '|', '|', ('complete_name', 'ilike', self), ('ref', '=', self), ('email', 'ilike', self), ('vat', 'ilike', self), ('company_registry', 'ilike', self)]"/>
+                <field name="parent_id" domain="[('is_company', '=', True)]" operator="child_of"/>
+                <field name="email" filter_domain="[('email', 'ilike', self)]"/>
+                <field name="phone" filter_domain="['|', ('phone', 'ilike', self), ('mobile', 'ilike', self)]"/>
+                <field name="category_id" string="Tag" operator="child_of"/>
+                <field name="user_id"/>
+                <separator/>
+                <filter string="Individuals" name="type_person" domain="[('is_company', '=', False)]"/>
+                <filter string="Companies" name="type_company" domain="[('is_company', '=', True)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter name="salesperson" string="Salesperson" domain="[]" context="{'group_by' : 'user_id'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'parent_id'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
         <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
             'default_is_company': True, 'default_customer_rank': 1}
         </field>
         <field name="domain">[('partner_type_id', 'in', [1])]</field>
         <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
+        <field name="search_view_id" ref="eit_freight_MasterData.res_partner_view_search_inherit_for_customer"/>
     </record>
+
     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
         <field name="domain">[('partner_type_id', 'in', [12,11,13,7,5,4,6])]</field>
         <field name="context">{'search_default_type_company': True}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
+        <field name="search_view_id" ref="eit_freight_MasterData.res_partner_view_search_inherit_for_vendor"/>
     </record>
 
 </odoo>
