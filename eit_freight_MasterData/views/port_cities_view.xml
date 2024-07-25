@@ -198,8 +198,8 @@
                 <field name="port_city_id" string="Port or City" filter_domain="['|',('port_city_id.name', 'ilike', self),
                 ('port_city_id.code', 'ilike', self)]"/>
                 <group expand="1" string="Group By">
-                    <filter string="Country" name='country' context="{'group_by':'port_city_id'}"/>
-                    <filter string="Port/City" name="port_city" context="{'group_by':'country_id'}"/>
+                    <filter string="Country" name='country' context="{'group_by':'country_id'}"/>
+                    <filter string="Port/City" name="port_city" context="{'group_by':'port_city_id'}"/>
                 </group>
                 <separator/>
                 <filter name="warhouse" string="Warehouse" domain="[('warhouse', '=', True)]"/>
