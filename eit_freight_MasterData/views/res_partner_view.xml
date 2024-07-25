@@ -44,7 +44,8 @@
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
-                <field name="partner_type_id" widget="many2many_tags"/>
+                <field name="partner_type_id" widget="many2many_tags" readonly="1"/>
+
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']" position="attributes">
                 <attribute name="context">{'default_partner_type_id': partner_type_id, 'default_parent_id': id,
@@ -159,7 +160,7 @@
                                         <field name="display_name"/>
                                     </strong>
                                     <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
-                                    <div class="oe_kanban_list_many2many" t-if="record.partner_type_id.raw_value != 1" >
+                                    <div class="oe_kanban_list_many2many" t-if="record.partner_type_id.raw_value != 1">
                                         <field name="partner_type_id" widget="many2many_tags"
                                                options="{'color_field': 'color'}"/>
                                     </div>
@@ -210,7 +211,6 @@
                     (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
     </record>
-
 
 
     <record id="res_partner_view_search_inherit_for_customer" model="ir.ui.view">
