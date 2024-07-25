@@ -51,7 +51,7 @@
                         <field name="code"/>
                         <field name="name"/>
                         <field name="country_id" options='{"no_open": True, "no_create": True}'/>
-                        <field name="country_group_ids" widget="many2many_tags"/>
+                        <field name="country_group_ids" widget="many2many_tags"  options='{"no_open": True, "no_create": True}'/>
                         <!--                        <field name="country_group_id_1" options='{"no_open": True, "no_create": True}'/>-->
                     </group>
                     <group>
