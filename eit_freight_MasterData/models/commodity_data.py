@@ -50,16 +50,8 @@ class CommodityData(models.Model):
             if record.code:
                 counts = 0
                 numbers = record.code
-                # if len(numbers) != 5:
-                #     raise ValidationError("You must enter five numbers separated by spaces.")
-                # for number in numbers:
-                #     num = int(number)
-                #     if num % 2 == 0:
-                #         counts += 1
-                if len(numbers) == 6 or len(numbers) == 8 or len(numbers) == 10:
-                    print('runinh')
-                else:
-                    raise ValidationError("HSCode Format Can Accept 6 Or 8 Or 10 Digits")
+                if len(numbers) not in {6, 8, 10}:
+                    raise ValidationError("HSCode Format Can Accept 6, 8, or 10 Digits")
 
     def write(self, values):
         if 'code' in values:
