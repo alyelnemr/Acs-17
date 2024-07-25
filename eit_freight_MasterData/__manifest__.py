@@ -9,7 +9,9 @@
     'author': 'EIT-Hub (Expert Information Technology)',
     'website': 'www.eit-hub.com',
     'category': 'Services/Freight',
-    "depends": ["base", 'mail', 'contacts', 'account', 'product', 'hr_expense', 'purchase', 'sale', 'sale_expense'],
+    "depends": [
+        "base", 'mail', 'contacts', 'account', 'product', 'hr_expense', 'purchase', 'sale', 'sale_expense'
+    ],
     "data": [
         'security/frieght_secuirity.xml',
         'security/ir.model.access.csv',
