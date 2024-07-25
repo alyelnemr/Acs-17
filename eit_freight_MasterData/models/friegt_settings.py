@@ -4,7 +4,7 @@ from odoo import fields, _, models, api
 from odoo.exceptions import UserError
 
 
-class FriegtType(models.Model):
+class FreightType(models.Model):
     _name = "transport.type"
     _description = 'Transport Type Data'
     _order = 'id asc'
@@ -191,7 +191,7 @@ class BillofLeading(models.Model):
                 rec.toggle_active()
 
 
-class PackageType(models.Model):
+class PackageTagType(models.Model):
     _name = "package.tag.type"
     _description = 'Package Tag Type Data'
 
@@ -200,6 +200,7 @@ class PackageType(models.Model):
 
 class PackageLine(models.Model):
     _name = "package.line"
+    _description = "Package Line"
 
     commodity_data_id = fields.Many2one('commodity.data', string="Commodity")
     package_type_id = fields.Many2one('package.type', string="Package Type")
