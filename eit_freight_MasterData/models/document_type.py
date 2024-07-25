@@ -7,6 +7,7 @@ from datetime import date
 
 class DocumentsTypes(models.Model):
     _name = "document.type"
+    _description = 'Document types'
 
     name = fields.Text(string="Name")
     type = fields.Selection([('cdoc', 'Customer Docs'), ('odoc', 'Operation Docs')], 'Docs Type')

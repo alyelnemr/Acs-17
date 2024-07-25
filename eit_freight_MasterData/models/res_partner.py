@@ -21,11 +21,6 @@ class InheritResPartner(models.Model):
             else:
                 rec.partner_type_id_1 = None
 
-    def show_partner_llllll(self):
-        part = self.search([('show_partner', '=', False)])
-        for p in part:
-            p.show_partner = True
-
     def show_partner_reset(self):
         part = self.search([('show_partner', '=', True)])
         for p in part:

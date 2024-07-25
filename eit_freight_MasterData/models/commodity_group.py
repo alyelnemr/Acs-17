@@ -6,6 +6,7 @@ from odoo import fields, models, api
 
 class CommodityGroup(models.Model):
     _name = "commodity.group"
+    _description = 'Commodity Group'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")

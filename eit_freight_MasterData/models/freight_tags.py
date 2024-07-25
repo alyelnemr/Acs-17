@@ -6,6 +6,7 @@ from odoo import api, fields, models
 
 class FreightTags(models.Model):
     _name = "frieght.tags"
+    _description = 'Freight Tags'
 
     name = fields.Text(string="Name")
     active = fields.Boolean(string='Status', default=True)

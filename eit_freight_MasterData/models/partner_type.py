@@ -7,6 +7,7 @@ from datetime import date
 
 class PartnerType(models.Model):
     _name = "partner.type"
+    _description = 'Partner Type Data'
     _order = 'id asc, name asc'
 
     name = fields.Char(string="Name")

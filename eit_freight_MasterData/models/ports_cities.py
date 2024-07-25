@@ -48,6 +48,7 @@ class PortCitiesTemplate(models.Model):
 
 class TerminalPort(models.Model):
     _name = "terminal.port"
+    _description = 'Terminal Port Data'
 
     name = fields.Char(string="Name")
     port_city_id = fields.Many2one('port.cites', string="Port / City")

@@ -7,6 +7,6 @@ from datetime import date
 
 class CommodityReq(models.Model):
     _name = "commodity.req"
-    _description = 'Commodity Data'
+    _description = 'Commodity Equip'
 
     name = fields.Char()
