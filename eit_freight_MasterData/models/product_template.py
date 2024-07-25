@@ -17,7 +17,6 @@ class ProductTemplate(models.Model):
         selection_add=[('charge_type', 'Charge Type')])
     is_sale_purchase = fields.Boolean()
 
-    @api.model
     def create(self, values):
         res = super(ProductTemplate, self).create(values)
 
