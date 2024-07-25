@@ -44,7 +44,12 @@
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
-                <field name="partner_type_id" widget="many2many_tags"/>
+                <field name="partner_type_id" widget="many2many_tags" readonly="1"/>
+
+            </xpath>
+            <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']" position="attributes">
+                <attribute name="context">{'default_partner_type_id': partner_type_id, 'default_parent_id': id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_lang': lang, 'default_user_id': user_id, 'default_type': 'other'}
+</attribute>
 
             </xpath>
 
