@@ -37,12 +37,6 @@
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
                 <attribute name="widget">selection</attribute>
             </xpath>
-            <xpath expr="//field[@name='property_delivery_carrier_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='website_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
-            </xpath>
             <xpath expr="//field[@name='excecuters']" position="attributes">
                 <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
             </xpath>

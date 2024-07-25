@@ -4,7 +4,7 @@ from odoo import fields, _, models, api
 from odoo.exceptions import UserError
 
 
-class FriegtType(models.Model):
+class FreightType(models.Model):
     _name = "transport.type"
     _description = 'Transport Type Data'
     _order = 'id asc'

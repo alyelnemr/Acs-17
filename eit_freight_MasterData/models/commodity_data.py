@@ -5,24 +5,11 @@ from odoo.exceptions import ValidationError
 from datetime import date
 
 
-class CommodityGroup(models.Model):
-    _name = "commodity.group"
-
-    name = fields.Char(string="Name")
-    code = fields.Char(string="Code")
-    status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status')
-    active = fields.Boolean(string='Status', default=True)
-
-    @api.onchange('active')
-    def _onchange_active(self):
-        for rec in self:
-            if not rec.active:
-                rec.toggle_active()
-
-
 class CommodityData(models.Model):
     _name = "commodity.data"
+    _description = 'Commodity Data'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'id desc'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Hs Code", required=True)
@@ -47,8 +34,9 @@ class CommodityData(models.Model):
     updated_on = fields.Date(string="Last Updated on")
     industry_id = fields.Many2one(
         comodel_name='res.partner.industry', string="Industry")
-    req_id = fields.Many2many('commodity.req',string="Commodity Equip")
+    req_id = fields.Many2many('commodity.req', string="Commodity Equip")
     tag_id_1 = fields.Many2many('frieght.tags', string="Tags")
+    export_tax = fields.Integer(string="Export Tax")
 
     @api.onchange('active1')
     def _onchange_active(self):
@@ -85,78 +73,3 @@ class CommodityData(models.Model):
         record = super(CommodityData, self).create(values)
         record._check_even_numbers()
         return record
-
-
-
-class DocumentsTypes(models.Model):
-    _name = "document.type"
-
-    name = fields.Text(string="Name")
-    type = fields.Selection([('cdoc', 'Customer Docs'), ('odoc', 'Operation Docs')], 'Docs Type')
-    active = fields.Boolean(string='Status', default=True)
-
-    @api.onchange('active')
-    def _onchange_active(self):
-        for rec in self:
-            if not rec.active:
-                rec.toggle_active()
-
-
-class FrieghtTags(models.Model):
-    _name = "frieght.tags"
-
-    name = fields.Text(string="Name")
-    active = fields.Boolean(string='Status', default=True)
-
-    @api.onchange('active')
-    def _onchange_active(self):
-        for rec in self:
-            if not rec.active:
-                rec.toggle_active()
-
-
-class CommodityDataApprovalsImport(models.Model):
-    _name = "commodity.data.approval.import"
-
-    name = fields.Text(string="Description")
-    approval_data_id_import = fields.Many2one('commodity.data')
-
-
-class CommodityDataApprovalsExport(models.Model):
-    _name = "commodity.data.approval.export"
-
-    name = fields.Text(string="Description")
-    approval_data_id_export = fields.Many2one('commodity.data')
-
-
-class CommodityDataCustomExport(models.Model):
-    _name = "commodity.data.custom.export"
-
-    name = fields.Text(string="Description")
-    custom_data_id_import = fields.Many2one('commodity.data')
-
-
-class CommodityDataCustomImport(models.Model):
-    _name = "commodity.data.custom.import"
-
-    name = fields.Text(string="Description")
-    custom_data_id_import = fields.Many2one('commodity.data')
-
-class PartnerType(models.Model):
-    _name = "partner.type"
-    _order = 'id asc, name asc'
-
-    name = fields.Char(string="Name")
-    code = fields.Char(string="Code")
-    active = fields.Boolean(string='Status', default=True)
-
-    @api.onchange('active')
-    def _onchange_active(self):
-        for rec in self:
-            if not rec.active:
-                rec.toggle_active()
-
-class CommodityReq(models.Model):
-    _name = "commodity.req"
-
-    name = fields.Char()
