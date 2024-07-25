@@ -220,7 +220,7 @@
         </field>
         <field name="domain">[('partner_type_id', 'in', [1])]</field>
         <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
     </record>
     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
@@ -228,7 +228,7 @@
         <field name="context">{'search_default_type_company': True}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('base_setup.res_partner_kanban_view')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('eit_freight_MasterData.res_partner_kanban_view_new')}),
                 ]"/>
     </record>
 
