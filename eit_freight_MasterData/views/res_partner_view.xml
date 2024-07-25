@@ -160,7 +160,7 @@
                                         <field name="display_name"/>
                                     </strong>
                                     <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
-                                    <div class="oe_kanban_list_many2many">
+                                    <div class="oe_kanban_list_many2many" t-if="record.partner_type_id.raw_value != 1" >
                                         <field name="partner_type_id" widget="many2many_tags"
                                                options="{'color_field': 'color'}"/>
                                     </div>
