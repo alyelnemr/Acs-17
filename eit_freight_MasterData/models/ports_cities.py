@@ -50,13 +50,9 @@ class PortCitiesTemplate(models.Model):
                 rec.toggle_active()
 
     def create(self, vals):
-        # Create the record first
         record = super(PortCitiesTemplate, self).create(vals)
-
-        # Update country_group_ids directly if both country_group_ids and country_id are present in vals
         if 'country_group_ids' in vals and 'country_id' in vals:
             country = self.env['res.country'].browse(vals['country_id'])
-            # Flatten the list of operations to get the new groups
             new_groups = []
             for operation in vals['country_group_ids']:
                 if operation[0] == 4:
@@ -72,10 +68,21 @@ class PortCitiesTemplate(models.Model):
     def write(self, vals):
         result = super(PortCitiesTemplate, self).write(vals)
         if 'country_group_ids' in vals:
-            new_groups = vals['country_group_ids'][0][2]
+            new_groups = set()
+            for operation in vals['country_group_ids']:
+                if operation[0] == 4:  # Link operation
+                    new_groups.add(operation[1])
+                elif operation[0] == 6:
+                    new_groups = operation[2]
+                elif operation[0] == 3:  # Unlink operation
+                    if operation[1] in new_groups:
+                        new_groups.remove(operation[1])
+
             for record in self:
-                if record.country_id and set(record.country_id.country_group_ids.ids) != set(new_groups):
-                    record.country_id.update({'country_group_ids': [(6, 0, new_groups)]})
+                if record.country_id:
+                    current_groups = set(record.country_id.country_group_ids.ids)
+                    if current_groups != new_groups:
+                        record.country_id.sudo().write({'country_group_ids': [(6, 0, list(new_groups))]})
         return result
 
 
