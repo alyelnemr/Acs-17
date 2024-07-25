@@ -54,7 +54,6 @@ class CommodityData(models.Model):
             self._check_even_numbers()
         return super(CommodityData, self).write(values)
 
-    @api.model
     def create(self, values):
         record = super(CommodityData, self).create(values)
         record.k()
