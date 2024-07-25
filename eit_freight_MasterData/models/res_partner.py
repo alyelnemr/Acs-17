@@ -5,7 +5,6 @@ class InheritResPartner(models.Model):
     _inherit = "res.partner"
 
     partner_type_id = fields.Many2many('partner.type', string="Partner Type", required=True)
-    created_by = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Created by", readonly=True)
     excecuters = fields.Many2many('res.users', string="Executors")
     partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type", compute="compute_partner_type_id_1")
 
@@ -21,12 +20,23 @@ class InheritResPartner(models.Model):
             else:
                 rec.partner_type_id_1 = None
 
-    def show_partner_llllll(self):
-        part = self.search([('show_partner', '=', False)])
-        for p in part:
-            p.show_partner = True
-
     def show_partner_reset(self):
         part = self.search([('show_partner', '=', True)])
         for p in part:
             p.show_partner = False
+
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'parent_id' in vals:
+                parent = self.search([('id', '=', vals['parent_id'])])
+                if parent and parent.company_type == 'company':
+                    vals['partner_type_id'] = [(6, 0, parent.partner_type_id.ids)]
+        return super(InheritResPartner, self).create(vals_list)
+
+    def write(self, vals):
+        if 'parent_id' in vals or self.parent_id:
+            parent_id = vals['parent_id'] if 'parent_id' in vals else self.parent_id.id or False
+            parent = self.search([('id', '=', parent_id)]) if parent_id else False
+            if parent and parent.company_type == 'company':
+                vals['partner_type_id'] = [(6, 0, parent.partner_type_id.ids)]
+        return super(InheritResPartner, self).write(vals)

@@ -51,8 +51,8 @@
                         <field name="code"/>
                         <field name="name"/>
                         <field name="country_id" options='{"no_open": True, "no_create": True}'/>
-                        <!--                        <field name="country_group_ids" widget="many2many_tags"/>-->
-                        <field name="country_group_id_1" options='{"no_open": True, "no_create": True}'/>
+                        <field name="country_group_ids" widget="many2many_tags"  options='{"no_open": True, "no_create": True}'/>
+                        <!--                        <field name="country_group_id_1" options='{"no_open": True, "no_create": True}'/>-->
                     </group>
                     <group>
                         <field name="type_id" widget="many2many_checkboxes"/>
@@ -198,11 +198,11 @@
                 <field name="port_city_id" string="Port or City" filter_domain="['|',('port_city_id.name', 'ilike', self),
                 ('port_city_id.code', 'ilike', self)]"/>
                 <group expand="1" string="Group By">
-                    <filter string="Country" name='country' context="{'group_by':'port_city_id'}"/>
-                    <filter string="Port/City" name="port_city" context="{'group_by':'country_id'}"/>
+                    <filter string="Country" name='country' context="{'group_by':'country_id'}"/>
+                    <filter string="Port/City" name="port_city" context="{'group_by':'port_city_id'}"/>
                 </group>
                 <separator/>
-                <filter name="warhouse" string="Warehouse" domain="[('warhouse', '=', True)]"/>
+                <filter name="warehouse" string="Warehouse" domain="[('warehouse', '=', True)]"/>
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
 
@@ -224,7 +224,7 @@
                     </group>
                     <group>
                         <field name="country_id"/>
-                        <field name="warhouse"/>
+                        <field name="warehouse"/>
                         <field name="active" widget="boolean_toggle"/>
                     </group>
                 </group>
@@ -240,7 +240,7 @@
                 <field name="name"/>
                 <field name="port_city_id"/>
                 <field name="country_id"/>
-                <field name="warhouse"/>
+                <field name="warehouse"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
