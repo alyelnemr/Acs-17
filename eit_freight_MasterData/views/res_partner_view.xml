@@ -93,6 +93,17 @@
         </field>
     </record>
 
+    <record id="res_partner_view_search_inherit_partner" model="ir.ui.view">
+        <field name="name">res.partner.view.search.inherit.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="salesperson" position="after">
+                <filter name="partner_type" string="Partner Type" context="{'group_by': 'partner_type_id'}"/>
+            </filter>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="res_partner_kanban_view_new">
         <field name="name">res.partner.kanban.new</field>
         <field name="model">res.partner</field>
