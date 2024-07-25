@@ -39,7 +39,4 @@ class InheritResPartner(models.Model):
             parent = self.search([('id', '=', parent_id)]) if parent_id else False
             if parent and parent.company_type == 'company':
                 vals['partner_type_id'] = [(6, 0, parent.partner_type_id.ids)]
-        if 'child_ids' in vals or self.child_ids:
-            parent.child_ids.write({'partner_type_id': [(6, 0, partner_type_id)]})
-
         return super(InheritResPartner, self).write(vals)
