@@ -28,10 +28,6 @@ class CommodityData(models.Model):
                                     , string="Export Req")
     import_custom = fields.One2many('commodity.data.custom.import', 'custom_data_id_import'
                                     , string="Import Req")
-    created_by = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Created by")
-    created_on = fields.Date(default=date.today(), string="Created on")
-    updated_by = fields.Many2one('res.users', string="Last Updated by")
-    updated_on = fields.Date(string="Last Updated on")
     industry_id = fields.Many2one(
         comodel_name='res.partner.industry', string="Industry")
     req_id = fields.Many2many('commodity.req', string="Commodity Equip")
@@ -56,8 +52,6 @@ class CommodityData(models.Model):
     def write(self, values):
         if 'code' in values:
             self._check_even_numbers()
-        values['updated_on'] = date.today()
-        values['updated_by'] = self.env.user.id
         return super(CommodityData, self).write(values)
 
     @api.model

@@ -19,7 +19,6 @@ class ProductTemplate(models.Model):
 
     def create(self, values):
         res = super(ProductTemplate, self).create(values)
-
         if res.detailed_type == 'charge_type' and res.is_sale_purchase:
             raise UserError(
                 _('Please add the Charge Type from the MasterData App \n Master Data >> Service Setting Menu >> Charge Type'))

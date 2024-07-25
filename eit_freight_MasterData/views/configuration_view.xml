@@ -82,12 +82,12 @@
                         <page string="Tracking">
                             <group>
                                 <group>
-                                    <field name="created_by"/>
-                                    <field name="created_on"/>
+                                    <field name="create_uid"/>
+                                    <field name="create_date"/>
                                 </group>
                                 <group>
-                                    <field name="updated_by"/>
-                                    <field name="updated_on"/>
+                                    <field name="write_uid"/>
+                                    <field name="write_date"/>
                                 </group>
                             </group>
                         </page>

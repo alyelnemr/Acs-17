@@ -9,7 +9,7 @@
                 <!--                <field name="show_partner" invisible="1"/>-->
             </xpath>
             <field name="property_account_position_id" position="after">
-                <field name="created_by"/>
+                <field name="create_uid"/>
                 <field name="excecuters" widget="many2many_tags"/>
             </field>
             <xpath expr="//field[@name='state_id']" position="attributes">
