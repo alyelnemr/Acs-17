@@ -21,6 +21,10 @@ class PortCitiesTemplate(models.Model):
     country_group_id_1 = fields.Many2one('res.country.group', string='Country Group',
                                          compute="compute_country_group_id", store=True)
 
+    @api.model
+    def _default_country_group_ids(self):
+        return self.env['res.country.group'].search([]).ids
+
     @api.depends('country_id')
     def compute_country_group_id(self):
         for rec in self:
@@ -45,6 +49,26 @@ class PortCitiesTemplate(models.Model):
             if not rec.active:
                 rec.toggle_active()
 
+    def create(self, vals):
+        record = super(PortCitiesTemplate, self).create(vals)
+        if 'country_group_ids' in vals and record.country_id:
+            current_groups = record.country_id.country_group_ids.ids
+            new_groups = vals['country_group_ids'][0][2]
+            if set(current_groups) != set(new_groups):
+                record.country_id.write({'country_group_ids': [(6, 0, new_groups)]})
+        return record
+
+    def write(self, vals):
+        result = super(PortCitiesTemplate, self).write(vals)
+        if 'country_group_ids' in vals:
+            for record in self:
+                if record.country_id:
+                    current_groups = record.country_id.country_group_ids.ids
+                    new_groups = vals['country_group_ids'][0][2]
+                    if set(current_groups) != set(new_groups):
+                        record.country_id.write({'country_group_ids': [(6, 0, new_groups)]})
+        return result
+
 
 class TerminalPort(models.Model):
     _name = "terminal.port"
@@ -54,7 +78,7 @@ class TerminalPort(models.Model):
     port_city_id = fields.Many2one('port.cites', string="Port / City")
     country_id = fields.Many2one('res.country', string="Country")
     address = fields.Text(string="Address")
-    warhouse = fields.Boolean(string="Warehouse")
+    warehouse = fields.Boolean(string="Warehouse")
     active = fields.Boolean(string='Status', default=True)
 
     @api.onchange('active')
