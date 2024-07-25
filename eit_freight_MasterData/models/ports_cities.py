@@ -87,6 +87,11 @@ class TerminalPort(models.Model):
             if not rec.active:
                 rec.toggle_active()
 
+    @api.onchange('port_city_id')
+    def _onchange_port_city_id(self):
+        if self.port_city_id:
+            self.country_id = self.port_city_id.country_id
+
 
 class PortCitiesType(models.Model):
     _name = "port.type"
