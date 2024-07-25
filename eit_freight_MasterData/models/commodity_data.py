@@ -46,8 +46,8 @@ class CommodityData(models.Model):
             if record.code:
                 counts = 0
                 numbers = record.code
-                if len(numbers) not in {6, 8, 10}:
-                    raise ValidationError("HSCode Format Can Accept 6, 8, or 10 Digits")
+                # if len(numbers) not in {6, 8, 10}:
+                #     raise ValidationError("HSCode Format Can Accept 6, 8, or 10 Digits")
 
     def write(self, values):
         if 'code' in values:
@@ -57,5 +57,5 @@ class CommodityData(models.Model):
     @api.model
     def create(self, values):
         record = super(CommodityData, self).create(values)
-        record._check_even_numbers()
+        record.k()
         return record
