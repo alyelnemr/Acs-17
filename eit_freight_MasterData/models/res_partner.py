@@ -24,21 +24,3 @@ class InheritResPartner(models.Model):
         part = self.search([('show_partner', '=', True)])
         for p in part:
             p.show_partner = False
-    def create(self, vals_list):
-        for vals in vals_list:
-            if 'parent_id' in vals:
-                if isinstance(vals['parent_id'], int):  # Check if parent_id is an int
-                    parent = self.search([('id', '=', vals['parent_id'])])
-                    if parent and parent.company_type == 'company':
-                        vals['partner_type_id'] = [(6, 0, parent.partner_type_id.ids)]
-                else:
-                    raise ValueError(f"parent_id must be an integer, got {type(vals['parent_id'])}")
-        return super(InheritResPartner, self).create(vals_list)
-
-    def write(self, vals):
-        if 'parent_id' in vals or self.parent_id:
-            parent_id = vals['parent_id'] if 'parent_id' in vals else self.parent_id.id or False
-            parent = self.search([('id', '=', parent_id)]) if parent_id else False
-            if parent and parent.company_type == 'company':
-                vals['partner_type_id'] = [(6, 0, parent.partner_type_id.ids)]
-        return super(InheritResPartner, self).write(vals)
