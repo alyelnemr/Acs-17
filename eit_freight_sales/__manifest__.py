@@ -23,7 +23,11 @@
     'application': False,
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm', 'sale_management', 'account', 'eit_freight_MasterData', 'sale_crm', 'web', 'website'],
+    'depends': [
+        'base', 'crm', 'sale_management',
+        'account', 'eit_freight_MasterData',
+        'sale_crm', 'web', 'website'
+    ],
 
     # always loaded
     'data': [
@@ -38,10 +42,14 @@
             '/eit_freight_sales/static/src/js/main.js',
             '/eit_freight_sales/static/src/img/quote-bg.png',
             '/eit_freight_sales/static/src/js/select2_init.js',
+            '/eit_freight_sales/static/src/scss/style.scss',
         ],
         'web.assets_backend': [
             '/eit_freight_sales/static/lib/select2.min.css',
             '/eit_freight_sales/static/lib/select2.min.js',
+        ],
+        'website.assets_frontend': [
+            '/eit_freight_sales/static/src/scss/style.scss',
         ],
     },
     # only loaded in demonstration mode
