@@ -174,7 +174,6 @@
                                     <span class="col-md-12 title-h1-font">
                                         <font class="">Find The Best Freight Quote</font>
                                     </span>
-                                    <p class="designed-url">Designed &amp; Implemented by <a target="_blank" href='https://www.eit-hub.com/'> EIT-Hub</a></p>
                                 </div>
                             </div>
 
@@ -231,7 +230,7 @@
                                                 class="form-check-input toggleElement" checked="checked"/>
                                         </div>
                                         <div class="row show_for_by_unit" name="show_for_by_unit_div">
-                                            <div class="form-group">
+                                            <div class="form-group form-group-table">
                                                 <table id="dynamicTable_by_unit" class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -295,7 +294,7 @@
                                         </div>
                                         <div class="row hide_for_by_unit" name="hide_for_by_unit_div"
                                             style="display: none;">
-                                            <div class="form-group">
+                                            <div class="form-group form-group-table">
                                                 <table id="Table" class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -323,7 +322,7 @@
                                     <div class="row show_for_sea" name="show_for_sea_div" style="display:none;">
                                         <div class="col-md-12 show_for_fcl_sea" name="show_for_fcl_sea_div"
                                             style="display: none;">
-                                            <div class="form-group">
+                                            <div class="form-group form-group-table">
                                                 <table id="dynamicTable_fcl_sea" class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -373,7 +372,7 @@
                                                     class="form-check-input toggleElement" checked="checked"/>
                                             </div>
                                             <div class="show_for_by_unit_lcl" name="show_for_by_unit_lcl_div">
-                                                <div class="form-group">
+                                                <div class="form-group form-group-table">
                                                     <table id="dynamicTable_by_unit_lcl" class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -437,7 +436,7 @@
                                             </div>
                                             <div class="row hide_for_by_unit_lcl" name="hide_for_by_unit_lcl_div"
                                                 style="display: none;">
-                                                <div class="form-group">
+                                                <div class="form-group form-group-table">
                                                     <table id="Table_lcl" class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -465,7 +464,7 @@
                                     <div class="row show_for_inland" name="show_for_inland_div" style="display:none;">
                                         <div class="col-md-12 show_for_ftl_inland" name="show_for_ftl_inland_div"
                                             style="display: none;">
-                                            <div class="form-group">
+                                            <div class="form-group form-group-table">
                                                 <table id="dynamicTable_ftl_inland" class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -515,7 +514,7 @@
                                                     class="form-check-input toggleElement" checked="checked"/>
                                             </div>
                                             <div class="col-md-12 show_for_by_unit_ltl" name="show_for_by_unit_ltl_div">
-                                                <div class="form-group">
+                                                <div class="form-group form-group-table">
                                                     <table id="dynamicTable_by_unit_ltl" class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -579,7 +578,7 @@
                                             </div>
                                             <div class="col-md-12 hide_for_by_unit_lcl" name="hide_for_by_unit_ltl_div"
                                                 style="display: none;">
-                                                <div class="form-group">
+                                                <div class="form-group form-group-table">
                                                     <table id="Table_lcl" class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -710,17 +709,13 @@
                                     </div>
                                     <br/>
                                     <t t-if="not is_public_user">
-                                        <table style="margin: auto;">
-                                            <tr>
-                                                <td>
-                                                    <form>
-                                                        <div style="display: flex; justify-content: flex-end;">
-                                                            <button type="submit" class="btn btn-primary">Request Quote</button>
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <div class="row" style="margin: auto;">
+                                            <form>
+                                                <div style="display: flex; justify-content: flex-end;">
+                                                    <button type="submit" class="btn btn-primary">Request Quote</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </t>
                                     <br/>
                                     <t t-if="is_public_user">
@@ -866,31 +861,26 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p>By creating an account, you agree to our <a href="/tos" target="_blank"
+                                        <p class="mt8">By creating an account, you agree to our <a href="/tos" target="_blank"
                                                                                     class="awyI_j">
                                             Terms of service
                                         </a> and
                                             <a href="/privacy" target="_blank" class="awyI_j">Privacy Policy</a>
                                         </p>
-                                        <table style="width: 30%; margin: auto;">
-                                            <tr>
-                                                <td>
-                                                    <form>
-                                                        <div style="display: flex; justify-content: flex-end;">
-                                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <form class="row">
+                                            <div style="display: flex; justify-content: flex-end;">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </form>
+                                                
                                     </t>
 
-                                    <div class="row">
+                                    <div class="row mt32">
+                                        <p class="designed-url">Designed &amp; Implemented by <a target="_blank" href='https://www.eit-hub.com/'> EIT-Hub</a></p>
                                     </div>
                                 </div>
-                                <br/>
-                                <br/>   
                             </form>
+                            
                             </div>
                         </div>
                     </div>
