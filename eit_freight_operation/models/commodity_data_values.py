@@ -11,7 +11,7 @@ class CommodityDtaValues(models.Model):
     vat = fields.Integer(string="Vat", related="commodity_data_id.vat")
     type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], string="Equip",
                             related="commodity_data_id.type")
-    tag_id = fields.Many2many('frieght.tags', string="Tags", related="commodity_data_id.tag_id_1")
+    tag_ids = fields.Many2many('frieght.tags', string="Tags", related="commodity_data_id.tag_ids")
     export_approval = fields.Many2many('commodity.data.approval.export'
                                        , string="Export Approvals", )
     export_custom = fields.Many2many('commodity.data.custom.export'

@@ -37,7 +37,7 @@
                         <group>
                             <field name="req_id" widget="many2many_checkboxes"/>
                             <field name="vat"/>
-                            <field name="tag_id"  />
+                            <field name="tag_ids" widget="many2many_tags" />
                             <field name="active1" widget="boolean_toggle"/>
 
                         </group>
@@ -112,7 +112,7 @@
                 <field name="group_id"/>
                 <field name="tax"/>
                 <field name="vat"/>
-                <field name="tag_id"/>
+                <field name="tag_ids" widget="many2many_tags"/>
                 <field name="active1" widget="boolean_toggle"/>
             </tree>
         </field>

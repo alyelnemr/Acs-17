@@ -18,7 +18,6 @@ class CommodityData(models.Model):
     group_id = fields.Many2one('commodity.group', string="Commodity Group")
     type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Equip')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status', readonly=True)
-    tag_id = fields.Many2one('frieght.tags', string="Tags One")
     active1 = fields.Boolean(string='Status', default=True)
     import_approval = fields.One2many('commodity.data.approval.import', 'approval_data_id_import'
                                       , string="Import Approvals")
@@ -31,7 +30,7 @@ class CommodityData(models.Model):
     industry_id = fields.Many2one(
         comodel_name='res.partner.industry', string="Industry")
     req_id = fields.Many2many('commodity.req', string="Commodity Equip")
-    tag_id_1 = fields.Many2many('frieght.tags', string="Tags")
+    tag_ids = fields.Many2many('frieght.tags', string="Tags")
     export_tax = fields.Integer(string="Export Tax")
 
     @api.onchange('active1')
