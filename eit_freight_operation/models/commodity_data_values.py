@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 
 
-class CommodityDtaValues(models.Model):
+class CommodityDataValues(models.Model):
     _name = "commodity.data.values"
     _description = "Commodity dta values"
 

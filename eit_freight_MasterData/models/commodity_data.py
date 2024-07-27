@@ -16,7 +16,7 @@ class CommodityData(models.Model):
     tax = fields.Integer(string="Import Tax")
     vat = fields.Integer(string="Vat")
     group_id = fields.Many2one('commodity.group', string="Commodity Group")
-    type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Equip')
+    type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Type')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status', readonly=True)
     active1 = fields.Boolean(string='Status', default=True)
     import_approval = fields.One2many('commodity.data.approval.import', 'approval_data_id_import'

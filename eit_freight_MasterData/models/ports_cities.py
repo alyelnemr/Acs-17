@@ -17,7 +17,7 @@ class PortCitiesTemplate(models.Model):
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Active', readonly=True)
     active = fields.Boolean(string='Status', default=True)
     type_id = fields.Many2many('transport.type', string="Port Is")
-    country_group_id_1 = fields.Many2one('res.country.group', string='Country Group',
+    country_group_id_1 = fields.Many2one('res.country.group', string='Country Group1',
                                          compute="compute_country_group_id", store=True)
 
     @api.onchange('country_id')

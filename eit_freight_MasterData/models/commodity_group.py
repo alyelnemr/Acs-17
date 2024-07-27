@@ -11,7 +11,7 @@ class CommodityGroup(models.Model):
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status')
-    active = fields.Boolean(string='Status', default=True)
+    active = fields.Boolean(string='Active', default=True)
 
     @api.onchange('active')
     def _onchange_active(self):
