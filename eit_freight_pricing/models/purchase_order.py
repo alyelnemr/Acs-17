@@ -72,7 +72,7 @@ class PurchaseOrder(models.Model):
 
 class ProductCharges(models.Model):
     _name = 'product.charges'
-    _description = "Product Charges"
+    _description = "Product charges"
 
     product_id = fields.Many2one('product.template', string="Charge Type",
                                  domain="[('detailed_type', '=', 'charge_type')]")

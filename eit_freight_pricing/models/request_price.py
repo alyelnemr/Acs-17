@@ -6,6 +6,7 @@ from odoo import api, fields, models, tools, SUPERUSER_ID
 
 class RequestPrice(models.Model):
     _name = 'request.price'
+    _description = "Request price"
     _order = 'id desc'
     _inherit = ['mail.thread.cc',
                 'mail.thread.blacklist',
@@ -168,6 +169,7 @@ class RequestPrice(models.Model):
 
 class PricePackageType(models.Model):
     _name = 'air.package.type'
+    _description = "Price package type"
 
     package_type_id = fields.Many2one(
         'package.type', string="Package Type", store=True,
@@ -206,6 +208,7 @@ class PricePackageType(models.Model):
 
 class FclContainerType(models.Model):
     _name = 'fcl.container.type'
+    _description = "Fcl container type"
 
     container_id = fields.Many2one('container.type', string="Container Types")
     qty = fields.Integer(string="QTY")
@@ -215,6 +218,7 @@ class FclContainerType(models.Model):
 
 class FtlContainerType(models.Model):
     _name = 'ftl.container.type'
+    _description = "Ftl container type"
 
     container_id = fields.Many2one('container.type', string="Container Types")
     qty = fields.Integer(string="QTY")
@@ -224,6 +228,7 @@ class FtlContainerType(models.Model):
 
 class LclContainerType(models.Model):
     _name = 'lcl.container.type'
+    _description = "Lcl container type"
 
     package_type_id = fields.Many2one(
         'package.type', string="Package Type", store=True,
@@ -246,6 +251,7 @@ class LclContainerType(models.Model):
 
 class LtlContainerType(models.Model):
     _name = 'ltl.container.type'
+    _description = "Ltl container type"
 
     package_type_id = fields.Many2one(
         'package.type', string="Package Type", store=True,

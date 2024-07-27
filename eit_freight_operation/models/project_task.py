@@ -69,8 +69,8 @@ class Task(models.Model):
         ('03_approved', 'Arrived'),  # Updated from Approved to Arrived
         *CLOSED_STATES.items(),
         ('04_waiting_normal', 'Waiting'),
-    ], string='State', copy=False, default='01_in_progress', required=True, 
-       readonly=False, store=True, index=True, tracking=True)
+    ], string='State', copy=False, default='01_in_progress', required=True,
+        readonly=False, store=True, index=True, tracking=True)
     services = fields.Many2many('service.scope', string="Services")
 
     @api.depends('transport_type_id')
@@ -199,7 +199,7 @@ class Task(models.Model):
             year_str = str(current_year)[-3:].zfill(3)
             transport_code = self.transport_type_id.code if self.transport_type_id and self.transport_type_id.code else ''
             clearance_code = self.clearence_type_id.code if self.clearence_type_id and self.clearence_type_id.code else ''
-            
+
             seequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
             self.name = name.replace("X", seequence)
 
@@ -217,7 +217,7 @@ class Task(models.Model):
         elif vals.get('state') == '1_canceled':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
         return super(Task, self).create(vals)
-    
+
     def write(self, vals):
         # Prevent recursion by checking if the stage change is necessary
         for task in self:
@@ -236,6 +236,7 @@ class Task(models.Model):
             vals['stage_id'] = new_stage_id
 
         return super(Task, self).write(vals)
+
     # def write(self, vals):
     #     res = super(Task, self).write(vals)
     #     for task in self:
@@ -266,13 +267,12 @@ class Task(models.Model):
             if task.state == '1_done':
                 warning_message = {
                     'title': "Are you sure?",
-                    'message': "Do you want to close operation no. = %s?\nNote that you may not have access to this operation after closing!" % (task.name),
+                    'message': "Do you want to close operation no. = %s?\nNote that you may not have access to this operation after closing!" % (
+                        task.name),
                 }
                 task.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
                 return {'warning': warning_message}
-        
 
-    
     # @api.model
     # def create(self, vals):
     #     result = super(Task, self).create(vals)
@@ -281,17 +281,17 @@ class Task(models.Model):
     #     year_str = str(current_year)[-3:].zfill(3)
     #     transport_code = result.transport_type_id.code if result.transport_type_id and result.transport_type_id.code else ''
     #     clearance_code = result.clearence_type_id.code if result.clearence_type_id and result.clearence_type_id.code else ''
-        
+
     #     seequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
     #     result.name = name.replace("X", seequence)
     #     return result
-    
+
     def action_view_bookings(self):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
             'binding_type': 'object',
-            'domain': [('project_id', '=', self.project_id.id), ('state','=', 'sale')],
+            'domain': [('project_id', '=', self.project_id.id), ('state', '=', 'sale')],
             'multi': False,
             'name': 'Sale Order',
             'target': 'current',
@@ -301,13 +301,14 @@ class Task(models.Model):
 
     def get_sale_count(self):
         for rec in self:
-            count = self.env['sale.order'].search_count([('project_id', '=', rec.project_id.id), ('state','=', 'sale')])
+            count = self.env['sale.order'].search_count(
+                [('project_id', '=', rec.project_id.id), ('state', '=', 'sale')])
             rec.sale_count = count
-
 
 
 class OptPartners(models.Model):
     _name = "opt.partners"
+    _description = "Opt partners"
 
     partner_type_id = fields.Many2one('partner.type', string="Partner Type")
     partner_id = fields.Many2one('res.partner', string="Company Name")
@@ -322,6 +323,7 @@ class OptPartners(models.Model):
 
 class ShippingPackages(models.Model):
     _name = "shipping.pacckage"
+    _description = "Shipping packages"
 
     package_type_id = fields.Many2one('package.type', string="Package")
     quantity = fields.Integer(string="Qty")
@@ -361,6 +363,7 @@ class ShippingPackages(models.Model):
 
 class HouseBl(models.Model):
     _name = "house.bl"
+    _description = "House bl"
 
     hbl_no = fields.Char(string="HBL No")
     road_no = fields.Char(string="Road No")
@@ -371,7 +374,8 @@ class HouseBl(models.Model):
 
 class ContainerData(models.Model):
     _inherit = 'container.data'
-    
+    _description = "Container data"
+
     loading_instruction = fields.Html(string="Loading Instructions")
     is_save_container = fields.Boolean('Is Save Container?', store=True, default=True)
 

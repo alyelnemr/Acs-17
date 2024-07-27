@@ -150,7 +150,7 @@ class ProductTemplate(models.Model):
 
 class ProductCharges(models.Model):
     _name = 'pricing.charges'
-    _description = "Pricing Charges"
+    _description = "Product charges"
 
     product_id_2 = fields.Many2one('product.template', string="Charge Type",
                                    domain="[('detailed_type', '=', 'charge_type')]")
@@ -213,6 +213,7 @@ class ProductSupplierInfo(models.Model):
 
 class TotalSaleCurrency(models.Model):
     _name = 'total.sale.currency'
+    _description = "Total sale currency"
 
     currency_id = fields.Many2one('res.currency', string="Currency")
     amount = fields.Float(string="Amount")
@@ -221,6 +222,7 @@ class TotalSaleCurrency(models.Model):
 
 class TotalCostCurrency(models.Model):
     _name = 'total.cost.currency'
+    _description = "Total cost currency"
 
     currency_id = fields.Many2one('res.currency', string="Currency")
     amount = fields.Float(string="Amount")

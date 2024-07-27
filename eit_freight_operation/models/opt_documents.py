@@ -3,6 +3,7 @@ from odoo import models, fields, api, _
 
 class OptDocuments(models.Model):
     _name = "opt.documents"
+    _description = "Opt documents"
 
     document_type_id = fields.Many2one('document.type', string="Document Name")
     document_no = fields.Integer(string="Document No")
@@ -15,6 +16,7 @@ class OptDocuments(models.Model):
 
 class OptPayable(models.Model):
     _name = "opt.payable"
+    _description = "Opt payable"
 
     vendor_name = fields.Many2one('res.partner', string="Vendor Name")
     product_id = fields.Many2one('product.template', string="Charges",
@@ -39,6 +41,7 @@ class OptPayable(models.Model):
 
 class OptRecieveble(models.Model):
     _name = "opt.recieveble"
+    _description = "Opt receivable"
 
     vendor_name = fields.Many2one('res.partner', string="Vendor Name")
     product_id = fields.Many2one('product.template', string="Charges",
@@ -63,6 +66,7 @@ class OptRecieveble(models.Model):
 
 class Friegtservicestage(models.Model):
     _name = "frieght.serviice.stages"
+    _description = "Freight service stage"
 
     stage_id = fields.Many2one('tracking.stage', string="Stage")
     start_date = fields.Date(string="Start Date")

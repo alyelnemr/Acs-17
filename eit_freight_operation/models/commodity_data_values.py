@@ -3,6 +3,7 @@ from odoo import models, fields, api, _
 
 class CommodityDtaValues(models.Model):
     _name = "commodity.data.values"
+    _description = "Commodity dta values"
 
     commodity_data_id = fields.Many2one('commodity.data', string="Commodity")
     code = fields.Char(string="Hs Code", related="commodity_data_id.code")
@@ -52,6 +53,7 @@ class CommodityDtaValues(models.Model):
 
 class CleraenceStages(models.Model):
     _name = "clearence.stages"
+    _description = "Clearance stages"
 
     stage_id = fields.Many2one('tracking.stage', string="Stage", domain="[('docs_type', '=', 'custom_doc')]")
     start_date = fields.Date(string="Start date")

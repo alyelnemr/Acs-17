@@ -3,6 +3,7 @@ from odoo import models, fields, api, _
 
 class StagePricing(models.Model):
     _name = 'stage.pricing'
+    _description = "Stage pricing"
     _order = 'sequences'
     _rec_name = 'name'
 
