@@ -1010,7 +1010,7 @@
                                                         <group>
                                                             <field name="vat"/>
                                                             <field name="type"/>
-                                                            <field name="tag_id"/>
+                                                            <field name="tag_ids"/>
                                                             <field name="export_custom"
                                                                    invisible="clearence_type_id not in [2,5,6] or service_scope_id not in [3] or not export_custom"
                                                                    widget="many2many_tags"/>
