@@ -79,7 +79,7 @@
                 <field name="name"/>
                 <field name="country_id"/>
                 <!--                <field name="country_group_ids" widget="many2many_tags"/>-->
-                <field name="country_group_ids"/>
+                <field name="country_group_ids" widget="many2many_tags" />
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
@@ -121,7 +121,7 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="country_id"/>
-                <field name="country_group_id_1"/>
+                <field name="country_group_ids"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_global_click">

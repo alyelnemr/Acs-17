@@ -36,12 +36,9 @@ class PortCitiesTemplate(models.Model):
     @api.depends('country_id', 'code')
     def compute_display_name(self):
         for rec in self:
-            str = ""
-            if rec.name:
-                str = str + rec.name + "-"
-            if rec.country_id:
-                str = str + rec.country_id.name
-            rec.display_name = str
+            display_name = rec.name if rec.name else ""
+            display_name = (display_name + "-" + rec.country_id.name) if rec.country_id else display_name
+            rec.display_name = display_name
 
     @api.onchange('active')
     def _onchange_active(self):
