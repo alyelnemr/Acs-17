@@ -80,7 +80,7 @@
                                 <field name="max_load"/>
                             </group>
                             <group>
-                                <field name="partner_id"/>
+                                <field name="partner_id" options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
                                 <field name="tare_weight"/>
                                 <field name="active" widget="boolean_toggle"/>
                             </group>
