@@ -60,6 +60,8 @@
             <field name="res_model">freight.vessels</field>
             <field name="view_mode">tree,form</field>
         </record>
+    <menuitem name="Vessels" id="menu_vessels" parent="menu_freight_settings"
+              action="action_vessels" sequence="8"/>
 
     </data>
 </odoo>

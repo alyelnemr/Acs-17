@@ -1,12 +1,122 @@
 <odoo>
-    <!--    container data-->
+    <!--    transport type-->
+    <record model="ir.ui.view" id="freight_types_search">
+        <field name="name">Freight Form</field>
+        <field name="model">transport.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
 
-    <!--    container data-->
+    <record model="ir.ui.view" id="freight_types_form">
+        <field name="name">Freight Form</field>
+        <field name="model">transport.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-    <!--    vessels-->
+    <record model="ir.ui.view" id="frighet_type_list">
+        <field name="name">Transport Type</field>
+        <field name="model">transport.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_fright_type">
+        <field name="name">Transport Type</field>
+        <field name="res_model">transport.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!--    transport type-->
 
 
-    <!--    veslls-->
+
+
+
+    <!--    package type-->
+
+    <record model="ir.ui.view" id="package_type_search">
+        <field name="name">Package Type</field>
+        <field name="model">package.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="air" string="Air" domain="[('tag_type_ids.name', '=', 'AIR')]"/>
+                <filter name="lcr" string="Sea" domain="[('tag_type_ids.name', '=', 'LCL')]"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="package_types_form">
+        <field name="name">Package Form</field>
+        <field name="model">package.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="tag_type_ids" widget="many2many_checkboxes"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="package_type_list">
+        <field name="name">Package Type</field>
+        <field name="model">package.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="tag_type_ids" widget="many2many_tags"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_package_type">
+        <field name="name">Package Type</field>
+        <field name="res_model">package.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!--    package type-->
+
+
+
 
     <!--    shipment cost-->
 
@@ -29,6 +139,18 @@
     </record>
 
     <!--    shipment cost-->
+
+
+
+
+
+
+    <!--    container data-->
+
+    <!--    vessels-->
+
+
+    <!--    veslls-->
 
     <!--    container type-->
     <record model="ir.ui.view" id="container_type_search">
@@ -93,115 +215,7 @@
 
     <!--    container type-->
 
-    <!--    package type-->
-
-    <record model="ir.ui.view" id="package_type_search">
-        <field name="name">Package Type</field>
-        <field name="model">package.type</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name" filter_domain="['|',('name', 'ilike', self),
-                ('code', 'ilike', self)]"/>
-                <filter name="air" string="Air" domain="[('tag_type_ids.name', '=', 'AIR')]"/>
-                <filter name="lcr" string="Sea" domain="[('tag_type_ids.name', '=', 'LCL')]"/>
-                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
-                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
-            </search>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="package_types_form">
-        <field name="name">Package Form</field>
-        <field name="model">package.type</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="code"/>
-                            <field name="name"/>
-                        </group>
-                        <group>
-                            <field name="tag_type_ids" widget="many2many_checkboxes"/>
-                            <field name="active" widget="boolean_toggle"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="package_type_list">
-        <field name="name">Package Type</field>
-        <field name="model">package.type</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="code"/>
-                <field name="name"/>
-                <field name="tag_type_ids" widget="many2many_tags"/>
-                <field name="active" widget="boolean_toggle"/>
-            </tree>
-        </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_package_type">
-        <field name="name">Package Type</field>
-        <field name="res_model">package.type</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <!--    package type-->
-
     <!--    fright type-->
-    <record model="ir.ui.view" id="freight_types_search">
-        <field name="name">Freight Form</field>
-        <field name="model">transport.type</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name" filter_domain="['|',('name', 'ilike', self),
-                ('code', 'ilike', self)]"/>
-                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
-            </search>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="freight_types_form">
-        <field name="name">Freight Form</field>
-        <field name="model">transport.type</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="code"/>
-                        </group>
-                        <group>
-                            <field name="active" widget="boolean_toggle"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="frighet_type_list">
-        <field name="name">Transport Type</field>
-        <field name="model">transport.type</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="code"/>
-                <field name="active" widget="boolean_toggle"/>
-            </tree>
-        </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_fright_type">
-        <field name="name">Transport Type</field>
-        <field name="res_model">transport.type</field>
-        <field name="view_mode">tree,form</field>
-    </record>
 
     <!--    fright type-->
 
@@ -254,6 +268,10 @@
     </record>
     <!--    bill of leading-->
 
+    <menuitem name="MasterData" id="menu_freight"
+              web_icon="eit_freight_MasterData,static/description/icon.png" sequence="1"
+              groups="group_freight_user,group_freight_manager,group_freight_admin"
+    />
     <menuitem name="Freight Settings" id="menu_freight_settings" parent="menu_freight"/>
     <menuitem name="Transport Type" id="menu_freight_type" parent="menu_freight_settings" action="action_fright_type"
               sequence="1"/>
@@ -267,10 +285,5 @@
               action="action_bill_of_leading" sequence="6"/>
     <menuitem name="Shipments Scope" id="menu_shipment_scop_type" parent="menu_freight_settings"
               action="action_shipemnt_scop" sequence="7"/>
-    <menuitem name="Vessels" id="menu_vessels" parent="menu_freight_settings"
-              action="action_vessels" sequence="8"/>
-    <menuitem name="Containers" id="menu_container_data" parent="menu_freight_settings"
-              action="action_container_data" sequence="5"/>
-    <menuitem name="Planes" id="menu_flightsa" parent="menu_freight_settings"
-              action="action_flights" sequence="9"/>
+
 </odoo>

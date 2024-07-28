@@ -25,7 +25,6 @@ class ContainerData(models.Model):
     un_number = fields.Many2many('ir.attachment', string="UN Number")
     pacchage_line_ids = fields.One2many('package.line', 'shipping_container_id', string="Packages")
     number_of_packages = fields.Integer(string="Number Of Packages")
-    task_id_container = fields.Many2one('project.task')
     create_date = fields.Datetime(string='Create Date', readonly=True, default=fields.Datetime.now)
 
     _sql_constraints = [('name_uniq', "unique(name)", "This Container Has Been Added Before")]

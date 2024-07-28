@@ -112,4 +112,6 @@
         <field name="view_mode">tree,form,kanban,cohort,pivot</field>
     </record>
 
+    <menuitem name="Planes" id="menu_flightsa" parent="menu_freight_settings"
+              action="action_flights" sequence="9"/>
 </odoo>

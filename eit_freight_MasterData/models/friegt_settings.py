@@ -4,7 +4,7 @@ from odoo import fields, _, models, api
 from odoo.exceptions import UserError
 
 
-class FreightType(models.Model):
+class TransportType(models.Model):
     _name = "transport.type"
     _description = 'Transport Type Data'
     _order = 'id asc'
@@ -68,7 +68,7 @@ class Vessels(models.Model):
                 rec.toggle_active()
 
 
-class BillofLeading(models.Model):
+class BillLeadingType(models.Model):
     _name = "bill.leading.type"
     _description = 'BOL Type Data'
     _order = 'id desc'

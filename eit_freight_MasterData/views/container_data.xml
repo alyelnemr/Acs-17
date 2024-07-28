@@ -125,6 +125,8 @@
             <field name="view_mode">tree,form,kanban,cohort,pivot</field>
         </record>
 
+    <menuitem name="Containers" id="menu_container_data" parent="menu_freight_settings"
+              action="action_container_data" sequence="5"/>
 
     </data>
 </odoo>

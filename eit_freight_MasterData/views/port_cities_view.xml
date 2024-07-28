@@ -101,17 +101,6 @@
         </field>
     </record>
 
-    <!--    <record id="port_pivout" model="ir.ui.view">-->
-    <!--        <field name="name">Ports &amp; Cities</field>-->
-    <!--        <field name="model">port.cites</field>-->
-    <!--        <field name="arch" type="xml">-->
-    <!--            <pivot string="Ports &amp; Cities" sample="1">-->
-    <!--                <field name="country_id"/>-->
-    <!--                &lt;!&ndash;                <field name="country_group_ids" type="measure"/>&ndash;&gt;-->
-    <!--                &lt;!&ndash;                <field name="type_id" type="measure"/>&ndash;&gt;-->
-    <!--            </pivot>-->
-    <!--        </field>-->
-    <!--    </record>-->
 
     <record id="port_kanban" model="ir.ui.view">
         <field name="name">Ports &amp; Cities</field>
@@ -176,7 +165,7 @@
     <record model="ir.actions.act_window" id="action_port_cities">
         <field name="name">Ports &amp; Cities</field>
         <field name="res_model">port.cites</field>
-        <field name="view_mode">tree,form,kanban,cohort,graph,pivot</field>
+        <field name="view_mode">tree,form,kanban,cohort,graph</field>
     </record>
 
     <!--    port and cities-->
@@ -254,10 +243,6 @@
 
     <!-- menu-->
 
-    <menuitem name="MasterData" id="menu_freight"
-              web_icon="eit_freight_MasterData,static/description/icon.png" sequence="1"
-              groups="group_freight_user,group_freight_manager,group_freight_admin"
-    />
     <menuitem name="Locations" id="menu_freight1" parent="menu_freight"/>
     <menuitem name="Ports &amp; Cities" id="sub_menu_freight1" parent="menu_freight1" action="action_port_cities"/>
     <menuitem name="Terminals" id="sub_menu_freight_ter" parent="menu_freight1" action="action_terminals"/>
