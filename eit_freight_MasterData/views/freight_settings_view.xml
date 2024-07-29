@@ -272,7 +272,7 @@
               web_icon="eit_freight_MasterData,static/description/icon.png" sequence="1"
               groups="group_freight_user,group_freight_manager,group_freight_admin"
     />
-    <menuitem name="Freight Settings" id="menu_freight_settings" parent="menu_freight"/>
+    <menuitem name="Freight Settings" id="menu_freight_settings" parent="menu_freight" sequence="2"/>
     <menuitem name="Transport Type" id="menu_freight_type" parent="menu_freight_settings" action="action_fright_type"
               sequence="1"/>
     <menuitem name="Package Type" id="menu_package_type" parent="menu_freight_settings" action="action_package_type"

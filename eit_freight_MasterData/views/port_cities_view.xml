@@ -243,7 +243,7 @@
 
     <!-- menu-->
 
-    <menuitem name="Locations" id="menu_freight1" parent="menu_freight"/>
+    <menuitem name="Locations" id="menu_freight1" parent="menu_freight" sequence="1"/>
     <menuitem name="Ports &amp; Cities" id="sub_menu_freight1" parent="menu_freight1" action="action_port_cities"/>
     <menuitem name="Terminals" id="sub_menu_freight_ter" parent="menu_freight1" action="action_terminals"/>
     <menuitem name="Countries" id="sub_menu_freight2" parent="menu_freight1" action="action_show_countries"/>

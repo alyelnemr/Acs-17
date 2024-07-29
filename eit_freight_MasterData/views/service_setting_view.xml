@@ -179,7 +179,7 @@
         <field name="view_mode">tree,form</field>
     </record>
     <!--    activity type-->
-    <menuitem name="Service Settings" id="menu_service_settings" parent="menu_freight"/>
+    <menuitem name="Service Settings" id="menu_service_settings" parent="menu_freight" sequence="3"/>
     <menuitem name="Service Scope" id="menu_service_scope" parent="menu_service_settings"
               action="action_service_scope" sequence="2"/>
     <menuitem name="Clearance Type" id="menu_clearance_type" parent="menu_service_settings"
