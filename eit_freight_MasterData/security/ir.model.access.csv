@@ -75,9 +75,9 @@ access_freight_conditions_user,freight.conditions.user,model_freight_conditions,
 access_terminal_port_user,terminal.port.user,model_terminal_port,group_freight_user,1,0,0,0
 
 access_port_type,port.type,model_port_type,group_freight_user,1,1,1,1
-access_package_tag_type,package.tag.type,model_package_tag_type,,1,1,1,1
-access_commodity_req,commodity.req,model_commodity_req,,1,1,1,1
-access_package_line,package.line,model_package_line,,1,1,1,1
+access_package_tag_type,package.tag.type,model_package_tag_typegroup_freight_user,1,1,1,1
+access_commodity_req,commodity.req,model_commodity_req,group_freight_user,1,1,1,1
+access_package_line,package.line,model_package_line,group_freight_user,1,1,1,1
 
 access_account_incoterms_users,account.incoterms.users,model_account_incoterms,group_freight_user,1,0,0,0
 access_account_incoterms_manager,account.incoterms.manager,model_account_incoterms,group_freight_manager,1,1,1,0
