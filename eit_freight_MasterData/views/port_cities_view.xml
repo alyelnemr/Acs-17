@@ -249,6 +249,9 @@
     <menuitem name="Countries" id="sub_menu_freight2" parent="menu_freight1" action="action_show_countries"/>
     <menuitem name="Country Group" id="sub_menu_freight3" parent="menu_freight1" action="action_show_countries_group"/>
     <!--    <menuitem name="Port Type" id="sub_menu_fport_type" parent="menu_freight1" action="action_show_port_type"/>-->
-
+<menuitem name="MasterData" id="menu_freight"
+          web_icon="eit_freight_MasterData,static/description/icon.png" sequence="1"
+          groups="group_freight_user,group_freight_manager,group_freight_admin"
+          action="action_port_cities"/>
 
 </odoo>
