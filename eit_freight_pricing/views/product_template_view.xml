@@ -1,0 +1,469 @@
+<odoo>
+    <record id="product_price_search" model="ir.ui.view">
+        <field name="name">product.pricing.serach</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Pricing ID"
+                       filter_domain="[('name', 'ilike', self)]"/>
+                <field name="pol_id" string="POL"
+                       filter_domain="[('pol_id', 'ilike', self)]"/>
+                <field name="pod_id" string="POD"
+                       filter_domain="[('pod_id', 'ilike', self)]"/>
+                <separator/>
+                <filter string="My Pricing" name="my_pricing" domain="[('p_user_ids', 'in', uid)]"/>
+                <filter string="Air" name="transport_type_id_air" domain="[('transport_type_id','=', 1)]"/>
+                <filter string="Sea" name="transport_type_id_sea" domain="[('transport_type_id','=', 2)]"/>
+                <filter string="Inland" name="transport_type_id_inland" domain="[('transport_type_id','=',3)]"/>
+                <filter string="Active" name="active" domain="[('active','=',True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active','=',False)]"/>
+                <separator/>
+                <filter string="Transport Type" name="transport_type"
+                        context="{'group_by':'transport_type_id'}"/>
+<!--                <filter string="Container Type" name="container_type_filter"-->
+<!--                        context="{'group_by':'container_type'}"/>-->
+                <filter string="Package Type" name="package_type_filter"
+                        context="{'group_by':'package_type'}"/>
+
+
+            </search>
+        </field>
+    </record>
+
+    <record id="product_template_tree_view_pricing2" model="ir.ui.view">
+        <field name="name">product.template.product.tree.pricing</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <tree string="Product" multi_edit="1" sample="1">
+                <header>
+                    <button string="Print Labels" type="object" name="action_open_label_layout"/>
+                </header>
+                <field name="priority" widget="priority" string="Priority"/>
+                <field name="name" string="Pricing ID"/>
+                <field name="transport_type_id"/>
+                <field name="pol_id"/>
+                <field name="pod_id"/>
+                <field name="list_price" string="Sale Rate (USD) "
+                       options="{'currency_field': 'currency_id'}" optional="false" decoration-muted="not sale_ok"/>
+                <field name="transit_time_duration" string="T.T" optional="false"/>
+                <field name="product_variant_count" column_invisible="True"/>
+                <!--                <field name="list_price" string="Rate" widget='monetary'-->
+                <!--                       options="{'currency_field': 'currency_id'}" optional="show" decoration-muted="not sale_ok"/>-->
+                <field name="sale_ok" column_invisible="True"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="expiration_date"/>
+                <field name="cost_currency_id" column_invisible="True"/>
+                <field name="standard_price" widget='monetary' options="{'currency_field': 'cost_currency_id'}"
+                       optional="show" readonly="1" column_invisible="True" string="Cost Rate (USD)"/>
+                <field name="p_user_ids" widget="many2many_avatar_user" optional="false"/>
+                <field name="uom_id" string="Unit" readonly="1" optional="show" groups="uom.group_uom"/>
+                <field name="active" column_invisible="True"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+                <field name="is_published" optional="false"/>
+                <field name="activity_ids" widget="list_activity"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_template_form_view_pricing2">
+        <field name="name">product.product.charge.types.form.view</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div name="button_box">
+                        <button class="oe_stat_button"
+                                name="action_open_documents"
+                                type="object"
+                                icon="fa-file-text-o">
+                            <field string="Documents" name="product_document_count" widget="statinfo"/>
+                        </button>
+                        <field name="is_published" widget="website_redirect_button"/>
+                        <button class="oe_stat_button" name="action_view_po" groups="purchase.group_purchase_user"
+                                type="object" icon="fa-credit-card"
+                                help="Purchased in the last 365 days">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value d-flex gap-1">
+                                    <field name="purchased_product_qty" widget="statinfo" nolabel="1"
+                                           class="oe_inline"/>
+                                    <field name="uom_name" class="oe_inline"/>
+                                </span>
+                                <span class="o_stat_text">Purchased</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" name="action_view_sales" type="object" icon="fa-signal"
+                                help="Sold in the last 365 days" groups="sales_team.group_sale_salesman">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value d-flex gap-1">
+                                    <field name="sales_count" widget="statinfo" nolabel="1" class="oe_inline"/>
+                                    <field name="uom_name" class="oe_inline"/>
+                                </span>
+                                <span class="o_stat_text">Sold</span>
+                            </div>
+                        </button>
+                        <!--                        <button name="%(product.product_variant_action)d" type="action" icon="fa-sitemap"-->
+                        <!--                                class="oe_stat_button"-->
+                        <!--                        >-->
+                        <!--                            <field string="Variants" name="product_variant_count" widget="statinfo"/>-->
+                        <!--                        </button>-->
+                    </div>
+                    <div class="oe_title">
+                        <h1 class="d-flex flex-row">
+                            <field name="priority" nolabel="1" widget="priority" class="me-2"/>
+                            <field name="name" options="{'line_breaks': False}" widget="text" class="o_text_overflow"
+                                   readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="p_user_ids" widget="many2many_avatar_user"
+                                   options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="transport_type_id" readonly="id != False" options="{'no_open': True}"/>
+                            <!--                            <field name="service_scope" invisible="transport_type_id not in (2, 3)"-->
+                            <!--                                   required="transport_type_id in (2, 3)"/>-->
+                            <field name="sale_ok" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="partner_id" options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="currency_id" options="{'no_edit': True, 'no_create': True}" readonly="0"
+                                   invisible="1"/>
+                            <field name="expiration_date"/>
+                            <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
+                                   domain="[('type', '=', 'sea')]" options="{'no_open': True}"/>
+                            <field name="shipment_scope_id" invisible="transport_type_id not in [3]"
+                                   domain="[('type', '=', 'inland')]" options="{'no_open': True}"/>
+                            <field name="currency_rate" invisible="1"/>
+                        </group>
+                    </group>
+                    <group name="pricing_info" string="PRICING DETAILS">
+                        <group>
+                            <field name="container_type"
+                                   invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="package_type" options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                   invisible="transport_type_id not in [1,2,3] or shipment_scope_id in [1,3]"/>
+
+                            <field name="commodity_id" options="{'no_edit': True, 'no_create': True}"
+                                   invisible="1"/>
+                            <label for="transit_time_duration" string="Transit Time"/>
+                            <div style="display: flex; align-items: center;">
+                                <field name="transit_time_duration"/>
+                                <div class="o_form_label">Days</div>
+                            </div>
+                            <label for="free_time_duration" string="Free Time" invisible="transport_type_id in [1]"/>
+                            <div style="display: flex; align-items: center;" invisible="transport_type_id in [1]">
+                                <field name="free_time_duration"/>
+                                <div class="o_form_label">Days</div>
+                            </div>
+                        </group>
+                        <group>
+
+                            <field name="pol_id" domain="[('type_id', '=', transport_type_id)]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="pod_id" domain="[('type_id', '=', transport_type_id)]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="air_line" invisible="transport_type_id not in [1]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <!--                                                        <field name="package_type" invisible="transport_type_id not in [1]"-->
+                            <!--                                                               domain="[('tag_type_ids.name', '=', 'AIR')]"-->
+                            <!--                                   options="{'no_edit': True, 'no_create': True}"/>-->
+                            <!--                                                        <field name="container_type" invisible="shipment_scope_id not in [1,3]"-->
+                            <!--                                                               options="{'no_edit': True, 'no_create': True}"/>-->
+                            <!--                            <field name="package_type_1" invisible="shipment_scope_id not in [2]"-->
+                            <!--                                   options="{'no_edit': True, 'no_create': True}"-->
+                            <!--                                   domain="[('tag_type_ids.name', '=', 'LCL')]"/>-->
+                            <!--                            <field name="package_type_1" invisible="shipment_scope_id not in [4]"-->
+                            <!--                                   options="{'no_edit': True, 'no_create': True}"-->
+                            <!--                            />-->
+                            <field name="shipping_line" invisible="transport_type_id not in [2]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="trucker" invisible="transport_type_id not in [3]"
+                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                            <field name="scope_ids" widget="many2many_tags"
+                                   options="{'no_edit': True, 'no_create': True}"/>
+
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Charges" name="charges">
+                            <field name="pricing_charge_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id_2"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                    <field name="package_type"
+                                           column_invisible="parent.transport_type_id not in [1,2,3] or parent.shipment_scope_id in [1,3]"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                           optional="false"/>
+                                    <field name="container_type"
+                                           column_invisible="parent.transport_type_id in [1] or parent.shipment_scope_id not in [1,3]"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                           optional="false"/>
+                                    <field name="cost_price"/>
+                                    <field name="sale_price"/>
+                                    <field name="currency_id"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                    <field name="qty" column_invisible="1"/>
+                                    <field name="ex_rate"/>
+                                    <field name="cost_main_curr" optional="false"/>
+                                    <field name="cost_usd" optional="false"/>
+                                    <field name="sale_main_curr" optional="false"/>
+                                    <field name="sale_usd"/>
+                                    <field name="company_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                            <div class="row">
+                                <div name="total_currency_for_cost" class="col">
+                                    <label for="tot_cost">Cost Per Currency</label>
+                                    <field name="tot_cost" nolabel="1">
+                                        <tree edit="0" delete="0" create="0" no_open="True">
+                                            <field name="currency_id"/>
+                                            <field name="amount"/>
+                                        </tree>
+                                    </field>
+                                </div>
+                                <div name="total_currency_for_sale" class="col">
+                                    <label for="tot_sale">Sales Per Currency</label>
+                                    <field name="tot_sale" nolabel="1">
+                                        <tree edit="0" delete="0" create="0" no_open="True">
+                                            <field name="currency_id"/>
+                                            <field name="amount"/>
+                                        </tree>
+                                    </field>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col" style="text-align:right">
+                                    <field name="currency_id" invisible="1"/>
+                                    Total Sale in USD
+                                    <field name="total_sale_in_usd"/>
+                                    <br/>
+                                    Total Cost in USD
+                                    <field name="total_cost_in_usd"/>
+                                    <br/>
+                                    Expected Revenue
+                                    <field name="expected_revennue"/>
+                                </div>
+                            </div>
+
+
+                        </page>
+                        <page string="General Information">
+                            <group>
+                                <group>
+                                    <field name="detailed_type" invisible="1"/>
+                                    <field name="standard_price" string="Total Cost in USD" readonly="1"/>
+                                    <field name="categ_id" string="Pricing Category"
+                                           ptions="{'no_edit': True, 'no_create': True}"/>
+                                    <field name="default_code"/>
+                                    <field name="barcode"/>
+                                    <field name="product_tag_ids" widget="many2many_tags"
+                                           context="{'product_template_id': id}"/>
+                                    <button name="%(product.product_tag_action)d" icon="oi-arrow-right" type="action"
+                                            class="btn-link ps-0" colspan="2" string="Configure tags"/>
+
+                                </group>
+                                <group>
+                                    <field name="list_price" string="Total Sale in USD" readonly="1"/>
+                                    <field name="taxes_id" widget="many2many_tags"/>
+
+                                </group>
+                            </group>
+                            <group string="Internal Notes">
+                                <field colspan="2" name="description" nolabel="1"
+                                       placeholder="This note is only for internal purposes."/>
+                            </group>
+                        </page>
+                        <page name="variants" string="Attributes &amp; Variants" groups="product.group_product_variant">
+                            <field name="attribute_line_ids" widget="one2many" context="{'show_attribute': False}">
+                                <tree string="Variants" editable="bottom" decoration-info="value_count &lt;= 1">
+                                    <field name="value_count" column_invisible="True"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="attribute_id" readonly="id"/>
+                                    <field name="value_ids" widget="many2many_tags"
+                                           options="{'no_create_edit': True, 'color_field': 'color'}"
+                                           context="{'default_attribute_id': attribute_id, 'show_attribute': False}"/>
+                                    <button string="Configure" class="float-end btn-secondary"
+                                            type="object" name="action_open_attribute_values"
+                                            groups="product.group_product_variant"/>
+                                </tree>
+                            </field>
+                            <p class="oe_grey oe_edit_only">
+                                <strong>Warning</strong>: adding or deleting attributes
+                                will delete and recreate existing variants and lead
+                                to the loss of their possible customizations.
+                            </p>
+                        </page>
+                        <page string="Sales" name="sales">
+                            <group name="sale">
+                                <group string="Upsell &amp; Cross-Sell" name="upsell" invisible="1"/>
+                                <group string="eCommerce Shop" name="shop" invisible="not sale_ok">
+                                    <field name="website_url" invisible="1"/>
+                                    <field name="website_id" options="{'no_create': True}"
+                                           groups="website.group_multi_website"/>
+                                    <field name="website_sequence" groups="base.group_no_one"/>
+                                    <field name="public_categ_ids" widget="many2many_tags" string="Categories"/>
+                                    <field name="website_ribbon_id" groups="base.group_no_one"
+                                           options="{'no_quick_create': True}"/>
+                                </group>
+                                <group name="product_template_images" string="Extra Product Media"
+                                       invisible="not sale_ok">
+                                    <field name="product_template_image_ids" class="o_website_sale_image_list"
+                                           context="{'default_name': name}" mode="kanban" add-label="Add a Media"
+                                           nolabel="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Sales Description" name="description">
+                                    <field colspan="2" name="description_sale" nolabel="1"
+                                           placeholder="This note is added to sales orders and invoices."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Purchase">
+                            <field name="seller_ids">
+                                <tree editable="bottom">
+                                    <field name="partner_id"
+                                           domain="[('partner_type_id', 'in', [11,12,7,4,5]), ('is_company', '=', True)]"/>
+                                    <field name="tt_days"/>
+                                    <field name="service_grade"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+
+                        </page>
+                        <page string="Vessels">
+                            <field name="vessel_line_ids">
+                                <tree editable="bottom">
+                                    <field name="vessel_id"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                    <field name="voyage_number"/>
+                                    <field name="etd"/>
+                                    <field name="eta"/>
+                                    <field name="tt_day"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rate Conditions">
+                            <group>
+                                <group>
+                                    <!--                            <label for="conndition_ids" string="Terms &amp; Conditions" class="o_form_label"/>-->
+                                    <field name="conndition_ids" class="o_form_field_spacing"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                </group>
+                            </group>
+                            <field name="condition_test"/>
+                        </page>
+                        <page string="Accounting" name="invoicing"
+                              groups="account.group_account_readonly,account.group_account_invoice">
+                            <group name="properties" groups="account.group_account_readonly">
+                                <group string="Receivables">
+                                    <field name="property_account_income_id"
+                                           groups="account.group_account_readonly"/>
+                                </group>
+                                <group string="Payables" name="payables">
+                                    <field name="property_account_expense_id"
+                                           groups="account.group_account_readonly"/>
+                                </group>
+                            </group>
+                            <group name="accounting"
+                                   groups="account.group_account_readonly,account.group_account_invoice"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_template_form_view_inherit">
+        <field name="name">product.inheritt</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <button name="%(product.product_variant_action)d" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <page name="variants" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </page>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_template_kanban_stock_view2">
+        <field name="name">Product Template Kanban Stock2</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="currency_id"/>
+                <field name="expiration_date"/>
+                <field name="p_user_ids"/>
+                <field name="activity_ids"/>
+                <field name="transport_type_id"/>
+                <field name="pol_id"/>
+                <field name="pod_id"/>
+                <field name="is_published"/>
+            </xpath>
+
+            <xpath expr="//div[hasclass('o_kanban_image')]" position="replace">
+            </xpath>
+
+
+            <div name="product_lst_price" position="before">
+                <div name="transport_type_id" class="mt-1">
+                    Type:
+                    <field name="transport_type_id"/>
+                </div>
+                <div name="transport_type_id" class="mt-1">
+                    POL:
+                    <field name="pol_id"/>
+                </div>
+                <div name="transport_type_id" class="mt-1">
+                    POD:
+                    <field name="pod_id"/>
+                </div>
+            </div>
+            <div name="product_lst_price" position="replace">
+                <div name="product_lst_price" class="mt-1">
+                    Sales Rate (USD):
+                    <field name="list_price"
+                           options="{'currency_field': 'currency_id', 'field_digits': True}"/>
+                </div>
+            </div>
+            <div name="product_lst_price" position="after">
+                <div name="product_date" class="mt-1">
+                    Expiration Date:
+                    <field name="expiration_date"/>
+                </div>
+                <div class="border-top mt-2 pt-2">
+                    <field name="is_published" widget="boolean_toggle"/>
+                    <t t-if="record.is_published.raw_value">Published</t>
+                    <t t-else="">Not Published</t>
+                </div>
+                <div>
+                    <field name="activity_ids" widget="kanban_activity"/>
+                </div>
+            </div>
+
+        </field>
+    </record>
+
+    <record id="sequence_product_template" model="ir.sequence">
+        <field name="name">Product</field>
+        <field name="code">product.template</field>
+        <field name="active">TRUE</field>
+        <field name="prefix">%(prefix)s/%(y)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</odoo>

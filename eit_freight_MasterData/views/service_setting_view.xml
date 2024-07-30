@@ -1,0 +1,193 @@
+<odoo>
+    <!--    clearnce type-->
+    <record model="ir.ui.view" id="clearence_type_search">
+        <field name="name">Clearance Type</field>
+        <field name="model">clearence.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="clearance_type_list">
+        <field name="name">Clearance Type</field>
+        <field name="model">clearence.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_clearance_type">
+        <field name="name">Clearance Type</field>
+        <field name="res_model">clearence.type</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!--    clearnace type-->
+
+    <!--    service scope-->
+
+    <record model="ir.ui.view" id="service_acopr_search">
+        <field name="name">Service Scope</field>
+        <field name="model">service.scope</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="service_scope_form">
+        <field name="name">Service Scope</field>
+        <field name="model">service.scope</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="service_scope_list">
+        <field name="name">Service Scope</field>
+        <field name="model">service.scope</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_service_scope">
+        <field name="name">Service Scope</field>
+        <field name="res_model">service.scope</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    service scope-->
+
+    <!--    tracking stage-->
+    <record model="ir.ui.view" id="tracking_stage_search">
+        <field name="name">Tracking Stages</field>
+        <field name="model">tracking.stage</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|',('name', 'ilike', self),
+                ('code', 'ilike', self)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                <filter name="clearance" string="Clearance" domain="[('stage_clearence', '=', True)]"/>
+                <filter name="freight" string="Freight" domain="[('stage_frieght', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="tracking_stage_form">
+        <field name="name">Tracking Stages</field>
+        <field name="model">tracking.stage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="docs_type" widget="radio" invisible="1"/>
+                            <field name="stage_frieght" widget="boolean_toggle"/>
+                            <field name="stage_clearence" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="tracking_stage_list">
+        <field name="name">Tracking Stages</field>
+        <field name="model">tracking.stage</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="stage_frieght" widget="boolean_toggle"/>
+                <field name="stage_clearence" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_tracking_stage">
+        <field name="name">Tracking Stages</field>
+        <field name="res_model">tracking.stage</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    tracking stage-->
+    <!--    activity type-->
+    <record model="ir.ui.view" id="activity_type_search">
+        <field name="name">Activity Type</field>
+        <field name="model">activity.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="activity_type_form">
+        <field name="name">Activity Type</field>
+        <field name="model">activity.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="activity_type_list">
+        <field name="name">Activity Type</field>
+        <field name="model">activity.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_activiy_type">
+        <field name="name">Activity Type</field>
+        <field name="res_model">activity.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    activity type-->
+    <menuitem name="Service Settings" id="menu_service_settings" parent="menu_freight" sequence="3"/>
+    <menuitem name="Service Scope" id="menu_service_scope" parent="menu_service_settings"
+              action="action_service_scope" sequence="2"/>
+    <menuitem name="Clearance Type" id="menu_clearance_type" parent="menu_service_settings"
+              action="action_clearance_type" sequence="3"/>
+    <menuitem name="Tracking Stages" id="menu_tracking_stage" parent="menu_service_settings"
+              action="action_tracking_stage" sequence="4"/>
+    <menuitem name="Activity Type" id="menu_activity_type" parent="menu_service_settings"
+              action="action_activiy_type" sequence="5"/>
+    <menuitem name="Incoterms" id="menu_Incoterms" parent="menu_service_settings"
+              action="account.action_incoterms_tree" sequence="6"/>
+</odoo>
