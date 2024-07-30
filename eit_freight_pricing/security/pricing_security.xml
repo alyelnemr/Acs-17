@@ -18,6 +18,7 @@
         <field name="name">Administrator</field>
         <field name="category_id" ref="module_category_pricing"/>
         <field name="implied_ids" eval="[(4, ref('group_pricing_manager'))]"/>
+        <field name="users" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
     </record>
     <record id="base.default_user" model="res.users">
         <field name="groups_id" eval="[(4,ref('group_prcing_user'))]"/>
@@ -36,18 +37,18 @@
         <field name="domain_force">[(1, '=',1)]</field>
     </record>
 
-<!--    <record model="ir.rule" id="team_price_user">-->
-<!--        <field name="name">User: Own Documents Only</field>-->
-<!--        <field name="model_id" ref="product.model_product_template"/>-->
-<!--        <field name="domain_force">-->
-<!--            [('p_user_ids','in',user),-->
+    <!--    <record model="ir.rule" id="team_price_user">-->
+    <!--        <field name="name">User: Own Documents Only</field>-->
+    <!--        <field name="model_id" ref="product.model_product_template"/>-->
+    <!--        <field name="domain_force">-->
+    <!--            [('p_user_ids','in',user),-->
 
-<!--            ]-->
-<!--        </field>-->
-<!--        <field name="groups" eval="[(4, ref('group_prcing_user'))]"/>-->
-<!--        <field name="perm_read" eval="True"/>-->
-<!--        <field name="perm_write" eval="True"/>-->
-<!--        <field name="perm_create" eval="True"/>-->
-<!--        <field name="perm_unlink" eval="False"/>-->
-<!--    </record>-->
+    <!--            ]-->
+    <!--        </field>-->
+    <!--        <field name="groups" eval="[(4, ref('group_prcing_user'))]"/>-->
+    <!--        <field name="perm_read" eval="True"/>-->
+    <!--        <field name="perm_write" eval="True"/>-->
+    <!--        <field name="perm_create" eval="True"/>-->
+    <!--        <field name="perm_unlink" eval="False"/>-->
+    <!--    </record>-->
 </odoo>
