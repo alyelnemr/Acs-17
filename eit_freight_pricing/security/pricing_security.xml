@@ -1,0 +1,53 @@
+<odoo>
+    <record model="ir.module.category" id="module_category_pricing">
+        <field name="name">Pricing</field>
+        <field name="parent_id" ref="base.module_category_inventory"/>
+        <field name="sequence">50</field>
+        <field name="visible" eval="0"/>
+    </record>
+    <record model="res.groups" id="group_prcing_user">
+        <field name="name">User: Own Documents Only</field>
+        <field name="category_id" ref="module_category_pricing"/>
+    </record>
+    <record model="res.groups" id="group_pricing_manager">
+        <field name="name">User: All Documents</field>
+        <field name="category_id" ref="module_category_pricing"/>
+        <field name="implied_ids" eval="[(4, ref('group_prcing_user'))]"/>
+    </record>
+    <record model="res.groups" id="group_pricing_admin">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_pricing"/>
+        <field name="implied_ids" eval="[(4, ref('group_pricing_manager'))]"/>
+    </record>
+    <record id="base.default_user" model="res.users">
+        <field name="groups_id" eval="[(4,ref('group_prcing_user'))]"/>
+    </record>
+
+    <record id="team_admin_pricing" model="ir.rule">
+        <field name="name">Admin can see All</field>
+        <field name="model_id"
+               ref="product.model_product_template"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="groups"
+               eval="[(4, ref ('group_pricing_admin'))]"/>
+        <field name="domain_force">[(1, '=',1)]</field>
+    </record>
+
+<!--    <record model="ir.rule" id="team_price_user">-->
+<!--        <field name="name">User: Own Documents Only</field>-->
+<!--        <field name="model_id" ref="product.model_product_template"/>-->
+<!--        <field name="domain_force">-->
+<!--            [('p_user_ids','in',user),-->
+
+<!--            ]-->
+<!--        </field>-->
+<!--        <field name="groups" eval="[(4, ref('group_prcing_user'))]"/>-->
+<!--        <field name="perm_read" eval="True"/>-->
+<!--        <field name="perm_write" eval="True"/>-->
+<!--        <field name="perm_create" eval="True"/>-->
+<!--        <field name="perm_unlink" eval="False"/>-->
+<!--    </record>-->
+</odoo>
