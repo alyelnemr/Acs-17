@@ -15,7 +15,7 @@
                     <a t-att-href="record.website.raw_value" target="_blank" invisible="website != ''"
                        class="btn btn-sm btn-secondary float-end o-hidden-ios" role="button">Learn More
                     </a>
-                    <a type="edit" class="btn btn-secondary btn-sm float-end" role="button"
+                    <a type="edit" class="btn btn-secondary btn-sm float-end" role="button" t-att-href="record.website.raw_value"
                        invisible="website in (False, '')">
                         Module
                         Info
