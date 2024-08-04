@@ -45,7 +45,7 @@ class Task(models.Model):
     pod = fields.Many2one('port.cites', string="POD(Info)", compute="compute_pod")
     pickup_address = fields.Text(string="Pickup Address")
     delivery_address = fields.Text(string="Delivery Address")
-    vessel_id = fields.Many2one('fright.vessels', string="Vessel")
+    vessel_id = fields.Many2one('freight.vessels', string="Vessel")
     voyage = fields.Text(string="Voyage")
     etd = fields.Date(string="ETD")
     atd = fields.Date(string="ATD")
@@ -250,16 +250,16 @@ class Task(models.Model):
     #             task.stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
     #     return res
 
-    @api.onchange('state')
-    def _onchange_state(self):
-        if self.state == '1_under_settlement':
-            self.stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
-        elif self.state in ['01_in_progress', '02_changes_requested', '03_approved']:
-            self.stage_id = self.env.ref('eit_freight_operation.stage_open').id
-        elif self.state == '1_done':
-            self.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
-        elif self.state == '1_canceled':
-            self.stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
+    # @api.onchange('state')
+    # def _onchange_state(self):
+    #     if self.state == '1_under_settlement':
+    #         self.stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
+    #     elif self.state in ['01_in_progress', '02_changes_requested', '03_approved']:
+    #         self.stage_id = self.env.ref('eit_freight_operation.stage_open').id
+    #     elif self.state == '1_done':
+    #         self.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
+    #     elif self.state == '1_canceled':
+    #         self.stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
 
     @api.onchange('state')
     def _onchange_state_closed(self):
@@ -321,46 +321,6 @@ class OptPartners(models.Model):
     company_id = fields.Many2one('res.company', string="Company")
 
 
-class ShippingPackages(models.Model):
-    _name = "shipping.pacckage"
-    _description = "Shipping packages"
-
-    package_type_id = fields.Many2one('package.type', string="Package")
-    quantity = fields.Integer(string="Qty")
-    length = fields.Float(string="Length")
-    width = fields.Float(string="Width")
-    height = fields.Float(string="Height")
-    volume = fields.Float(string="Volume", )
-    net_wight = fields.Float(string="NetWt(KG)")
-    gross_weight = fields.Float(string="Gross(KG)")
-    commodity_id = fields.Many2one('commodity.data', string="Commodity")
-    imo = fields.Boolean(string="IMO")
-    ref = fields.Boolean(string="REF")
-    un_number = fields.Many2many('ir.attachment', string="UN Number")
-    task_id_shipping = fields.Many2one('project.task')
-    volume_wt = fields.Float(string="VOL WT")
-    chw = fields.Float(string="CHW")
-    temperature = fields.Integer(string="Temperature")
-    loading_instruction = fields.Html(string="Notes")
-
-    @api.onchange('volume', 'width', 'height', 'length')
-    def compute_volume(self):
-        for rec in self:
-            if rec.length and rec.width and rec.height:
-                rec.volume = rec.length * rec.width * rec.height
-                rec.volume_wt = (rec.length * rec.width * rec.height) / 6000
-            else:
-                rec.volume = 0
-                rec.volume_wt = 0
-
-    @api.onchange('gross_weight', 'volume_wt')
-    def onchange_volume_wt(self):
-        if self.volume_wt < self.gross_weight:
-            self.chw = self.gross_weight
-        else:
-            self.chw = self.volume_wt
-
-
 class HouseBl(models.Model):
     _name = "house.bl"
     _description = "House bl"
@@ -370,32 +330,3 @@ class HouseBl(models.Model):
     do_no = fields.Char(string="D/O No")
     war_house = fields.Char(string="Ware House")
     bl_task_id = fields.Many2one('project.task')
-
-
-class ContainerData(models.Model):
-    _inherit = 'container.data'
-    _description = "Container data"
-
-    loading_instruction = fields.Html(string="Loading Instructions")
-    is_save_container = fields.Boolean('Is Save Container?', store=True, default=True)
-
-    def save_container(self):
-        for record in self:
-            if record.name and record.container_id and record.container_type:
-                # Check if the container already exists
-                container_exists = self.env['container.data'].search([('name', '=', record.name)], limit=1).id
-                if not container_exists:
-                    self.env['container.data'].create({
-                        'name': record.name,
-                        'container_id': record.container_id.id,
-                        'container_type': record.container_type,
-                        'is_save_container': False
-                    })
-                    record.write({'is_save_container': False})
-                    self.env.cr.commit()
-
-                # else:
-                #     raise UserError('This container already exists.')
-            else:
-                raise UserError(
-                    'Please fill in the container number, Container Type, and Container ID before saving the container data.')

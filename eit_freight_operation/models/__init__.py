@@ -1,3 +1,4 @@
+from . import shipping_package
 from . import container_data
 from . import project_task
 from . import project_project
