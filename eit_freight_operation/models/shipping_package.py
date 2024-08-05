@@ -2,8 +2,8 @@ from odoo import models, fields, api
 
 
 class ShippingPackages(models.Model):
-    _name = "shipping.pacckage"
-    _description = "Shipping packages"
+    _name = "shipping.package"
+    _description = "Shipping Packages Lines"
 
     package_type_id = fields.Many2one('package.type', string="Package")
     quantity = fields.Integer(string="Qty")
@@ -22,6 +22,7 @@ class ShippingPackages(models.Model):
     chw = fields.Float(string="CHW")
     temperature = fields.Integer(string="Temperature")
     loading_instruction = fields.Html(string="Notes")
+    shipping_container_id = fields.Many2one('shipping.container.details', string="Container")
 
     @api.onchange('volume', 'width', 'height', 'length')
     def compute_volume(self):

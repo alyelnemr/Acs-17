@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
 
 from odoo import models, fields, api, _
 import datetime
@@ -37,22 +38,21 @@ class Task(models.Model):
     master_bl = fields.Text(string="Master B/L")
     opt_partners_lines = fields.One2many('opt.partners', 'task_id', string="Opt. Partners")
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Information")
-    shippinng_package_ids = fields.One2many('shipping.pacckage', 'task_id_shipping', string="Shipping Package")
-    shiiping_container_ids = fields.One2many('container.data', 'task_id_container', string="Container")
+    shipping_package_ids = fields.One2many('shipping.package', 'task_id_shipping', string="Shipping Package")
+    shipping_container_ids = fields.One2many('shipping.container', 'project_task_id', string="Container")
     master_bl_in = fields.Text(string="Master B/L(Info)", compute="compute_master_bl")
-    booking_no = fields.Text(string="Booking No")
+    booking_no = fields.Char(string="Booking No")
     pol = fields.Many2one('port.cites', string="POL(Info)", compute="compute_pol")
     pod = fields.Many2one('port.cites', string="POD(Info)", compute="compute_pod")
     pickup_address = fields.Text(string="Pickup Address")
     delivery_address = fields.Text(string="Delivery Address")
     vessel_id = fields.Many2one('freight.vessels', string="Vessel")
-    voyage = fields.Text(string="Voyage")
+    voyage_no = fields.Char(string="Voyage No")
     etd = fields.Date(string="ETD")
-    atd = fields.Date(string="ATD")
+    atd = fields.Date(string="Departure (ATD)")
     eta = fields.Date(string="ETA")
-    ata = fields.Date(string="ATA")
+    ata = fields.Date(string="Arrival (ATA)")
     transit_time = fields.Integer(string="Transit Time")
-    shippment_order_no = fields.Text(string="Shipping Order No")
     house_bl_id = fields.One2many('house.bl', 'bl_task_id', string="House B/L ")
     routing_types = fields.Selection(
         [('origin_route', 'Origin Route'), ('transist_route', 'Transit Route'), ('dest_route', 'Destination Route')],
@@ -83,6 +83,34 @@ class Task(models.Model):
     services = fields.Many2many('service.scope', string="Services")
     show_packages = fields.Boolean(string="Show Packages", default=False)
     show_containers = fields.Boolean(string="Show Containers", default=False)
+    show_transportation = fields.Boolean(string="Show Transportation", default=False)
+    show_transportation_inland = fields.Boolean(string="Show Transportation Inland", default=False)
+    show_bill_leading_details = fields.Boolean(string="Show Bill Leading Details", default=False)
+    bill_of_lading_issuance = fields.Date(string="Bill of Lading Issuance")
+    terminal_port_id = fields.Many2one(comodel_name='terminal.port', string="Terminal Port",
+                                       domain="[('warehouse', '=', False)]")
+    bill_lading_type_id = fields.Many2one(comodel_name='bill.leading.type', string="Bill Lading Type")
+    bill_lading_collection = fields.Selection([('prepaid', 'Prepaid'), ('collect', 'Collect')],
+                                              default='prepaid',
+                                              string="Bill Lading Collection")
+    delivery_order_no = fields.Char(string="Delivery Order No")
+    plane_name = fields.Char(string="Plane Name")
+    flight_no = fields.Char(string="Flight No")
+    truck_no = fields.Char(string="Truck No")
+    acid_no = fields.Char(string="ACID No")
+    acid_issuance_date = fields.Date(string="ACID Issuance Date")
+    foreign_exporter_id = fields.Char(string="Foreign Exporter ID")
+    foreign_exporter_country_id = fields.Many2one(comodel_name='res.country', string="Foreign Exporter Country")
+    acid_expiry_date = fields.Date(string="ACID Expiry Date")
+    is_house_bl = fields.Boolean(string="House B/L", default=False)
+    is_consolidation = fields.Boolean(string="Consolidation", default=False)
+    terminal_port_warehouse_id = fields.Many2one(comodel_name='terminal.port', string="Warehouse",
+                                                 domain="[('warehouse', '=', True)]")
+
+    @api.onchange('acid_issuance_date')
+    def _onchange_acid_issuance_date(self):
+        if self.acid_issuance_date:
+            self.acid_expiry_date = self.acid_issuance_date + relativedelta(months=6)
 
     @api.depends('transport_type_id')
     def _compute_pol_domain(self):
@@ -207,16 +235,24 @@ class Task(models.Model):
         for rec in self:
             rec.show_containers = False
             rec.show_packages = False
+            rec.show_transportation = False
+            rec.show_transportation_inland = False
+            rec.show_bill_leading_details = False
             if rec.transport_type_id.code == 'AIR':
                 rec.show_packages = True
-            if rec.transport_type_id.code == 'SEA' and rec.shipment_scope_id.code == 'LCL':
-                rec.show_packages = True
-            if rec.transport_type_id.code == 'LND' and rec.shipment_scope_id.code == 'LTL':
-                rec.show_packages = True
-            if rec.transport_type_id.code == 'SEA' and rec.shipment_scope_id.code == 'FCL':
-                rec.show_containers = True
-            if rec.transport_type_id.code == 'LND' and rec.shipment_scope_id.code == 'FTL':
-                rec.show_containers = True
+                rec.show_transportation = True
+            if rec.transport_type_id.code == 'SEA':
+                rec.show_bill_leading_details = True
+                if rec.shipment_scope_id.code == 'LCL':
+                    rec.show_packages = True
+                if rec.shipment_scope_id.code == 'FCL':
+                    rec.show_containers = True
+            if rec.transport_type_id.code == 'LND':
+                rec.show_transportation_inland = True
+                if rec.shipment_scope_id.code == 'LTL':
+                    rec.show_packages = True
+                if rec.shipment_scope_id.code == 'FTL':
+                    rec.show_containers = True
 
     @api.onchange('transport_type_id', 'clearence_type_id')
     def create_sequence(self):
@@ -330,7 +366,8 @@ class OptPartners(models.Model):
     _description = "Opt partners"
 
     partner_type_id = fields.Many2one('partner.type', string="Partner Type", required=True)
-    partner_id = fields.Many2one('res.partner', string="Company Name", domain="[('partner_type_id', '=', partner_type_id), ('is_company', '=', True)]")
+    partner_id = fields.Many2one('res.partner', string="Company Name",
+                                 domain="[('partner_type_id', '=', partner_type_id), ('is_company', '=', True)]")
     phone = fields.Char(related='partner_id.phone', string="Phone")
     email = fields.Char(related='partner_id.email', string="Email")
     sales_person = fields.Many2one(related='partner_id.user_id', string="Salesperson")

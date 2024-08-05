@@ -1,4 +1,4 @@
-id,container_id:id,name,container_type,partner_id:id,tare_weight
+id,container_type_id:id,name,container_is,partner_id:id,tare_weight
 container_data_1,demo_container_type_1,CMAU1803892 ,Dry,res_partner_8,2410
 container_data_2,demo_container_type_2,SEGU6111870 ,Dry,,3830
 container_data_3,demo_container_type_2,MEDU8346590 ,Dry,,3940
