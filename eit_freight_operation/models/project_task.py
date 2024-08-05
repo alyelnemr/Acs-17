@@ -81,6 +81,8 @@ class Task(models.Model):
     expecting_date_closing = fields.Date(string="Expecting Date Closing")
     should_set_date_closing = fields.Boolean(string="Should Set Date Closing", default=False)
     services = fields.Many2many('service.scope', string="Services")
+    show_packages = fields.Boolean(string="Show Packages", default=False)
+    show_containers = fields.Boolean(string="Show Containers", default=False)
 
     @api.depends('transport_type_id')
     def _compute_pol_domain(self):
@@ -200,8 +202,25 @@ class Task(models.Model):
                     "You can't choose the same port at two different locations."
                     "If you have internal transport at the same port, You can add it to the “Service” tab below after choosing the true destinations and saving")
 
+    @api.onchange('transport_type_id', 'shipment_scope_id')
+    def show_container_package(self):
+        for rec in self:
+            rec.show_containers = False
+            rec.show_packages = False
+            if rec.transport_type_id.code == 'AIR':
+                rec.show_packages = True
+            if rec.transport_type_id.code == 'SEA' and rec.shipment_scope_id.code == 'LCL':
+                rec.show_packages = True
+            if rec.transport_type_id.code == 'LND' and rec.shipment_scope_id.code == 'LTL':
+                rec.show_packages = True
+            if rec.transport_type_id.code == 'SEA' and rec.shipment_scope_id.code == 'FCL':
+                rec.show_containers = True
+            if rec.transport_type_id.code == 'LND' and rec.shipment_scope_id.code == 'FTL':
+                rec.show_containers = True
+
     @api.onchange('transport_type_id', 'clearence_type_id')
     def create_sequence(self):
+        self.shipment_scope_id = False
         if self.transport_type_id and self.clearence_type_id:
             name = self.env['ir.sequence'].next_by_code('project.task')
             current_year = datetime.datetime.now().year

@@ -92,6 +92,8 @@
                            options="{'no_open': True, 'no_create': True}"/>
                     <field name="should_set_date_closing" invisible="1"/>
                     <field name="state_selectable" invisible="1"/>
+                    <field name="show_packages" invisible="1"/>
+                    <field name="show_containers" invisible="1"/>
                     <field name="expecting_date_closing" readonly="stage_id == 3"
                            invisible="not should_set_date_closing" required="should_set_date_closing"/>
                 </xpath>
@@ -266,7 +268,7 @@
                         </field>
                     </page>
                     <page string="Containers"
-                          invisible="(not transport_type_id and not shipment_scope_id) or (transport_type_id in (2) and shipment_scope_id not in (1)) or (transport_type_id in (1)) or (transport_type_id in (3) and shipment_scope_id not in (2))">
+                          invisible="not show_containers">
                         <field name="shiiping_container_ids" readonly="stage_id == 3">
                             <kanban>
                                 <field name="container_type"/>
@@ -396,7 +398,7 @@
                         </field>
                     </page>
                     <page string="Packages"
-                          invisible="(not transport_type_id and not shipment_scope_id) or (transport_type_id in (2) and shipment_scope_id not in (2)) or (transport_type_id in (3) and shipment_scope_id not in (4))">
+                          invisible="not show_packages">
                         <field name="shippinng_package_ids" string="Package" readonly="stage_id == 3">
                             <kanban>
                                 <field name="package_type_id"/>
