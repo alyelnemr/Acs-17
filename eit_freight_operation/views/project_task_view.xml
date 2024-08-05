@@ -418,14 +418,16 @@
                                 <templates>
                                     <t t-name="kanban-box">
                                         <div t-attf-class="oe_kanban_global_click">
-                                            <table>
-                                                <tr>
-                                                    <td>
+                                            <table width="100%">
+                                                <tr width="100%">
+                                                    <td width="25%">
                                                         <strong>Package:</strong>
                                                     </td>
-                                                    <td width="25%">
+                                                    <td width="75%">
                                                         <field name="package_type_id"/>
                                                     </td>
+                                                </tr>
+                                                <tr width="100%">
                                                     <td>
                                                         <strong>Commodity:</strong>
                                                     </td>
@@ -435,14 +437,13 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Quantity:</strong>
+                                                        <strong>Qty:</strong>
                                                     </td>
                                                     <td>
                                                         <field name="quantity"/>
                                                     </td>
-
                                                     <td>
-                                                        <strong>Volume:</strong>
+                                                        <strong>CBM:</strong>
                                                     </td>
                                                     <td>
                                                         <field name="volume"/>
@@ -450,13 +451,13 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Net Weight:</strong>
+                                                        <strong>Net KG:</strong>
                                                     </td>
                                                     <td>
                                                         <field name="net_wight"/>
                                                     </td>
                                                     <td>
-                                                        <strong>Gross:</strong>
+                                                        <strong>Gross KG:</strong>
                                                     </td>
                                                     <td>
                                                         <field name="gross_weight"/>
@@ -494,11 +495,11 @@
                                             <field name="length"/>
                                             <field name="width"/>
                                             <field name="height"/>
-                                            <field name="volume" string="CBM"/>
+                                            <field name="volume"/>
                                             <field name="volume_wt" invisible="1"/>
                                             <field name="chw" invisible="parent.transport_type_id != 1"/>
-                                            <field name="net_wight" invisible="1"/>
-                                            <field name="gross_weight" string="Weight"/>
+                                            <field name="net_wight"/>
+                                            <field name="gross_weight"/>
                                         </group>
 
                                     </group>
@@ -554,7 +555,8 @@
                                 <field name="bill_lading_collection" widget="radio" readonly="stage_id == 3"/>
                                 <field name="delivery_order_no" readonly="stage_id == 3"/>
                                 <field name="is_house_bl" readonly="stage_id == 3" invisible="not show_containers"/>
-                                <field name="is_consolidation" readonly="stage_id == 3" invisible="not show_containers"/>
+                                <field name="is_consolidation" readonly="stage_id == 3"
+                                       invisible="not show_containers"/>
                                 <field name="terminal_port_warehouse_id" readonly="stage_id == 3"/>
                             </group>
                             <group>

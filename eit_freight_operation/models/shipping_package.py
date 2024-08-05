@@ -7,12 +7,12 @@ class ShippingPackages(models.Model):
 
     package_type_id = fields.Many2one('package.type', string="Package")
     quantity = fields.Integer(string="Qty")
-    length = fields.Float(string="Length")
-    width = fields.Float(string="Width")
-    height = fields.Float(string="Height")
-    volume = fields.Float(string="Volume", )
-    net_wight = fields.Float(string="NetWt(KG)")
-    gross_weight = fields.Float(string="Gross(KG)")
+    length = fields.Float(string="Length (CM)")
+    width = fields.Float(string="Width (CM)")
+    height = fields.Float(string="Height (CM)")
+    volume = fields.Float(string="Volume (CBM)")
+    net_wight = fields.Float(string="Net Weight (KG)")
+    gross_weight = fields.Float(string="Gross Weight (KG)")
     commodity_id = fields.Many2one('commodity.data', string="Commodity")
     imo = fields.Boolean(string="IMO")
     ref = fields.Boolean(string="REF")
@@ -24,15 +24,12 @@ class ShippingPackages(models.Model):
     loading_instruction = fields.Html(string="Notes")
     shipping_container_id = fields.Many2one('shipping.container.details', string="Container")
 
-    @api.onchange('volume', 'width', 'height', 'length')
+    @api.onchange('width', 'height', 'length')
     def compute_volume(self):
         for rec in self:
             if rec.length and rec.width and rec.height:
-                rec.volume = rec.length * rec.width * rec.height
+                rec.volume = rec.length * rec.width * rec.height / 1000000
                 rec.volume_wt = (rec.length * rec.width * rec.height) / 6000
-            else:
-                rec.volume = 0
-                rec.volume_wt = 0
 
     @api.onchange('gross_weight', 'volume_wt')
     def onchange_volume_wt(self):
