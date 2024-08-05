@@ -65,12 +65,20 @@ class Task(models.Model):
     sale_count = fields.Integer(string="Sale Orers", compute='get_sale_count')
     state = fields.Selection([
         ('01_in_progress', 'In Progress'),
-        ('02_changes_requested', 'Date Changed'),  # Updated from Changes Requested to Date Changed
-        ('03_approved', 'Arrived'),  # Updated from Approved to Arrived
+        ('02_changes_requested', 'Planned Date Changed'),  # Updated from Changes Requested to Date Changed
+        ('03_approved', 'Invoicing'),  # Updated from Approved to Arrived
         *CLOSED_STATES.items(),
         ('04_waiting_normal', 'Waiting'),
     ], string='State', copy=False, default='01_in_progress', required=True,
         readonly=False, store=True, index=True, tracking=True)
+    state_selectable = fields.Selection([
+        ('01_in_progress', 'In Progress'),
+        ('02_changes_requested', 'Planned Date Changed'),
+        ('03_approved', 'Invoicing'),
+        ('1_done', 'Closed',)
+    ], string='State', copy=False, default='01_in_progress', required=True)
+    expecting_date_closing = fields.Date(string="Expecting Date Closing")
+    should_set_date_closing = fields.Boolean(string="Should Set Date Closing", default=False)
     services = fields.Many2many('service.scope', string="Services")
 
     @api.depends('transport_type_id')
@@ -210,10 +218,12 @@ class Task(models.Model):
             vals['stage_id'] = project.type_ids[0].id  # Set the first stage as default
         if vals.get('state') == '1_under_settlement':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
-        elif vals.get('state') in ['01_in_progress', '02_changes_requested', '03_approved']:
+        elif vals.get('state') in ['01_in_progress', '02_changes_requested']:
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_open').id
         elif vals.get('state') == '1_done':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_closed').id
+        elif vals.get('state') == '03_approved':
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
         elif vals.get('state') == '1_canceled':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
         return super(Task, self).create(vals)
@@ -221,21 +231,35 @@ class Task(models.Model):
     def write(self, vals):
         # Prevent recursion by checking if the stage change is necessary
         for task in self:
-            new_state = vals.get('state', task.state)
-            if new_state == '1_under_settlement':
-                new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
-            elif new_state in ['01_in_progress', '02_changes_requested', '03_approved']:
-                new_stage_id = self.env.ref('eit_freight_operation.stage_open').id
-            elif new_state == '1_done':
-                new_stage_id = self.env.ref('eit_freight_operation.stage_closed').id
-            elif new_state == '1_canceled':
-                new_stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
-            else:
-                new_stage_id = task.stage_id.id
+            new_state = vals.get('state_selectable', False)
+            is_admin = self.env.user.has_group('eit_freight_MasterData.group_freight_admin')
+            if new_state:
+                vals['should_set_date_closing'] = False
+                if new_state != '1_done' and task.state == '1_done' and not is_admin:
+                    raise UserError('Only Admin can restore task from closed state')
+                if new_state != '1_done' and task.state == '1_done' and is_admin:
+                    vals['should_set_date_closing'] = True
+                    vals['expecting_date_closing'] = datetime.date.today() + timedelta(days=1)
+                if new_state == '1_under_settlement':
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
+                elif new_state in ['01_in_progress', '02_changes_requested']:
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_open').id
+                elif new_state == '1_done' and is_admin:
+                    vals['should_set_date_closing'] = False
+                    vals['expecting_date_closing'] = False
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_closed').id
+                elif new_state == '1_canceled':
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
+                elif new_state == '03_approved':
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
+                else:
+                    new_stage_id = task.stage_id.id
 
-            vals['stage_id'] = new_stage_id
+                vals['stage_id'] = new_stage_id
+                vals['state'] = new_state
 
         return super(Task, self).write(vals)
+
 
     # def write(self, vals):
     #     res = super(Task, self).write(vals)
