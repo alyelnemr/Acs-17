@@ -75,6 +75,7 @@ class Task(models.Model):
         ('01_in_progress', 'In Progress'),
         ('02_changes_requested', 'Planned Date Changed'),
         ('03_approved', 'Invoicing'),
+        ('1_canceled', 'Canceled'),
         ('1_done', 'Closed',)
     ], string='State', copy=False, default='01_in_progress', required=True)
     expecting_date_closing = fields.Date(string="Expecting Date Closing")
@@ -260,31 +261,6 @@ class Task(models.Model):
 
         return super(Task, self).write(vals)
 
-
-    # def write(self, vals):
-    #     res = super(Task, self).write(vals)
-    #     for task in self:
-    #         if task.state == '1_under_settlement':
-    #             task.stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
-    #         elif task.state in ['01_in_progress', '02_changes_requested', '03_approved']:
-    #             task.stage_id = self.env.ref('eit_freight_operation.stage_open').id
-    #         elif task.state == '1_done':
-    #             task.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
-    #         elif task.state == '1_canceled':
-    #             task.stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
-    #     return res
-
-    # @api.onchange('state')
-    # def _onchange_state(self):
-    #     if self.state == '1_under_settlement':
-    #         self.stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
-    #     elif self.state in ['01_in_progress', '02_changes_requested', '03_approved']:
-    #         self.stage_id = self.env.ref('eit_freight_operation.stage_open').id
-    #     elif self.state == '1_done':
-    #         self.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
-    #     elif self.state == '1_canceled':
-    #         self.stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
-
     @api.onchange('state')
     def _onchange_state_closed(self):
         for task in self:
@@ -334,8 +310,8 @@ class OptPartners(models.Model):
     _name = "opt.partners"
     _description = "Opt partners"
 
-    partner_type_id = fields.Many2one('partner.type', string="Partner Type")
-    partner_id = fields.Many2one('res.partner', string="Company Name")
+    partner_type_id = fields.Many2one('partner.type', string="Partner Type", required=True)
+    partner_id = fields.Many2one('res.partner', string="Company Name", domain="[('partner_type_id', '=', partner_type_id), ('is_company', '=', True)]")
     phone = fields.Char(related='partner_id.phone', string="Phone")
     email = fields.Char(related='partner_id.email', string="Email")
     sales_person = fields.Many2one(related='partner_id.user_id', string="Salesperson")
