@@ -30,10 +30,19 @@ class ContainerData(models.Model):
                 rec.toggle_active()
 
     def create(self, vals_list):
-        if self.check_container_number(vals_list['name']):
-            for key, value in vals_list.items():
-                if isinstance(value, str):
-                    vals_list[key] = value.strip()
+        # Check if vals_list is a list
+        if isinstance(vals_list, list):
+            for vals in vals_list:
+                if self.check_container_number(vals.get('name', '')):
+                    for key, value in vals.items():
+                        if isinstance(value, str):
+                            vals[key] = value.strip()
+            return super(ContainerData, self).create(vals_list)
+        else:
+            if self.check_container_number(vals_list.get('name', '')):
+                for key, value in vals_list.items():
+                    if isinstance(value, str):
+                        vals_list[key] = value.strip()
             return super(ContainerData, self).create(vals_list)
 
     def write(self, vals_list):
@@ -64,4 +73,3 @@ class ContainerData(models.Model):
             raise UserError("The number should contain 4 Capital letters Must ended By (U) & 7 numbers")
         else:
             return True
-
