@@ -9,6 +9,10 @@
                 <attribute name="invisible">True</attribute>
                 <attribute name="string">Operations</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="force_save">True</attribute>
+                <attribute name="readonly">True</attribute>
+            </xpath>
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="domain">[("partner_type_id", "=", [1])]</attribute>
                 <attribute name="force_save">1</attribute>

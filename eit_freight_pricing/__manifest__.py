@@ -2,11 +2,9 @@
 {
     'name': "Pricing",
 
-    'summary': "The pricing module is for publishing shipping rates on the website with integration to get a Quote or Make a booking online",
+    'summary': """Freight Forwarding Pricing""",
 
-    'description': """
-    The pricing module is for publishing shipping rates on the website with integration to get a Quote or Make a booking online, as we can request prices and RFQ to compare the rates
-    """,
+    'description': """The pricing module is for publishing shipping rates on the website with integration to get a Quote or Make a booking online""",
 
     'author': "EIT-Hub (Expert Information Technology) ",
     'website': "www.eit-hub.com",
@@ -32,6 +30,5 @@
     'installable': True,
     'application': True,
     'auto_install': True,
-    'post_init_hook': 'post_init_hook',
     'license': 'LGPL-3',
 }

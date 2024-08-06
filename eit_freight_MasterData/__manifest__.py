@@ -7,7 +7,7 @@
     This module is provided to handle all kinds of freight operations and integrated with the customer portal on the website to follow the shipments
     """,
     'author': 'EIT-Hub (Expert Information Technology)',
-    'website': 'www.eit-hub.com',
+    'website': 'http://www.eit-hub.com',
     'category': 'Services/Freight',
     "depends": ["base", 'mail', 'contacts', 'account', 'product', 'hr_expense', 'purchase', 'sale', 'sale_expense',
                 'spreadsheet_dashboard_hr_expense'],

@@ -7,7 +7,7 @@
         </record>
         <record id="stage_invoice" model="project.task.type">
             <field name="sequence">10</field>
-            <field name="name">Invoiced</field>
+            <field name="name">Invoicing</field>
         </record>
         <record id="stage_closed" model="project.task.type">
             <field name="sequence">20</field>
