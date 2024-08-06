@@ -6,7 +6,7 @@ class InheritResPartner(models.Model):
 
     partner_type_id = fields.Many2many('partner.type', string="Partner Type", required=True)
     excecuters = fields.Many2many('res.users', string="Executors")
-    partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type", compute="compute_partner_type_id_1")
+    partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type1", compute="compute_partner_type_id_1")
 
     def compute_partner_type_id_1(self):
         for rec in self:

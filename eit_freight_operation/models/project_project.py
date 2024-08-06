@@ -24,6 +24,8 @@ class Project(models.Model):
 
     @api.model
     def create(self, vals):
+        if not vals.get('name') or vals.get('name') == _('New') or vals.get('name') == False:
+            vals['name'] = self.env['res.partner'].browse(vals.get('partner_id')).name
         if not vals.get('type_ids'):
             vals['type_ids'] = [(6, 0, self._get_default_stages())]
         return super(Project, self).create(vals)

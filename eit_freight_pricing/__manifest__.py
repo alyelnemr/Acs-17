@@ -15,7 +15,7 @@
                 'mail', 'website_sale', 'hr_expense'],
 
     'data': [
-        'security/pricing_secuirity.xml',
+        'security/pricing_security.xml',
         'security/ir.model.access.csv',
         'security/stage_pricing_data.xml',
         'views/product_template_view.xml',
@@ -23,13 +23,12 @@
         'views/request_price_view.xml',
         'views/purchase_order_view.xml',
         'views/sale_order_view.xml',
-        'wizard/requst_price_vendor_view.xml',
+        'wizard/request_price_vendor_view.xml',
 
     ],
 
     'installable': True,
     'application': True,
     'auto_install': True,
-    'post_init_hook': 'post_init_hook',
     'license': 'LGPL-3',
 }

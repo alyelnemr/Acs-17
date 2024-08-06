@@ -16,10 +16,9 @@ class CommodityData(models.Model):
     tax = fields.Integer(string="Import Tax")
     vat = fields.Integer(string="Vat")
     group_id = fields.Many2one('commodity.group', string="Commodity Group")
-    type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Equip')
+    type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Type')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status', readonly=True)
-    tag_id = fields.Many2one('frieght.tags', string="Tags One")
-    active1 = fields.Boolean(string='Status', default=True)
+    active = fields.Boolean(string='Active', default=True)
     import_approval = fields.One2many('commodity.data.approval.import', 'approval_data_id_import'
                                       , string="Import Approvals")
     export_approval = fields.One2many('commodity.data.approval.export', 'approval_data_id_export'
@@ -31,13 +30,13 @@ class CommodityData(models.Model):
     industry_id = fields.Many2one(
         comodel_name='res.partner.industry', string="Industry")
     req_id = fields.Many2many('commodity.req', string="Commodity Equip")
-    tag_id_1 = fields.Many2many('frieght.tags', string="Tags")
+    tag_ids = fields.Many2many('frieght.tags', string="Tags")
     export_tax = fields.Integer(string="Export Tax")
 
-    @api.onchange('active1')
+    @api.onchange('active')
     def _onchange_active(self):
         for rec in self:
-            if not rec.active1:
+            if not rec.active:
                 rec.toggle_active()
 
     @api.constrains('code')
@@ -56,5 +55,4 @@ class CommodityData(models.Model):
 
     def create(self, values):
         record = super(CommodityData, self).create(values)
-        record.k()
         return record

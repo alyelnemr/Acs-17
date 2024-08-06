@@ -13,8 +13,8 @@
                 <filter name="dry" string="Dry" domain="[('type', '=', 'dry')]"/>
                 <filter name="reefer" string="Reefer" domain="[('type', '=', 'reefer')]"/>
                 <filter name="imo" string="Imo" domain="[('type', '=', 'imo')]"/>
-                <filter name="active" string="Active" domain="[('active1', '=', True)]"/>
-                <filter name="inactive" string="Inactive" domain="[('active1', '=', False)]"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
 
             </search>
         </field>
@@ -37,8 +37,8 @@
                         <group>
                             <field name="req_id" widget="many2many_checkboxes"/>
                             <field name="vat"/>
-                            <field name="tag_id"  />
-                            <field name="active1" widget="boolean_toggle"/>
+                            <field name="tag_ids" widget="many2many_tags" />
+                            <field name="active" widget="boolean_toggle"/>
 
                         </group>
                     </group>
@@ -112,8 +112,8 @@
                 <field name="group_id"/>
                 <field name="tax"/>
                 <field name="vat"/>
-                <field name="tag_id"/>
-                <field name="active1" widget="boolean_toggle"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+                <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
     </record>
@@ -362,7 +362,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Configurations" id="menu_freight_configuration" parent="menu_freight"/>
+    <menuitem name="Configurations" id="menu_freight_configuration" parent="menu_freight" sequence="4"/>
     <menuitem name="Commodity Group" id="menu_commodity_group" parent="menu_freight_configuration"
               action="action_commodity_group" sequence="1"/>
     <menuitem name="Commodities" id="menu_commodity_data" parent="menu_freight_configuration"

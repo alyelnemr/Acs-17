@@ -1,8 +1,9 @@
 from odoo import models, fields, api, _
 
 
-class CommodityDtaValues(models.Model):
+class CommodityDataValues(models.Model):
     _name = "commodity.data.values"
+    _description = "Commodity dta values"
 
     commodity_data_id = fields.Many2one('commodity.data', string="Commodity")
     code = fields.Char(string="Hs Code", related="commodity_data_id.code")
@@ -10,7 +11,7 @@ class CommodityDtaValues(models.Model):
     vat = fields.Integer(string="Vat", related="commodity_data_id.vat")
     type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], string="Equip",
                             related="commodity_data_id.type")
-    tag_id = fields.Many2many('frieght.tags', string="Tags", related="commodity_data_id.tag_id_1")
+    tag_ids = fields.Many2many('frieght.tags', string="Tags", related="commodity_data_id.tag_ids")
     export_approval = fields.Many2many('commodity.data.approval.export'
                                        , string="Export Approvals", )
     export_custom = fields.Many2many('commodity.data.custom.export'
@@ -52,6 +53,7 @@ class CommodityDtaValues(models.Model):
 
 class CleraenceStages(models.Model):
     _name = "clearence.stages"
+    _description = "Clearance stages"
 
     stage_id = fields.Many2one('tracking.stage', string="Stage", domain="[('docs_type', '=', 'custom_doc')]")
     start_date = fields.Date(string="Start date")

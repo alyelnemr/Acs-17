@@ -17,7 +17,7 @@ class PortCitiesTemplate(models.Model):
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Active', readonly=True)
     active = fields.Boolean(string='Status', default=True)
     type_id = fields.Many2many('transport.type', string="Port Is")
-    country_group_id_1 = fields.Many2one('res.country.group', string='Country Group',
+    country_group_id_1 = fields.Many2one('res.country.group', string='Country Group1',
                                          compute="compute_country_group_id", store=True)
 
     @api.onchange('country_id')
@@ -36,12 +36,9 @@ class PortCitiesTemplate(models.Model):
     @api.depends('country_id', 'code')
     def compute_display_name(self):
         for rec in self:
-            str = ""
-            if rec.name:
-                str = str + rec.name + "-"
-            if rec.country_id:
-                str = str + rec.country_id.name
-            rec.display_name = str
+            display_name = rec.name if rec.name else ""
+            display_name = (display_name + "-" + rec.country_id.name) if rec.country_id else display_name
+            rec.display_name = display_name
 
     @api.onchange('active')
     def _onchange_active(self):

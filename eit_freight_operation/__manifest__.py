@@ -6,9 +6,11 @@
     'description': """
     This module is provided to handle all kinds of freight operations and integrated with the customer portal on the website to follow the shipments 
     """,
+    'website': 'http://www.eit-hub.com',
     'author': "EIT-Hub (Expert Information Technology)  www.eit-hub.com",
     'category': 'Services/Freight',
-    "depends": ['base', 'project', 'eit_freight_MasterData', 'hr_expense', 'documents', 'sale_project', 'documents_project'],
+    "depends": ['base', 'project', 'eit_freight_MasterData', 'hr_expense', 'documents', 'sale_project',
+                'documents_project'],
     "data": [
         'security/ir.model.access.csv',
         'security/project_security.xml',
@@ -18,7 +20,8 @@
         'views/project_task_view.xml',
         'wizard/origin_route_view.xml',
         'wizard/trasit_route_view.xml',
-        'wizard/destination_route_view.xml'
+        'wizard/destination_route_view.xml',
+        'wizard/project_task_closing_wizard_views.xml',
     ],
     'demo': [
         'data/project_demo.xml',

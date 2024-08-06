@@ -15,7 +15,7 @@ patch(FormController.prototype, {
         const currentModel = this.props.resModel;
         const modelList = ['port.cites', 'res.country','res.country.group','transport.type',
         'package.type','container.type','container.data','bill.leading.type','shipment.scop',
-        'fright.vessels','frieght.flights','product.product','service.scope','clearence.type',
+        'freight.vessels','freight.airplane','product.product','service.scope','clearence.type',
         'tracking.stage','activity.type','account.incoterms','commodity.group','commodity.data','partner.type',
         'document.type','frieght.tags'];
         this.modelInList = modelList.includes(currentModel);

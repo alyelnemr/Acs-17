@@ -222,6 +222,7 @@ class ProductSupplierInfo(models.Model):
 
 class TotalSaleCurrency(models.Model):
     _name = 'total.sale.currency'
+    _description = "Total sale currency"
 
     currency_id = fields.Many2one('res.currency', string="Currency")
     amount = fields.Float(string="Amount")
@@ -230,6 +231,7 @@ class TotalSaleCurrency(models.Model):
 
 class TotalCostCurrency(models.Model):
     _name = 'total.cost.currency'
+    _description = "Total cost currency"
 
     currency_id = fields.Many2one('res.currency', string="Currency")
     amount = fields.Float(string="Amount")
@@ -239,7 +241,7 @@ class TotalCostCurrency(models.Model):
 class FrieghtVessalsLine(models.Model):
     _name = 'frieght.vessel.line'
 
-    vessel_id = fields.Many2one('fright.vessels', string="Vessel")
+    vessel_id = fields.Many2one('freight.vessels', string="Vessel")
     voyage_number = fields.Char(string="Voyage Number")
     etd = fields.Date(string="ETD")
     eta = fields.Date(string="ETA")

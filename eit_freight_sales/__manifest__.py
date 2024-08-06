@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "EIT Freight Request quote",
+    'name': "Freight Sales",
 
     'summary': """
-        EIT Freight Request a quote form
+        Freight Forwarding Sales
         """,
 
     'description': """
-        The request-a-quote module allows visitors to send shipping request rates with seamless CRM integration.
+        Freight Forwarding Sales.
     """,
 
     'author': "EIT-Hub (Expert Information Technology)",
@@ -20,7 +20,7 @@
     'category': 'Services/Freight',
     'version': '17.0',
     'license': 'LGPL-3',
-    'application': False,
+    'application': True,
 
     # any module necessary for this one to work correctly
     'depends': [
