@@ -73,3 +73,4 @@ class ContainerData(models.Model):
             raise UserError("The number should contain 4 Capital letters Must ended By (U) & 7 numbers")
         else:
             return True
+

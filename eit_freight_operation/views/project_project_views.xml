@@ -42,7 +42,8 @@
             </xpath>
 
             <xpath expr="//group[@name='extra_settings']" position="inside">
-                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='settings']/group[1]/group[1]/field[@name='sale_line_id'][2]" position="move"/>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='settings']/group[1]/group[1]/field[@name='sale_line_id'][2]"
+                       position="move"/>
                 <field name="create_uid" readonly="True"/>
                 <field name="create_date" readonly="True"/>
             </xpath>
@@ -111,29 +112,42 @@
         </field>
     </record>
 
-    <record id="project_kanban_view_inherited" model="ir.ui.view">
-            <field name="name">project.kanban.view.inherited</field>
-            <field name="model">project.project</field>
-            <field name="inherit_id" ref="project.view_project_kanban"/>
-            <field name="arch" type="xml">
-                <!-- Locate the div with class 'muted-class' and make it invisible -->
-                <xpath expr="//div[contains(@class, 'text-muted o_row')]" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//div[contains(@class, 'o_primary')]" position="inside">
-                    <field name="created_on" display="full"/>
-                </xpath>
-                <xpath expr="//field[@name='created_on']" position="after">
-                    <field name="industry_id" display="full"/>
-                </xpath>
-            </field>
-        </record>
 
-        <!-- <record id="base.module_category_services_project" model="ir.module.category">
-            <field name="name">Operations</field>
-            <field name="description">Helps you manage your operations and tasks by tracking them, generating plannings, etc...</field>
-            <field name="sequence">3</field>
-        </record> -->
+    <record id="project_kanban_view_inherited" model="ir.ui.view">
+        <field name="name">project.kanban.view.inherited</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+            <!-- Locate the div with class 'muted-class' and make it invisible -->
+            <xpath expr="//div[contains(@class, 'text-muted o_row')]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'o_primary')]" position="inside">
+                <field name="created_on" display="full"/>
+            </xpath>
+            <xpath expr="//field[@name='created_on']" position="after">
+                <field name="industry_id" display="full"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="edit_project_document_form_inherit_readonly" model="ir.ui.view">
+        <field name="name">project.project.form.inherit.readonly</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="documents_project.edit_project_document_form_inherit"/>
+        <field name="priority">34</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='documents_folder_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- <record id="base.module_category_services_project" model="ir.module.category">
+        <field name="name">Operations</field>
+        <field name="description">Helps you manage your operations and tasks by tracking them, generating plannings, etc...</field>
+        <field name="sequence">3</field>
+    </record> -->
 
 
 </odoo>
