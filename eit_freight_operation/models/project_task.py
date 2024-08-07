@@ -135,6 +135,12 @@ class Task(models.Model):
             'target': 'new',
         }
 
+    def _compute_access_warning(self):
+        super(Task, self)._compute_access_warning()
+        for task in self.filtered(lambda x: x.project_id.privacy_visibility not in ('portal_followers', 'portal')):
+            task.access_warning = _(
+                "The task cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy of the project to 'Visible by following customers' in order to make it accessible by the recipient(s).")
+
     @api.depends('deatination_route', 'origin_route', 'transit_route')
     def _compute_service_ids(self):
         for rec in self:
@@ -282,7 +288,12 @@ class Task(models.Model):
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
         elif vals.get('state') == '1_canceled':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
-        return super(Task, self).create(vals)
+        tasks = super(Task, self).create(vals)
+
+        for task in tasks:
+            if task.project_id.privacy_visibility == 'portal_followers':
+                task._portal_ensure_token()
+        return tasks
 
     def write(self, vals):
         # Prevent recursion by checking if the stage change is necessary
