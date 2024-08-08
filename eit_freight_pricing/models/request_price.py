@@ -66,7 +66,28 @@ class RequestPrice(models.Model):
 
     requester_notes = fields.Text(string="Requester Notes")
     date = fields.Date(string="Date")
-    reporter = fields.Many2one('res.partner', string="Requester")
+    reporter = fields.Many2one('res.users', string="Requester")
+    created_rfq = fields.Boolean(string="Created Rfq?")
+    count_rfqs = fields.Integer(string="Purchase", compute='get_purchase_count')
+
+    def action_view_rfqs(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'binding_type': 'object',
+            'domain': [('price_req_id', '=', self.id)],
+            'multi': False,
+            'name': 'Purchase',
+            'target': 'current',
+            'res_model': 'purchase.order',
+            'view_mode': 'tree,form',
+        }
+
+    def get_purchase_count(self):
+        for rec in self:
+            count = self.env['purchase.order'].search_count([('price_req_id', '=', self.id)])
+            rec.count_rfqs = count
+
 
     # stage_id = fields.Many2one('stage.pricing')
     stage_id = fields.Many2one(
@@ -100,6 +121,14 @@ class RequestPrice(models.Model):
     def _stage_find(self, domain=None, order='sequence, id', limit=1):
         search_domain = list(domain)
         return self.env['crm.stage'].search(search_domain, order=order, limit=limit)
+    
+    def action_cancel(self):
+        cancelled_stage = self.env.ref('eit_freight_pricing.stage_pricing_7')
+        self.stage_id = cancelled_stage.id
+
+    def action_reset(self):
+        new_stage = self.env.ref('eit_freight_pricing.stage_pricing_5')
+        self.stage_id = new_stage.id
 
     @api.model
     def _read_group_stage_ids(self, stages, domain, order):
@@ -107,31 +136,31 @@ class RequestPrice(models.Model):
         stage_ids = stages._search(search_domain, order=order, access_rights_uid=SUPERUSER_ID)
         return stages.browse(stage_ids)
 
-    @api.depends('reporter.email')
-    def _compute_email_from(self):
-        for lead in self:
-            if lead.reporter.email and lead._get_partner_email_update():
-                lead.reporter = lead.reporter.email
+    # @api.depends('reporter.email')
+    # def _compute_email_from(self):
+    #     for lead in self:
+    #         if lead.reporter.email and lead._get_partner_email_update():
+    #             lead.reporter = lead.reporter.email
 
-    def _inverse_email_from(self):
-        for lead in self:
-            if lead._get_partner_email_update():
-                lead.reporter.email = lead.email_from
+    # def _inverse_email_from(self):
+    #     for lead in self:
+    #         if lead._get_partner_email_update():
+    #             lead.reporter.email = lead.email_from
 
-    def _get_partner_email_update(self):
-        """Calculate if we should write the email on the related partner. When
-        the email of the lead / partner is an empty string, we force it to False
-        to not propagate a False on an empty string.
+    # def _get_partner_email_update(self):
+    #     """Calculate if we should write the email on the related partner. When
+    #     the email of the lead / partner is an empty string, we force it to False
+    #     to not propagate a False on an empty string.
 
-        Done in a separate method so it can be used in both ribbon and inverse
-        and compute of email update methods.
-        """
-        self.ensure_one()
-        if self.reporter and self.email_from != self.reporter.email:
-            lead_email_normalized = tools.email_normalize(self.email_from) or self.email_from or False
-            partner_email_normalized = tools.email_normalize(self.reporter.email) or self.reporter.email or False
-            return lead_email_normalized != partner_email_normalized
-        return False
+    #     Done in a separate method so it can be used in both ribbon and inverse
+    #     and compute of email update methods.
+    #     """
+    #     self.ensure_one()
+    #     if self.reporter and self.email_from != self.reporter.email:
+    #         lead_email_normalized = tools.email_normalize(self.email_from) or self.email_from or False
+    #         partner_email_normalized = tools.email_normalize(self.reporter.email) or self.reporter.email or False
+    #         return lead_email_normalized != partner_email_normalized
+    #     return False
 
     @api.depends('transport_type_id')
     def _compute_product_id_domain(self):
