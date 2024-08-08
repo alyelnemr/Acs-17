@@ -63,6 +63,20 @@ class ProductTemplate(models.Model):
     conndition_ids = fields.Many2one('freight.conditions', string="Terms & Conditions")
     condition_test = fields.Text(string="Conditions")
     vessel_line_ids = fields.One2many('frieght.vessel.line', 'product_vessel_id')
+    plane_line_ids = fields.One2many('frieght.plane.line', 'product_plane_id')
+    # dyn_filter_pro = fields.Char(string='Container/Package', compute='_compute_con_pack_domain', store=False)
+
+    # @api.depends('container_type', 'package_type')
+    # def _compute_con_pack_domain(self):
+    #     for record in self:
+    #         domain = []
+    #         if record.container_type:
+    #             domain.append(('container_type', '=', record.container_type.id))
+    #         if record.package_type:
+    #             domain.append(('package_type', '=', record.package_type.id))
+            
+    #         # Convert domain list to string to store in Char field
+    #         record.dyn_filter_pro = str(domain)
 
     @api.onchange('conndition_ids')
     def _onchange_conndition_ids(self):
@@ -152,7 +166,21 @@ class ProductTemplate(models.Model):
             name = self.env['ir.sequence'].next_by_code('product.template')
             res.name = name
 
+        if res.detailed_type == 'pricing' and res.is_sale_purchase:
+            raise UserError(
+                _('Please add the Record from the Pricing App'))
+
         return res
+    
+    def write(self, vals):
+        is_sale_purchase = self.env.context.get('default_is_sale_purchase', False)
+
+        if vals.get('detailed_type') == 'pricing' and is_sale_purchase:
+            raise UserError(
+                _('Please add the Record from the Pricing App'))
+
+        result = super(ProductTemplate, self).write(vals)
+        return result
 
 
 class ProductCharges(models.Model):
@@ -265,4 +293,11 @@ class FrieghtVessalsLine(models.Model):
                 eta_date = fields.Date.from_string(record.eta)
                 delta = eta_date - etd_date
                 record.tt_day = delta.days
+
+
+class FrieghtPlanesLine(models.Model):
+    _name = 'frieght.plane.line'
+
+    plane_id = fields.Many2one('freight.airplane', string="Plane")
+    product_plane_id = fields.Many2one('product.template')
 
