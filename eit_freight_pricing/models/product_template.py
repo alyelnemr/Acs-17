@@ -20,7 +20,7 @@ class ProductTemplate(models.Model):
     expiration_date = fields.Date(string='Expiration Date')
     partner_id = fields.Many2one('res.partner', string="Vendor",
                                  domain="[('partner_type_id', 'in', [4, 5, 7, 11, 12]),('is_company', '=', True)]")
-    currency_id = fields.Many2one('res.currency', string="Currency")
+    currency_id = fields.Many2one('res.currency', string="Currency", index=True)
     currency_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
     package_type = fields.Many2one('package.type', string="Package Type")
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope",
