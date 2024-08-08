@@ -6,5 +6,5 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     purchase_type = fields.Selection([('product', 'Products'), ('freight', 'Freight')], string="Purchase Type",
-                                     default='purchase')
+                                     default='product')
 
