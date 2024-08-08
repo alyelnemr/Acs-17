@@ -13,8 +13,6 @@ access_opt_payable,opt.payable,model_opt_payable,,1,1,1,1
 access_project_document_line,project.document.line,model_project_document_line,,1,1,1,1
 access_opt_recieveble,opt.recieveble,model_opt_recieveble,,1,1,1,1
 access_frieght_serviice_stages,frieght_serviice_stages,model_frieght_serviice_stages,,1,1,1,1
-access_project_task,projec.task_manager,model_project_task,project.group_project_manager,1,1,1,1
-access_project_task,projec.task,model_project_task,project.group_project_user,1,0,0,0
 access_project_task_closing_wizard_user,access.project.task.closing.wizard.user,model_project_task_closing_wizard,,1,1,1,1
 access_shipping_container_user,shipping.container.user,model_shipping_container,base.group_user,1,1,1,1
 access_shipping_container_details_user,shipping.container.details.user,model_shipping_container_details,base.group_user,1,1,1,1
