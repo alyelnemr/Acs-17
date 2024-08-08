@@ -14,7 +14,7 @@ class ProductTemplate(models.Model):
         default=lambda self: self.env.user.ids,
         domain=[('share', '=', False)]
     )
-    transport_type_id = fields.Many2one('transport.type', string="Transport Type", required=True)
+    transport_type_id = fields.Many2one('transport.type', string="Transport Type")
     service_scope = fields.Many2one('service.scope', string="Service Scope")
     scope_ids = fields.Many2many('service.scope', string="Services")
     expiration_date = fields.Date(string='Expiration Date')
