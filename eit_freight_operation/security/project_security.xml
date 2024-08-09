@@ -35,7 +35,7 @@
             <value eval="{'noupdate': False}"/>
         </function>
 
-        <record model="ir.rule" id="project.project_public_members_rule">
+        <record id="project.project_public_members_rule" model="ir.rule">
             <field name="name">Project: employees: following required for follower-only projects</field>
             <field name="model_id" ref="project.model_project_project"/>
             <field name="domain_force">['|',
@@ -233,7 +233,7 @@
             <value eval="{'noupdate': False}"/>
         </function>
 
-        <record model="ir.rule" id="update_visibility_rule">
+        <record id="update_visibility_rule" model="ir.rule">
             <field name="name">Project/Update: employees: follow required for follower-only projects</field>
             <field name="model_id" ref="project.model_project_update"/>
             <field name="domain_force">[
