@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <record id="project_task_stage_user_restriction" model="ir.rule">
             <field name="name">Project Task Stage User Restriction</field>
             <field name="model_id" ref="project.model_project_task"/>
             <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
-            <field name="domain_force">['|', ('stage_id', '!=', 'project.project_stage_3'), ('stage_id', '=', False)]
-            </field>
+            <field name="domain_force">['|', ('stage_id', '!=', 'project.project_stage_3'), ('stage_id', '=', False)]</field>
         </record>
+
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
 
         <!-- <delete model="ir.rule" id="project.project_public_members_rule"/>
-        <delete model="ir.rule" id="project.task_visibility_rule"/>
-        <delete model="ir.rule" id="project.ir_rule_private_task"/>
+        <delete model="ir.rule" id="project.task_visibility_rule"/> -->
+        <!-- <delete model="ir.rule" id="project.ir_rule_private_task"/>
         <delete model="ir.rule" id="project.project_project_rule_portal"/>
         <delete model="ir.rule" id="project.project_collaborator_rule_portal"/>
         <delete model="ir.rule" id="project.project_task_rule_portal"/>
@@ -30,7 +30,12 @@
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
 
-        <!-- <record model="ir.rule" id="project_public_members_rule">
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record model="ir.rule" id="project.project_public_members_rule">
             <field name="name">Project: employees: following required for follower-only projects</field>
             <field name="model_id" ref="project.model_project_project"/>
             <field name="domain_force">['|',
@@ -39,10 +44,19 @@
                 ]
             </field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-        </record> -->
+        </record>
 
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
-        <!-- <record model="ir.rule" id="task_visibility_rule">
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'task_visibility_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.task_visibility_rule" model="ir.rule">
             <field name="name">Project/Task: employees: follow required for follower-only projects</field>
             <field name="model_id" ref="project.model_project_task"/>
             <field name="domain_force">[
@@ -59,10 +73,38 @@
                 ]
             </field>
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
-        </record> -->
+        </record>
 
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'task_visibility_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
-        <!-- <record id="ir_rule_private_task" model="ir.rule">
+        <!-- <record model="ir.rule" id="project.task_visibility_rule">
+            <field name="name">Project/Task: employees: follow required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;',
+                ('project_id', '!=', False),
+                '|',
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+                '|',
+                ('message_partner_ids', 'in', [user.partner_id.id]),
+                # to subscribe check access to the record, follower is not enough at creation
+                ('user_ids', 'in', user.id)
+                ]
+            </field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>-->
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'ir_rule_private_task')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.ir_rule_private_task" model="ir.rule">
             <field name="name">Project: See private tasks</field>
             <field name="model_id" ref="project.model_project_task"/>
             <field name="domain_force">[
@@ -73,9 +115,20 @@
                 ]
             </field>
             <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
-        </record> -->
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'ir_rule_private_task')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
         <!-- Portal -->
-        <!-- <record id="project_project_rule_portal" model="ir.rule">
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_project_rule_portal')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+        
+        <record id="project.project_project_rule_portal" model="ir.rule">
             <field name="name">Project: portal users: portal and following</field>
             <field name="model_id" ref="project.model_project_project"/>
             <field name="domain_force">[
@@ -85,123 +138,211 @@
                 ]
             </field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-        </record> -->
+        </record>
 
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_project_rule_portal')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
+        
+        <!-- Project Collaborator -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_collaborator_rule_portal')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+        
+        <record id="project.project_collaborator_rule_portal" model="ir.rule">
+            <field name="name">Project/Collaborator: portal users: can only see his own collobaroration in shared projects</field>
+            <field name="model_id" ref="project.model_project_collaborator"/>
+            <field name="domain_force">[
+                ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
+                ('partner_id', '=', user.partner_id.id),
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
 
-    <!-- <record id="project_collaborator_rule_portal" model="ir.rule">
-        <field name="name">Project/Collaborator: portal users: can only see his own collobaroration in shared projects</field>
-        <field name="model_id" ref="project.model_project_collaborator"/>
-        <field name="domain_force">[
-            ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
-            ('partner_id', '=', user.partner_id.id),
-        ]</field>
-        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-    </record> -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_collaborator_rule_portal')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
+        <!-- Project Collaborator END -->
 
-    <!-- <record id="project_task_rule_portal" model="ir.rule">
-        <field name="name">Project/Task: portal users: (portal and following project) or (portal and following task)</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="domain_force">[
-        ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
-        ('active', '=', True),
-        '|',
-            ('project_id.message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
-            ('message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
-        ]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-    </record> -->
+        <!-- Project task rule portal -->
 
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
 
-    <!-- <record id="project_task_rule_portal_project_sharing" model="ir.rule">
-        <field name="name">Project/Task: portal users: portal user can edit with project sharing feature</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="active">0</field>
-        <field name="domain_force">[
+        <record id="project.project_task_rule_portal" model="ir.rule">
+            <field name="name">Project/Task: portal users: (portal and following project) or (portal and following task)</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">[
             ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
             ('active', '=', True),
             '|',
                 ('project_id.message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
                 ('message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
-            ('project_id.collaborator_ids.partner_id', 'in', [user.partner_id.id]),
-        ]</field>
-        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="False"/>
-    </record> -->
+            ]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
 
-    <!-- <record model="ir.rule" id="update_visibility_rule">
-        <field name="name">Project/Update: employees: follow required for follower-only projects</field>
-        <field name="model_id" ref="project.model_project_update"/>
-        <field name="domain_force">[
-        '|',
-            ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
-            '|',
-                ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
-                '|',
-                    ('user_id', '=', user.id),
-                    ('project_id.user_id', '=', user.id)
-        ]</field>
-        <field name="groups" eval="[(4,ref('base.group_user'))]"/>
-    </record> -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
+        <!-- Project task rule portal END -->
 
-    <!-- <record model="ir.rule" id="report_project_task_user_rule">
-        <field name="name">Tasks Analysis: project visibility User</field>
-        <field name="model_id" ref="project.model_report_project_task_user"/>
-        <field name="domain_force">[
-        '|',
-            ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
-            '|',
-                ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+        <!-- project task rule portal project sharing -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal_project_sharing')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.project_task_rule_portal_project_sharing" model="ir.rule">
+            <field name="name">Project/Task: portal users: portal user can edit with project sharing feature</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="active">0</field>
+            <field name="domain_force">[
+                ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
+                ('active', '=', True),
                 '|',
-                    ('task_id.message_partner_ids', 'in', [user.partner_id.id]),
+                    ('project_id.message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
+                    ('message_partner_ids', 'child_of', [user.partner_id.commercial_partner_id.id]),
+                ('project_id.collaborator_ids.partner_id', 'in', [user.partner_id.id]),
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal_project_sharing')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'update_visibility_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record model="ir.rule" id="update_visibility_rule">
+            <field name="name">Project/Update: employees: follow required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_update"/>
+            <field name="domain_force">[
+            '|',
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                '|',
+                    ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+                    '|',
+                        ('user_id', '=', user.id),
+                        ('project_id.user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'update_visibility_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'report_project_task_user_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.report_project_task_user_rule" model="ir.rule">
+            <field name="name">Tasks Analysis: project visibility User</field>
+            <field name="model_id" ref="project.model_report_project_task_user"/>
+            <field name="domain_force">[
+            '|',
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                '|',
+                    ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+                    '|',
+                        ('task_id.message_partner_ids', 'in', [user.partner_id.id]),
+                        ('user_ids', 'in', user.id),
+            ]</field>
+            <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'report_project_task_user_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'burndown_chart_project_user_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.burndown_chart_project_user_rule" model="ir.rule">
+            <field name="name">Burndown chart: project visibility User</field>
+            <field name="model_id" ref="project.model_project_task_burndown_chart_report"/>
+            <field name="domain_force">[
+            '|',
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                '|',
+                    ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
                     ('user_ids', 'in', user.id),
-        ]</field>
-        <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
-    </record> -->
+            ]</field>
+            <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
+        </record>
 
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'burndown_chart_project_user_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
-    <!-- <record model="ir.rule" id="burndown_chart_project_user_rule">
-        <field name="name">Burndown chart: project visibility User</field>
-        <field name="model_id" ref="project.model_project_task_burndown_chart_report"/>
-        <field name="domain_force">[
-        '|',
-            ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'milestone_visibility_rule')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.milestone_visibility_rule" model="ir.rule">
+            <field name="name">Project/Milestone: employees: follow required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_milestone"/>
+            <field name="domain_force">[
             '|',
-                ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
-                ('user_ids', 'in', user.id),
-        ]</field>
-        <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
-    </record> -->
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                '|',
+                    ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+                    ('project_id.user_id', '=', user.id),
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <!-- <record model="ir.rule" id="milestone_visibility_rule">
-        <field name="name">Project/Milestone: employees: follow required for follower-only projects</field>
-        <field name="model_id" ref="project.model_project_milestone"/>
-        <field name="domain_force">[
-        '|',
-            ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
-            '|',
-                ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
-                ('project_id.user_id', '=', user.id),
-        ]</field>
-        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-    </record> -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'milestone_visibility_rule')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
-    <!-- <record id="project_milestone_rule_portal_project_sharing" model="ir.rule">
-        <field name="name">Project/milestone portal users: portal user can read with project sharing feature</field>
-        <field name="model_id" ref="project.model_project_milestone"/>
-        <field name="domain_force">[
-            ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
-            ('project_id.collaborator_ids.partner_id', 'in', [user.partner_id.id]),
-        ]</field>
-        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-    </record> -->
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_milestone_rule_portal_project_sharing')]"/>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record id="project.project_milestone_rule_portal_project_sharing" model="ir.rule">
+            <field name="name">Project/milestone portal users: portal user can read with project sharing feature</field>
+            <field name="model_id" ref="project.model_project_milestone"/>
+            <field name="domain_force">[
+                ('project_id.privacy_visibility', 'in', ('portal_followers', 'portal')),
+                ('project_id.collaborator_ids.partner_id', 'in', [user.partner_id.id]),
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_milestone_rule_portal_project_sharing')]"/>
+            <value eval="{'noupdate': True}"/>
+        </function>
 
     </data>
 </odoo>
