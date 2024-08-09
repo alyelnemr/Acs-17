@@ -1,6 +1,6 @@
 {
     "name": "Freight Operations",
-    "version": "17.0.1.0.5",
+    "version": "17.0.1.0.6",
     'summary': """
         Freight Forwarding Operations""",
     'description': """
