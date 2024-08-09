@@ -30,7 +30,7 @@
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
 
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -78,7 +78,7 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'task_visibility_rule')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
 
         <!-- <record model="ir.rule" id="project.task_visibility_rule">
             <field name="name">Project/Task: employees: follow required for follower-only projects</field>
@@ -99,7 +99,7 @@
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>-->
 
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'ir_rule_private_task')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -120,10 +120,10 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'ir_rule_private_task')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
         <!-- Portal -->
 
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_project_rule_portal')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -143,10 +143,10 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_project_rule_portal')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
         
         <!-- Project Collaborator -->
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_collaborator_rule_portal')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -164,13 +164,13 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_collaborator_rule_portal')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
 
         <!-- Project Collaborator END -->
 
         <!-- Project task rule portal -->
 
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -195,11 +195,11 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
         <!-- Project task rule portal END -->
 
         <!-- project task rule portal project sharing -->
-        <function name="write" model="ir.model.data">
+        <!-- <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_task_rule_portal_project_sharing')]"/>
             <value eval="{'noupdate': False}"/>
         </function>
@@ -342,7 +342,7 @@
         <function name="write" model="ir.model.data">
             <value model="ir.model.data" search="[('module', '=', 'project'), ('name', '=', 'project_milestone_rule_portal_project_sharing')]"/>
             <value eval="{'noupdate': True}"/>
-        </function>
+        </function> -->
 
     </data>
 </odoo>
