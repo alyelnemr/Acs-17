@@ -20,7 +20,7 @@ class ProductTemplate(models.Model):
     expiration_date = fields.Date(string='Expiration Date')
     partner_id = fields.Many2one('res.partner', string="Vendor",
                                  domain="[('partner_type_id', 'in', [4, 5, 7, 11, 12]),('is_company', '=', True)]")
-    currency_id = fields.Many2one('res.currency', string="Currency", index=True, search=True)
+    currency_id = fields.Many2one('res.currency', string="Currency", index=True)
     currency_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
     package_type = fields.Many2one('package.type', string="Package Type")
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope",
@@ -300,4 +300,25 @@ class FrieghtPlanesLine(models.Model):
 
     plane_id = fields.Many2one('freight.airplane', string="Plane")
     product_plane_id = fields.Many2one('product.template')
+    voyage_number = fields.Char(string="Voyage Number")
+    etd = fields.Date(string="ETD")
+    eta = fields.Date(string="ETA")
+    tt_day = fields.Integer(string="T.T Day")
+
+    @api.onchange('etd', 'tt_day')
+    def _compute_eta(self):
+        for record in self:
+            if record.etd and record.tt_day:
+                record.eta = record.etd + timedelta(days=record.tt_day)
+            else:
+                record.eta = False
+
+    @api.onchange('etd', 'eta')
+    def _compute_tt_day(self):
+        for record in self:
+            if record.etd and record.eta:
+                delta = record.eta - record.etd
+                record.tt_day = delta.days
+            else:
+                record.tt_day = 0
 

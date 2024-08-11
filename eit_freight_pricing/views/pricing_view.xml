@@ -47,7 +47,7 @@
     </record>
 
     <record id="purchase_form_action_pricing" model="ir.actions.act_window">
-        <field name="name">Requests for Quotation</field>
+        <field name="name">Freight Purchase</field>
         <field name="res_model">purchase.order</field>
         <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
         <field name="view_ids" eval="[(5, 0, 0),
