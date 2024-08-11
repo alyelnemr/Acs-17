@@ -83,6 +83,9 @@
                 </button>
 
             </xpath>
+	    <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='products']/field[@name='order_line']/tree[1]/field[@name='product_id']" position="attributes">
+                <attribute name="domain">[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id), ('detailed_type', 'not in', ('charge_type', 'pricing'))]</attribute>
+            </xpath>
             <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
                 <group name="request_info" string="Request Info" invisible="purchase_type in ['purchase']">
                     <group>
@@ -228,7 +231,7 @@
     </record>
 
     <record id="purchase.action_purchase_order_report_all" model="ir.actions.act_window">
-        <field name="domain">[('order_id.purchase_type', '=', 'purchase')]</field>
+        <field name="domain">[('order_id.purchase_type', '=', 'product')]</field>
     </record>
 
     <record id="purchase.product_product_menu" model="ir.ui.menu">

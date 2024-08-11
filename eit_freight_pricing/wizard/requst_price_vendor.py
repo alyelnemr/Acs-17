@@ -35,7 +35,6 @@ class RequestPrice(models.TransientModel):
         rfq_stage = self.env.ref('eit_freight_pricing.stage_pricing_6')
         if rfq_stage:
             self.price_id.stage_id = rfq_stage.id
-            self.created_rfq = True
 
 
 class PartnerPrice(models.TransientModel):

@@ -59,7 +59,6 @@
                 <field name="uom_id" string="Unit" readonly="1" optional="show" groups="uom.group_uom"/>
                 <field name="active" column_invisible="True"/>
                 <field name="activity_exception_decoration" widget="activity_exception"/>
-                <field name="priority" widget="priority" nolabel="1"/>
                 <field name="is_published" optional="false"/>
                 <field name="activity_ids" widget="list_activity"/>
 
@@ -356,6 +355,11 @@
                                 <tree editable="bottom">
                                     <field name="plane_id"
                                            options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                    <field name="voyage_number"/>
+                                    <field name="etd"/>
+                                    <field name="eta"/>
+                                    <field name="tt_day"/>
+                                    
                                 </tree>
                             </field>
                         </page>
