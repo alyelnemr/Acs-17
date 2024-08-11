@@ -1,0 +1,40 @@
+<odoo>
+
+    <!-- <record id="inherit_task_type_tree_view" model="ir.ui.view">
+        <field name="name">inherit.task.type.tree.view</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]" position="attributes">
+                <attribute name="create">false</attribute>
+                <attribute name="edit">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_project_task_type_edit_view" model="ir.ui.view">
+        <field name="name">inherit.project.task_type.edit.view</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_edit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form[1]" position="attributes">
+                <attribute name="create">false</attribute>
+                <attribute name="edit">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_project_view_project_task_type_kanban" model="ir.ui.view">
+        <field name="name">inherit.view.project.task.type.kanban</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.view_project_task_type_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="create">false</attribute>
+                <attribute name="edit">false</attribute>
+            </xpath>
+        </field>
+    </record> -->
+        
+
+</odoo>

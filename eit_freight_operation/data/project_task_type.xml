@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stage_open" model="project.task.type">
+            <field name="sequence">1</field>
+            <field name="name">Open</field>
+        </record>
+        <record id="stage_invoice" model="project.task.type">
+            <field name="sequence">10</field>
+            <field name="name">Invoicing</field>
+        </record>
+        <record id="stage_closed" model="project.task.type">
+            <field name="sequence">20</field>
+            <field name="name">Closed</field>
+            <field name="fold" eval="True"/>
+        </record>
+        <record id="stage_canceled" model="project.task.type">
+            <field name="sequence">30</field>
+            <field name="name">Cancelled</field>
+            <field name="fold" eval="True"/>
+        </record>
+
+        <record id="project_freight_forwarding" model="project.project">
+            <field name="name">Freight Forwarding</field>
+            <field name="type_ids" eval="[(6, 0, [ref('stage_open'), ref('stage_invoice'), ref('stage_closed'), ref('stage_canceled')])]"/>
+        </record>
+    </data>
+    <!-- <data> -->
+        <!-- <record id="project_stage_4" model="project.task.type">
+            <field name="sequence">30</field>
+            <field name="name">Invoicing</field>
+        </record> -->
+
+        <!-- <record id="project.group_project_user" model="res.groups">
+            <field name="category_id">Profile</field>
+        </record>
+
+        <record id="project.group_project_manager" model="res.groups">
+            <field name="category_id">Profile</field>
+        </record> -->
+
+<!--        <function model="project.project" name="write">-->
+<!--            <value eval="[ref('project.project_project_1')]"/>-->
+<!--            <value eval="{'type_ids': [(6, 0, [ref('project.project_stage_0'), ref('project.project_stage_1'), ref('project_stage_4'), ref('project.project_stage_2'), ref('project.project_stage_3')])]}"/>-->
+<!--        </function>-->
+
+<!--         <record id="project_project_1" model="project.project">-->
+<!--            <field name="date_start" eval="DateTime.today() - relativedelta(weeks=9)"/>-->
+<!--            <field name="date" eval="DateTime.today() + relativedelta(weekday=4,weeks=1)"/>-->
+<!--            <field name="name">Office Design</field>-->
+<!--            <field name="color">3</field>-->
+<!--            <field name="type_ids" eval="[Command.link(ref('project.project_stage_0')), Command.link(ref('project.project_stage_1')), Command.link(ref('project.project_stage_2')), Command.link(ref('project.project_stage_3')), Command.link(ref('project_stage_4'))]"/>-->
+<!--            <field name="partner_id" ref="base.partner_demo_portal"/>-->
+<!--            <field name="privacy_visibility">portal</field>-->
+<!--            <field name="favorite_user_ids" eval="[Command.link(ref('base.user_admin'))]"/>-->
+<!--            <field name="tag_ids" eval="[Command.link(ref('project.project_tags_05'))]"/>-->
+<!--            <field name="stage_id" ref="project.project_project_stage_1"/>-->
+<!--            <field name="analytic_account_id" ref="project.analytic_office_design"/>-->
+<!--        </record>-->
+
+<!--        <function model="project.task.type" name="write">-->
+<!--            <value eval="[ref('project.project_stage_2')]"/>-->
+<!--            <value eval="{'name': 'Closed', 'sequence': 40}"/>-->
+<!--        </function>-->
+
+<!--        <function model="project.task.type" name="write">-->
+<!--            <value eval="[ref('project.project_stage_3')]"/>-->
+<!--            <value eval="{'sequence': 50}"/>-->
+<!--        </function>-->
+        <!-- <function model="project.task.type" name="write">
+           <value eval="[ref('project.project_stage_0')]"/>
+           <value eval="{'name': 'Open'}"/>
+        </function>
+        <function model="project.task.type" name="write">
+           <value eval="[ref('project.project_stage_1')]"/>
+           <value eval="{'name': 'Invoiced'}"/>
+        </function>
+         <function model="project.task.type" name="write">
+           <value eval="[ref('project.project_stage_2')]"/>
+           <value eval="{'name': 'Closed'}"/>
+        </function> -->
+    <!-- </data> -->
+</odoo>
