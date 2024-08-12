@@ -183,7 +183,7 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id not in [2]">
-                        <field name="lcl_container_type_ids" readonly="parent.stage_id == 2" invisible="shipment_scope_id not in [2]">
+                        <field name="lcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id not in [2]">
                             <tree editable="bottom">
                                 <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                                 <field name="qty"/>
@@ -197,7 +197,7 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id_in not in [4]">
-                        <field name="lcl_container_type_ids" readonly="parent.stage_id == 2" invisible="shipment_scope_id_in not in [4]">
+                        <field name="lcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id_in not in [4]">
                             <tree editable="bottom">
                                 <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                                 <field name="qty"/>
@@ -211,7 +211,7 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id not in [1]">
-                        <field name="fcl_container_type_ids" readonly="parent.stage_id == 2" invisible="shipment_scope_id not in [1]">
+                        <field name="fcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id not in [1]">
                             <tree editable="bottom">
                                 <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                                 <field name="qty"/>
@@ -221,7 +221,7 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id_in not in [3]">
-                        <field name="ftl_container_type_ids" readonly="parent.stage_id == 2" invisible="shipment_scope_id_in not in [3]">
+                        <field name="ftl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id_in not in [3]">
                             <tree editable="bottom">
                                 <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                                 <field name="qty"/>
