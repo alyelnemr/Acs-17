@@ -55,7 +55,7 @@
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
             ]"/>
         <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
-        <field name="context">{"default_purchase_type": "pricing"}</field>
+        <field name="context">{"default_purchase_type": "freight"}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No purchase order found. Let's create one!
@@ -71,8 +71,8 @@
         <field name="name">Request For Quotation</field>
         <field name="res_model">purchase.order</field>
         <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
-        <field name="context">{"default_purchase_type": "pricing"}</field>
-        <field name="domain">[('purchase_type', '=', "pricing")]</field>
+        <field name="context">{"default_purchase_type": "freight"}</field>
+        <field name="domain">[('purchase_type', '=', "freight")]</field>
     </record>
 
     <record id="action_purchase_my_activity" model="ir.actions.act_window">
@@ -85,7 +85,7 @@
         <field name="name">Pricing Analysis</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">graph,pivot</field>
-        <field name="domain">[('detailed_type', '=', 'pricing')]</field>
+        <field name="domain">[('detailed_type', '=', 'freight')]</field>
     </record>
 
 
