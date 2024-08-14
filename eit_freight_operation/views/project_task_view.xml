@@ -1635,7 +1635,7 @@
             <field name="sequence">1</field> <!-- Update sequence -->
         </record>
 
-<!--        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>-->
+        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>
 
         <record id="operation_open_view_all_task_list_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="20"/>
