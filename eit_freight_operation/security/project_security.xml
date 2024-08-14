@@ -62,6 +62,9 @@
            <value eval="[ref('project.project_milestone_rule_portal_project_sharing')]"/>
         </function>
 
+        <function model="ir.actions.act_window.view" name="unlink">
+           <value eval="[ref('project.open_view_all_task_list_kanban')]"/>
+        </function>
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
