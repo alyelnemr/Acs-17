@@ -16,5 +16,8 @@
            <value eval="[ref('project.project_stage_2')]"/>
            <value eval="{'name': 'Closed'}"/>
         </function>
+        <function model="ir.actions.act_window.view" name="unlink">
+           <value eval="[ref('project.open_view_all_task_list_kanban')]"/>
+        </function>
     </data>
 </odoo>
