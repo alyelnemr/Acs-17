@@ -132,10 +132,12 @@ class Project(models.Model):
         return self.env.user._is_internal()
 
     def _compute_access_warning(self):
-        super(Project, self)._compute_access_warning()
-        for project in self.filtered(lambda x: x.privacy_visibility not in ('portal', 'portal_followers')):
-            project.access_warning = _(
-                "The project cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy to 'Visible by following customers' in order to make it accessible by the recipient(s).")
+        # super(Project, self)._compute_access_warning()
+        for project in self:
+            project.access_warning = ''
+            if project.filtered(lambda x: x.privacy_visibility not in ('portal', 'portal_followers')):
+                project.access_warning = _(
+                    "The project cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy to 'Visible by following customers' in order to make it accessible by the recipient(s).")
 
 
 class ProjectDocument(models.Model):
