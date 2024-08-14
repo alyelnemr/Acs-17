@@ -113,12 +113,12 @@
         </field>
     </record>
 
-    <record id="action_product_template_pricing_tree_view" model="ir.actions.act_window.view">
-        <field eval="1" name="sequence"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="product_template_tree_view_pricing2"/>
-        <field name="act_window_id" ref="action_product_pricing"/>
-    </record>
+<!--    <record id="action_product_template_pricing_tree_view" model="ir.actions.act_window.view">-->
+<!--        <field eval="1" name="sequence"/>-->
+<!--        <field name="view_mode">tree</field>-->
+<!--        <field name="view_id" ref="product_template_tree_view_pricing2"/>-->
+<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
+<!--    </record>-->
 
     <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">
         <field eval="2" name="sequence"/>
