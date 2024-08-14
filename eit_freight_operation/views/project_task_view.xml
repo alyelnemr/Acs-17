@@ -1245,7 +1245,7 @@
                                        readonly="invoice_id or vendor_bill_id"
                                        options="{'no_edit': True, 'no_create': True,'no_open': True}"
                                        optional="false"/>
-                                <field name="cost_price" widget="float" optional="hide" readonly="vendor_bill_id"/>
+                                <field name="cost_price" widget="float" optional="show" readonly="vendor_bill_id"/>
                                 <field name="sale_price" widget="float" readonly="invoice_id"/>
                                 <field name="currency_id" readonly="invoice_id or vendor_bill_id"
                                        options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
