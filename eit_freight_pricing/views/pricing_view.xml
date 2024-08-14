@@ -120,12 +120,12 @@
 <!--        <field name="act_window_id" ref="action_product_pricing"/>-->
 <!--    </record>-->
 
-    <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">
-        <field eval="2" name="sequence"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="product_template_form_view_pricing2"/>
-        <field name="act_window_id" ref="action_product_pricing"/>
-    </record>
+<!--    <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">-->
+<!--        <field eval="2" name="sequence"/>-->
+<!--        <field name="view_mode">form</field>-->
+<!--        <field name="view_id" ref="product_template_form_view_pricing2"/>-->
+<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
+<!--    </record>-->
 
     <record id="action_product_template_pricing_kanban_view" model="ir.actions.act_window.view">
         <field eval="3" name="sequence"/>
