@@ -9,12 +9,14 @@
     'website': 'http://www.eit-hub.com',
     'author': "EIT-Hub (Expert Information Technology)  www.eit-hub.com",
     'category': 'Services/Freight',
-    "depends": ['base', 'project', 'eit_freight_MasterData', 'hr_expense', 'documents', 'sale_project',
+    "depends": ['base', 'project', 'eit_freight_MasterData', 'hr_expense', 'documents', 'sale_project', 'account',
                 'documents_project'],
     "data": [
         'security/ir.model.access.csv',
         'security/project_security.xml',
         'data/project_task_type.xml',
+        'data/project_task_cron.xml',
+        'views/account_move.xml',
         'views/project_project_views.xml',
         'views/project_task_type_view.xml',
         'views/project_task_view.xml',
@@ -30,4 +32,5 @@
     'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
+    'post_init_hook': '_update_ir_module_category',
 }
