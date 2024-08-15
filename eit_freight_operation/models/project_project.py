@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, _lt
+from odoo.addons.rating.models import rating_data
+import json
 import datetime
 from odoo.exceptions import ValidationError
 from datetime import timedelta
@@ -20,8 +22,22 @@ class Project(models.Model):
     project_doc_lines = fields.One2many('project.document.line', 'project_id', string="Doc Lines")
 
     def _get_default_stages(self):
-        stages = self.env['project.task.type'].search([('name', 'in', ['Open', 'Invoice', 'Closed', 'Cancelled'])])
+        stages = self.env['project.task.type'].search([('is_default', '=', True)])
         return stages.ids
+
+    def replace_tasks_with_operations(self, data):
+        for entry in data:
+            if str(entry['text']) == 'Tasks':
+                entry['text'] = _lt('Operations')
+            elif str(entry['text']) == 'Sales Orders':
+                entry['text'] = _lt('Bookings')
+            elif str(entry['text']) == 'Sales Order Items':
+                entry['text'] = _lt('Bookings Items')
+
+    def _get_stat_buttons(self):
+        buttons = super(Project, self)._get_stat_buttons()
+        self.replace_tasks_with_operations(buttons)
+        return buttons
 
     @api.model
     def create(self, vals):
@@ -116,10 +132,12 @@ class Project(models.Model):
         return self.env.user._is_internal()
 
     def _compute_access_warning(self):
-        super(Project, self)._compute_access_warning()
-        for project in self.filtered(lambda x: x.privacy_visibility not in ('portal', 'portal_followers')):
-            project.access_warning = _(
-                "The project cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy to 'Visible by following customers' in order to make it accessible by the recipient(s).")
+        # super(Project, self)._compute_access_warning()
+        for project in self:
+            project.access_warning = ''
+            if project.filtered(lambda x: x.privacy_visibility not in ('portal', 'portal_followers')):
+                project.access_warning = _(
+                    "The project cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy to 'Visible by following customers' in order to make it accessible by the recipient(s).")
 
 
 class ProjectDocument(models.Model):
