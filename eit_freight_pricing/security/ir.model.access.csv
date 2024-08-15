@@ -13,8 +13,6 @@ access_total_cost_currency,total.cost.currency,model_total_cost_currency,base.gr
 access_request_price_vendor,request.price.vendor,model_request_price_vendor,base.group_user,1,1,1,1
 access_parnet_list,parnet.list,model_parnet_list,base.group_user,1,1,1,1
 access_frieght_vessel_line,frieght.vessel.line,model_frieght_vessel_line,base.group_user,1,1,1,1
-access_frieght_plane_line,frieght.plane.line,model_frieght_plane_line,base.group_user,1,1,1,1
-access_pricing_purchase_order_user,pricing.purchase.order.user,model_purchase_order,group_prcing_user,1,1,1,0
 access_request_price_user,request.price.user,model_request_price,group_prcing_user,1,1,1,0
 access_request_price_usero,request.price.usero,model_request_price,group_pricing_manager,1,1,1,0
 purchase.access_product_template_purchase_manager,product.template purchase_manager,product.model_product_template,purchase.group_purchase_manager,1,1,1,0

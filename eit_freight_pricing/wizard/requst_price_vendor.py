@@ -28,13 +28,9 @@ class RequestPrice(models.TransientModel):
                 'incoterms_id': self.price_id.incoterms_id.id,
                 'price_req_id': self.price_id.id,
                 'partner_id': line.partner_id.id,
-                'purchase_type': 'freight'
+                'purchase_type': 'pricing'
             }
             self.env['purchase.order'].create(val)
-            
-        rfq_stage = self.env.ref('eit_freight_pricing.stage_pricing_6')
-        if rfq_stage:
-            self.price_id.stage_id = rfq_stage.id
 
 
 class PartnerPrice(models.TransientModel):

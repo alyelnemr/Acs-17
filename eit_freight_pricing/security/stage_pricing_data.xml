@@ -9,13 +9,13 @@
             <field name="name">RFQ Sent</field>
             <field name="sequences">2</field>
         </record>
-        <!-- <record id="stage_pricing_7" model="stage.pricing">
+        <record id="stage_pricing_7" model="stage.pricing">
             <field name="name">Done</field>
             <field name="sequences">3</field>
-        </record> -->
-        <record id="stage_pricing_7" model="stage.pricing">
+        </record>
+        <record id="stage_pricing_8" model="stage.pricing">
             <field name="name">Cancelled</field>
-            <field name="sequences">3</field>
+            <field name="sequences">4</field>
         </record>
     </data>
 </odoo>

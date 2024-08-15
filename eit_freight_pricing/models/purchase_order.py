@@ -49,12 +49,6 @@ class PurchaseOrder(models.Model):
     ftl_container_type_ids = fields.Many2many('ftl.container.type',
                                               string="Ftl Container Types")
     price_req_id = fields.Many2one('request.price',string="Request Price")
-    count_price_req = fields.Integer(string="Price Req Count", compute='get_request_price_count')
-    
-    def get_request_price_count(self):
-        for rec in self:
-            count = self.env['request.price'].search_count([('id', '=', self.price_req_id.id)])
-            rec.count_price_req = count
 
     def action_open_price(self):
         return {

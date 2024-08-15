@@ -7,11 +7,8 @@
             <search string="Charge Types">
                 <field name="name" string="Name"
                        filter_domain="['|', '|',('pol', 'ilike', self),('pod', 'ilike', self),('name', 'ilike', self)]"/>
-                <field name="reporter"/>
-                <field name="pol"/>
-                <field name="pod"/>
                 <separator/>
-                <!-- <filter string="My Requests" name="my_request" domain="[('reporter.user_id', '=', uid)]"/> -->
+                <filter string="My Requests" name="my_request" domain="[('reporter.user_id', '=', uid)]"/>
                 <filter string="Air" name="transport_type_id_air" domain="[('transport_type_id','=', 1)]"/>
                 <filter string="Sea" name="transport_type_id_sea" domain="[('transport_type_id','=', 2)]"/>
                 <filter string="Inland" name="transport_type_id_inland" domain="[('transport_type_id','=',3)]"/>
@@ -21,7 +18,6 @@
                     <filter string="Transport Type" name="transport_type"
                             context="{'group_by':'transport_type_id'}"/>
                     <filter string="Requester" name="requester" context="{'group_by':'reporter'}"/>
-                    <filter name="stages" string="Stage" context="{'group_by': 'stage_id'}"/>
                 </group>
             </search>
         </field>
@@ -58,29 +54,18 @@
                                     </strong>
                                 </div>
                                 <div class="o_kanban_record_subtitle">
-                                    <div>
-                                        <t t-if="record.reporter.raw_value">
-                                            <field name="reporter"/>
-                                        </t>
-                                    </div>
-                                    <div>
-                                        <t t-if="record.transport_type_id and record.transport_type_id.raw_value">
-                                            <field class="me-1" name="transport_type_id"/>
-                                        </t>
-                                    </div>
-                                    
+                                    <t t-if="record.reporter.raw_value">
+                                        <field name="reporter"/>
+                                    </t>
+                                    <t t-if="record.transport_type_id and record.transport_type_id.raw_value">
+                                        <field class="me-1" name="transport_type_id"/>
+                                    </t>
                                 </div>
                                 <div>
-                                    <t t-if="record.pol.value">
-                                        <field name="pol"/>
-                                    </t>
-                                    <!--<span class="o_text_overflow" t-if="record.pol.value" t-esc="record.pol.value"/>-->
-                                    <!--<span class="o_text_overflow" t-if="record.pod.value" t-esc="record.pod.value"/>-->
-                                </div>
-                                <div>
-                                     <t t-if="record.pol.value">
-                                        <field name="pod"/>
-                                    </t>
+                                    <span class="o_text_overflow" t-if="record.pol.value"
+                                          t-esc="record.pol.value"></span>
+                                    <span class="o_text_overflow" t-if="record.pod.value"
+                                          t-esc="record.pod.value"></span>
                                 </div>
                             </div>
                             <div class="oe_kanban_footer">
@@ -102,12 +87,12 @@
         <field name="model">request.price</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name" string="ID"/>
+                <field name="name"/>
+                <field name="date"/>
                 <field name="reporter"/>
                 <field name="transport_type_id"/>
                 <field name="pol"/>
                 <field name="pod"/>
-                <field name="date"/>
                 <field name="stage_id"/>
             </tree>
         </field>
@@ -118,17 +103,10 @@
         <field name="arch" type="xml">
             <form string="Request Price">
                 <header>
-                    <button name="action_create_rfq" string="Create RFQ" type="object" class="oe_highlight" invisible="stage_id == 3"/>
-                    <button name="action_cancel" string="Cancel" type="object" class="oe_highlight" invisible="stage_id != 1 or stage_id == 2"/>
-                    <button name="action_reset" string="Reset to New" type="object" class="oe_highlight" invisible="stage_id != 3 or stage_id == 2"/>
-                    <field name="stage_id" widget="statusbar" options="{'fold_field': 'folded'}"/>
+                    <button name="action_create_rfq" string="Request RFQ" type="object" class="oe_highlight"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'folded'}"/>
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_view_rfqs" type="object" class="oe_stat_button" icon="fa-pencil-square-o"  invisible="count_rfqs == 0">
-                            <field name="count_rfqs" widget="statinfo"/>
-                        </button>
-                    </div>
                     <div class="oe_title">
                         <label for="name"/>
                         <h1>
@@ -137,32 +115,32 @@
                     </div>
                     <group>
                         <group>
-                            <field name="transport_type_id" readonly="stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="shipment_scope_id" readonly="stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" invisible="transport_type_id not in [2]"/>
-                            <field name="shipment_scope_id_in" readonly="stage_id == 2" invisible="transport_type_id not in [3]"/>
+                            <field name="transport_type_id"/>
+                            <field name="shipment_scope_id" invisible="transport_type_id not in [2]"/>
+                            <field name="shipment_scope_id_in" invisible="transport_type_id not in [3]"/>
                         </group>
                         <group>
-                            <field name="date" readonly="stage_id == 2"/>
-                            <field name="reporter" readonly="stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="date"/>
+                            <field name="reporter"/>
                         </group>
                     </group>
                     <group string="Shipment Details">
                         <group>
 
-                            <field name="commodity_id" readonly="stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="commodity_equip" readonly="stage_id == 2"/>
-                            <field name="temperature" readonly="stage_id == 2" invisible="commodity_equip !='reefer'"/>
-                            <field name="un_number" readonly="stage_id == 2" invisible="commodity_equip !='imo'"/>
-                            <field name="attachment" readonly="stage_id == 2" invisible="commodity_equip !='imo'"/>
+                            <field name="commodity_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="commodity_equip"/>
+                            <field name="temperature" invisible="commodity_equip !='reefer'"/>
+                            <field name="un_number" invisible="commodity_equip !='imo'"/>
+                            <field name="attachment" invisible="commodity_equip !='imo'"/>
 
                         </group>
                         <group>
-                            <field name="product_id_domain" invisible="1" readonly="stage_id == 2"/>
-                            <field name="pol" domain="product_id_domain" readonly="stage_id == 2"
+                            <field name="product_id_domain" invisible="1"/>
+                            <field name="pol" domain="product_id_domain"
                                    options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
-                            <field name="pod" domain="product_id_domain" readonly="stage_id == 2"
+                            <field name="pod" domain="product_id_domain"
                                    options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
-                            <field name="incoterms_id" readonly="stage_id == 2"
+                            <field name="incoterms_id"
                                    options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
 
                         </group>
@@ -170,7 +148,7 @@
                     <group>
                         <field name="package_ids" invisible="transport_type_id not in [1]">
                             <tree editable="bottom">
-                                <field name="package_type_id" readonly="parent.stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                                 <field name="length_cm"/>
@@ -183,9 +161,9 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id not in [2]">
-                        <field name="lcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id not in [2]">
+                        <field name="lcl_container_type_ids" invisible="shipment_scope_id not in [2]">
                             <tree editable="bottom">
-                                <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                                 <field name="length_cm"/>
@@ -197,9 +175,9 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id_in not in [4]">
-                        <field name="lcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id_in not in [4]">
+                        <field name="lcl_container_type_ids" invisible="shipment_scope_id_in not in [4]">
                             <tree editable="bottom">
-                                <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                                 <field name="length_cm"/>
@@ -211,9 +189,9 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id not in [1]">
-                        <field name="fcl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id not in [1]">
+                        <field name="fcl_container_type_ids" invisible="shipment_scope_id not in [1]">
                             <tree editable="bottom">
-                                <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="container_id" options="{'no_edit': True, 'no_create': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                             </tree>
@@ -221,9 +199,9 @@
                         </field>
                     </group>
                     <group invisible="shipment_scope_id_in not in [3]">
-                        <field name="ftl_container_type_ids" readonly="stage_id == 2" invisible="shipment_scope_id_in not in [3]">
+                        <field name="ftl_container_type_ids" invisible="shipment_scope_id_in not in [3]">
                             <tree editable="bottom">
-                                <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="container_id" options="{'no_edit': True, 'no_create': True}"/>
                                 <field name="qty"/>
                                 <field name="gw_kg"/>
                             </tree>
@@ -234,33 +212,33 @@
                         <page name="customer_requirements" string="Customer Requirements">
                             <group>
                                 <group>
-                                    <field name="cargo_readiness_date" readonly="stage_id == 2"/>
-                                    <label for="transit_time_duration" string="Transit Time Duration" readonly="stage_id == 2"/>
+                                    <field name="cargo_readiness_date"/>
+                                    <label for="transit_time_duration" string="Transit Time Duration"/>
                                     <div style="display: flex; align-items: center;">
-                                        <field name="transit_time_duration" readonly="stage_id == 2"/>
+                                        <field name="transit_time_duration"/>
                                         <div class="o_form_label">Days</div>
                                     </div>
                                     <label for="free_time_duration" string="Free Time Duration"/>
 
                                     <div style="display: flex; align-items: center;">
-                                        <field name="free_time_duration" readonly="stage_id == 2"/>
+                                        <field name="free_time_duration"/>
                                         <div class="o_form_label">Days</div>
                                     </div>
                                 </group>
                                 <group>
-                                    <field name="target_rate" readonly="stage_id == 2"/>
-                                    <field name="currency_id" readonly="stage_id == 2" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                                    <field name="preferred_line_id" readonly="stage_id == 2"
-                                          options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                    <field name="target_rate"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="preferred_line_id"
+                                           options="{'no_create': True, 'no_create_edit': True}"/>
                                 </group>
                             </group>
                             <group>
-                                <field name="service_needed_ids" readonly="stage_id == 2"/>
+                                <field name="service_needed_ids"/>
                             </group>
                         </page>
                         <page string="Requester Notes">
                             <group>
-                                <field name="requester_notes" readonly="stage_id == 2"/>
+                                <field name="requester_notes"/>
                             </group>
                         </page>
                     </notebook>

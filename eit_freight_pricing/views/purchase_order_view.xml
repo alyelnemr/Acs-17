@@ -31,25 +31,6 @@
 
         </field>
     </record>
-
-    <record id="inherit_purchase_order_view_search_filter" model="ir.ui.view">
-        <field name="name">inherit.purchase.order.view.filter</field>
-        <field name="model">purchase.order</field>
-        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
-        <field name="arch" type="xml">
-            <xpath expr="//filter[@name='my_purchases']" position="after">
-                <filter domain="[('purchase_type', '=', 'freight')]" name="studio_filter_b5_1i4m8dejt" string="Freight"/>
-                <filter domain="[('purchase_type', '=', 'product')]" name="studio_filter_681_1i4m8ejss" string="Products"/>
-            </xpath>
-            <xpath expr="//filter[@name='approved']" position="replace"/>
-            <xpath expr="//filter[@name='starred']" position="replace"/>
-
-            <xpath expr="//filter[@name='vendor']" position="before">
-                <filter name="studio_group_by_3a2_1i4m9qlo6" string="Purchase Type" context="{'group_by': 'purchase_type'}"/>
-            </xpath>
-        </field>
-    </record>
-
     <record id="purchase_order_view_tree_inherit_pricing" model="ir.ui.view">
         <field name="name">purchase.order.tree.pricing</field>
         <field name="model">purchase.order</field>
@@ -73,18 +54,14 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-     		<field name="count_price_req" invisible="1"/>
+
                 <button class="oe_stat_button"
                         name="action_open_price"
                         type="object"
-                        icon="fa-file-text-o"
-			invisible="count_price_req == 0">
+                        icon="fa-file-text-o">
                     <field string="Request Price" name="price_req_id" widget="statinfo"/>
                 </button>
 
-            </xpath>
-	    <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='products']/field[@name='order_line']/tree[1]/field[@name='product_id']" position="attributes">
-                <attribute name="domain">[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id), ('detailed_type', 'not in', ('charge_type', 'pricing'))]</attribute>
             </xpath>
             <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
                 <group name="request_info" string="Request Info" invisible="purchase_type in ['purchase']">
@@ -222,30 +199,12 @@
             </xpath>
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
-                <attribute name="readonly">0</attribute>
-            </xpath>
-            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='products']/field[@name='order_line']/tree[1]/field[@name='product_id']" position="attributes">
-                <attribute name="options">{"no_create_edit":true,"no_open":true,"no_quick_create":true}</attribute>
+                <attribute name="readonly">1</attribute>
             </xpath>
         </field>
     </record>
 
     <record id="purchase.action_purchase_order_report_all" model="ir.actions.act_window">
-        <field name="domain">[('order_id.purchase_type', '=', 'product')]</field>
-    </record>
-
-    <record id="purchase.product_product_menu" model="ir.ui.menu">
-        <field name="active">False</field>
-    </record>
-
-    <record id="inherit_purchase_product_view_form" model="ir.ui.view">
-        <field name="name">inherit.purchase.product.view.form</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='is_published']" position="attributes">
-                <attribute name="invisible">True</attribute>
-            </xpath>
-        </field>
+        <field name="domain">[('order_id.purchase_type', '=', 'purchase')]</field>
     </record>
 </odoo>

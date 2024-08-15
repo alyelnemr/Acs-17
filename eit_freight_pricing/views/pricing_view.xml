@@ -47,7 +47,7 @@
     </record>
 
     <record id="purchase_form_action_pricing" model="ir.actions.act_window">
-        <field name="name">Freight Purchase</field>
+        <field name="name">Requests for Quotation</field>
         <field name="res_model">purchase.order</field>
         <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
         <field name="view_ids" eval="[(5, 0, 0),
@@ -55,7 +55,7 @@
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
             ]"/>
         <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
-        <field name="context">{"default_purchase_type": "freight"}</field>
+        <field name="context">{"default_purchase_type": "pricing"}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No purchase order found. Let's create one!
@@ -71,8 +71,8 @@
         <field name="name">Request For Quotation</field>
         <field name="res_model">purchase.order</field>
         <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
-        <field name="context">{"default_purchase_type": "freight"}</field>
-        <field name="domain">[('purchase_type', '=', "freight")]</field>
+        <field name="context">{"default_purchase_type": "pricing"}</field>
+        <field name="domain">[('purchase_type', '=', "pricing")]</field>
     </record>
 
     <record id="action_purchase_my_activity" model="ir.actions.act_window">
@@ -85,7 +85,7 @@
         <field name="name">Pricing Analysis</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">graph,pivot</field>
-        <field name="domain">[('detailed_type', '=', 'freight')]</field>
+        <field name="domain">[('detailed_type', '=', 'pricing')]</field>
     </record>
 
 
@@ -93,10 +93,10 @@
         <field name="name">Pricing</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">kanban,tree,form,pivot,graph,activity</field>
-        <!-- <field name="view_ids" eval="[(5, 0, 0),
+        <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('eit_freight_pricing.product_template_tree_view_pricing2')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('eit_freight_pricing.product_template_form_view_pricing2')}),
-            ]"/> -->
+            ]"/>
         <field name="search_view_id" ref="product_price_search"/>
         <field name="context">
             {'default_sale_ok':True,
@@ -111,27 +111,6 @@
                 No product found. Let's create one!
             </p>
         </field>
-    </record>
-
-<!--    <record id="action_product_template_pricing_tree_view" model="ir.actions.act_window.view">-->
-<!--        <field eval="1" name="sequence"/>-->
-<!--        <field name="view_mode">tree</field>-->
-<!--        <field name="view_id" ref="product_template_tree_view_pricing2"/>-->
-<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
-<!--    </record>-->
-
-<!--    <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">-->
-<!--        <field eval="2" name="sequence"/>-->
-<!--        <field name="view_mode">form</field>-->
-<!--        <field name="view_id" ref="product_template_form_view_pricing2"/>-->
-<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
-<!--    </record>-->
-
-    <record id="action_product_template_pricing_kanban_view" model="ir.actions.act_window.view">
-        <field eval="3" name="sequence"/>
-        <field name="view_mode">kanban</field>
-        <field name="view_id" ref="product_template_kanban_stock_view3"/>
-        <field name="act_window_id" ref="action_product_pricing"/>
     </record>
 
     <record id="website_sale.action_product_pages_list" model="ir.actions.act_window">

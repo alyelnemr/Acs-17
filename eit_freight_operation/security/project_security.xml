@@ -1,70 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-<!--        <record id="project_task_stage_user_restriction" model="ir.rule">-->
-<!--            <field name="name">Project Task Stage User Restriction</field>-->
-<!--            <field name="model_id" ref="project.model_project_task"/>-->
-<!--            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>-->
-<!--            <field name="domain_force">['|', ('stage_id', '!=', 'project.project_stage_3'), ('stage_id', '=', False)]-->
-<!--            </field>-->
-<!--        </record>-->
+        <record id="project_task_stage_user_restriction" model="ir.rule">
+            <field name="name">Project Task Stage User Restriction</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="domain_force">['|', ('stage_id', '!=', 'project.project_stage_3'), ('stage_id', '=', False)]
+            </field>
+        </record>
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
 
-<!--        <delete model="ir.rule" id="project.project_public_members_rule"/>-->
-<!--        <delete model="ir.rule" id="project.task_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.ir_rule_private_task"/>-->
-<!--        <delete model="ir.rule" id="project.project_project_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_collaborator_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_task_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_task_rule_portal_project_sharing"/>-->
-<!--        <delete model="ir.rule" id="project.update_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.report_project_task_user_rule"/>-->
-<!--        <delete model="ir.rule" id="project.burndown_chart_project_user_rule"/>-->
-<!--        <delete model="ir.rule" id="project.milestone_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.project_milestone_rule_portal_project_sharing"/>-->
+        <delete model="ir.rule" id="project.project_public_members_rule"/>
+        <delete model="ir.rule" id="project.task_visibility_rule"/>
+        <delete model="ir.rule" id="project.ir_rule_private_task"/>
+        <delete model="ir.rule" id="project.project_project_rule_portal"/>
+        <delete model="ir.rule" id="project.project_collaborator_rule_portal"/>
+        <delete model="ir.rule" id="project.project_task_rule_portal"/>
+        <delete model="ir.rule" id="project.project_task_rule_portal_project_sharing"/>
+        <delete model="ir.rule" id="project.update_visibility_rule"/>
+        <delete model="ir.rule" id="project.report_project_task_user_rule"/>
+        <delete model="ir.rule" id="project.burndown_chart_project_user_rule"/>
+        <delete model="ir.rule" id="project.milestone_visibility_rule"/>
+        <delete model="ir.rule" id="project.project_milestone_rule_portal_project_sharing"/>
 
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_public_members_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.task_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.ir_rule_private_task')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_project_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_collaborator_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_task_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_task_rule_portal_project_sharing')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.update_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.report_project_task_user_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.burndown_chart_project_user_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.milestone_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_milestone_rule_portal_project_sharing')]"/>
-        </function>
-
-        <function model="ir.actions.act_window.view" name="unlink">
-           <value eval="[ref('project.open_view_all_task_list_kanban')]"/>
-        </function>
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
@@ -87,6 +47,10 @@
             <field name="model_id" ref="project.model_project_task"/>
             <field name="domain_force">[
                 '|',
+                '&amp;',
+                ('project_id', '!=', False),
+                '|',
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
                 ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
                 '|',
                 ('message_partner_ids', 'in', [user.partner_id.id]),
@@ -94,7 +58,7 @@
                 ('user_ids', 'in', user.id)
                 ]
             </field>
-            <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>
 
 
@@ -102,13 +66,13 @@
             <field name="name">Project: See private tasks</field>
             <field name="model_id" ref="project.model_project_task"/>
             <field name="domain_force">[
-            ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
-            '|', '|', ('project_id', '!=', False),
-                      ('parent_id', '!=', False),
-                 ('user_ids', 'in', user.id),
-        ]
+                ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                '|', '|', ('project_id', '!=', False),
+                ('parent_id', '!=', False),
+                ('user_ids', 'in', user.id),
+                ]
             </field>
-            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+            <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
         </record>
         <!-- Portal -->
         <record id="project_project_rule_portal" model="ir.rule">
