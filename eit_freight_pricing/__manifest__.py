@@ -22,6 +22,7 @@
         'views/pricing_view.xml',
         'views/request_price_view.xml',
         'views/purchase_order_view.xml',
+        'views/res_partner_view.xml',
         'views/sale_order_view.xml',
         'wizard/request_price_vendor_view.xml',
 

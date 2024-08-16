@@ -20,6 +20,7 @@ class RequestPrice(models.Model):
 
     name = fields.Char(string="Name", readonly=True,
                        copy=False)
+    active = fields.Boolean('Active', default=True, help="If unchecked, it will allow you to hide the request without removing it.")
     transport_type_id = fields.Many2one('transport.type', string="Transport type")
     package_ids = fields.One2many('air.package.type', 'request_price_id')
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope",
@@ -65,7 +66,7 @@ class RequestPrice(models.Model):
     service_needed_ids = fields.Many2many('service.scope', string="Service Needed")
 
     requester_notes = fields.Text(string="Requester Notes")
-    date = fields.Date(string="Date")
+    date = fields.Date(string="Date", default=fields.Date.today)
     reporter = fields.Many2one('res.users', string="Requester")
     created_rfq = fields.Boolean(string="Created Rfq?")
     count_rfqs = fields.Integer(string="Purchase", compute='get_purchase_count')

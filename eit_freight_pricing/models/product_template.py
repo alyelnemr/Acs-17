@@ -180,6 +180,13 @@ class ProductTemplate(models.Model):
                 _('Please add the Record from the Pricing App'))
 
         result = super(ProductTemplate, self).write(vals)
+        for rec in self:
+            if rec.p_user_ids:
+                partner_ids = []
+                for line in rec.p_user_ids:
+                    if line.partner_id:
+                        partner_ids.append(line.partner_id.id)
+                rec.message_subscribe(partner_ids, None)
         return result
 
 
