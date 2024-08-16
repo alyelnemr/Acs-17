@@ -7,6 +7,7 @@ access_ltl_container_type,ltl.container.type,model_ltl_container_type,base.group
 access_fcl_container_type,fcl.container.type,model_fcl_container_type,base.group_user,1,1,1,1
 access_ftl_container_type,ftl.container.type,model_ftl_container_type,base.group_user,1,1,1,1
 access_product_charges,product.charges,model_product_charges,base.group_user,1,1,1,1
+access_charge_type_currency_rate,charge.type.currency.rate,model_charge_type_currency_rate,base.group_user,1,1,1,1
 access_pricing_charges,pricing.charges,model_pricing_charges,base.group_user,1,1,1,1
 access_total_sale_currency,total.sale.currency,model_total_sale_currency,base.group_user,1,1,1,1
 access_total_cost_currency,total.cost.currency,model_total_cost_currency,base.group_user,1,1,1,1
