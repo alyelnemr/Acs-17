@@ -42,7 +42,7 @@
     <record model="ir.actions.act_window" id="action_requset_price">
         <field name="name">CRM Requests</field>
         <field name="res_model">request.price</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form,kanban,pivot</field>
         <!--        <field name="context">{'search_default_my_request':1}</field>-->
     </record>
 
@@ -54,8 +54,9 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('purchase.purchase_order_view_tree')}),
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
             ]"/>
-        <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
+        <!-- <field name="search_view_id" ref="purchase_freight_view_search_pricing"/> -->
         <field name="context">{"default_purchase_type": "freight"}</field>
+        <field name="domain">[('purchase_type', '=', 'freight')]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No purchase order found. Let's create one!
@@ -113,19 +114,19 @@
         </field>
     </record>
 
-<!--    <record id="action_product_template_pricing_tree_view" model="ir.actions.act_window.view">-->
-<!--        <field eval="1" name="sequence"/>-->
-<!--        <field name="view_mode">tree</field>-->
-<!--        <field name="view_id" ref="product_template_tree_view_pricing2"/>-->
-<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
-<!--    </record>-->
+    <record id="action_product_template_pricing_tree_view" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="product_template_tree_view_pricing2"/>
+        <field name="act_window_id" ref="action_product_pricing"/>
+    </record>
 
-<!--    <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">-->
-<!--        <field eval="2" name="sequence"/>-->
-<!--        <field name="view_mode">form</field>-->
-<!--        <field name="view_id" ref="product_template_form_view_pricing2"/>-->
-<!--        <field name="act_window_id" ref="action_product_pricing"/>-->
-<!--    </record>-->
+    <record id="action_product_template_pricing_form_view" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="product_template_form_view_pricing2"/>
+        <field name="act_window_id" ref="action_product_pricing"/>
+    </record>
 
     <record id="action_product_template_pricing_kanban_view" model="ir.actions.act_window.view">
         <field eval="3" name="sequence"/>

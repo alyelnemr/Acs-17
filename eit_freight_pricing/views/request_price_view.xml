@@ -15,7 +15,8 @@
                 <filter string="Air" name="transport_type_id_air" domain="[('transport_type_id','=', 1)]"/>
                 <filter string="Sea" name="transport_type_id_sea" domain="[('transport_type_id','=', 2)]"/>
                 <filter string="Inland" name="transport_type_id_inland" domain="[('transport_type_id','=',3)]"/>
-
+                <separator/>
+                <filter string="Archive" name="archive" domain="[('active','=', False)]"/>
                 <separator/>
                 <group expand="1" string="Group By">
                     <filter string="Transport Type" name="transport_type"
@@ -31,7 +32,7 @@
         <field name="model">request.price</field>
         <field name="priority" eval="1"/>
         <field name="arch" type="xml">
-            <kanban default_group_by="stage_id"
+            <kanban
                     sample="1" >
                 <field name="stage_id"/>
                 <field name="name"/>
@@ -119,7 +120,7 @@
             <form string="Request Price">
                 <header>
                     <button name="action_create_rfq" string="Create RFQ" type="object" class="oe_highlight" invisible="stage_id == 3"/>
-                    <button name="action_cancel" string="Cancel" type="object" class="oe_highlight" invisible="stage_id != 1 or stage_id == 2"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="stage_id != 1 or stage_id == 2"/>
                     <button name="action_reset" string="Reset to New" type="object" class="oe_highlight" invisible="stage_id != 3 or stage_id == 2"/>
                     <field name="stage_id" widget="statusbar" options="{'fold_field': 'folded'}"/>
                 </header>

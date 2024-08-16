@@ -146,7 +146,7 @@
                                    invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"
                                    options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="package_type" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
-                                   invisible="transport_type_id not in [1,2,3] or shipment_scope_id in [1,3]"/>
+                                   invisible="transport_type_id not in [1, 2, 3] or shipment_scope_id in [1, 3] or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
 
                             <field name="commodity_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
                                    invisible="1"/>
@@ -355,7 +355,7 @@
                                 <tree editable="bottom">
                                     <field name="plane_id"
                                            options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                                    <field name="voyage_number"/>
+                                    <field name="voyage_number" string="Flight Number"/>
                                     <field name="etd"/>
                                     <field name="eta"/>
                                     <field name="tt_day"/>

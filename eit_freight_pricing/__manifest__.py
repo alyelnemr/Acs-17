@@ -10,7 +10,7 @@
     'website': "www.eit-hub.com",
 
     'category': 'Services/Freight',
-    'version': '17.2',
+    'version': '17.3',
     'depends': ['base', 'purchase', 'eit_freight_MasterData', 'account', 'base_setup', 'product', 'base_setup',
                 'mail', 'website_sale', 'hr_expense'],
 
@@ -22,6 +22,7 @@
         'views/pricing_view.xml',
         'views/request_price_view.xml',
         'views/purchase_order_view.xml',
+        'views/res_partner_view.xml',
         'views/sale_order_view.xml',
         'wizard/request_price_vendor_view.xml',
 

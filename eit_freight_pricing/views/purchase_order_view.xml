@@ -1,10 +1,36 @@
 <odoo>
-    <record id="purchase_order_view_search_pricing" model="ir.ui.view">
-        <field name="name">purchase.order.pricing</field>
+    <record id="purchase_freight_view_search_pricing" model="ir.ui.view">
+        <field name="name">purchase.freight.view.search.pricing</field>
         <field name="model">purchase.order</field>
-        <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='my_Orders']" position="attributes">
+            <search string="Search Freight Purchase">
+                <field name="name" string="Order" filter_domain="['|', '|', ('name', 'ilike', self), ('partner_ref', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                <field name="partner_id" operator="child_of"/>
+                <field name="user_id"/>
+                <field name="product_id"/>
+                <!-- <filter name="my_Orders" string="My Orders" domain="[('user_id', '=', uid)]"/> -->
+                <!-- <filter string="Starred" name="starred" domain="[('priority', '=', '1')]"/> -->
+                <separator/>
+                <filter name="unconfirmed" string="Not Acknowledged" domain="[('mail_reception_confirmed', '=', False), ('state', '=', 'purchase')]"/>
+                <filter name="not_invoiced" string="Waiting Bills" domain="[('invoice_status', '=', 'to invoice')]" help="Purchase orders that include lines not invoiced."/>
+                <filter name="invoiced" string="Bills Received" domain="[('invoice_status', '=', 'invoiced')]" help="Purchase orders that have been invoiced."/>
+                <separator/>
+                <filter name="order_date" string="Order Date" date="date_order"/>
+                <separator/>
+                <filter invisible="1" string="Late Activities" name="activities_overdue" domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]" help="Show all records which has next action date is before today"/>
+                <filter invisible="1" string="Today Activities" name="activities_today" domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter invisible="1" string="Future Activities" name="activities_upcoming_all" domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Warnings" name="activities_exception" domain="[('activity_exception_decoration', '!=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Vendor" name="vendor" domain="[]" context="{'group_by': 'partner_id'}"/>
+                     <filter string="Transport Type" name="transport_type"
+                        context="{'group_by':'transport_type_id'}"/>
+                    <filter string="Purchase Representative" name="representative" domain="[]" context="{'group_by': 'user_id'}"/>
+                    <filter string="Order Date" name="order_date" domain="[]" context="{'group_by': 'date_order'}"/>
+                </group>
+            </search>
+            <!-- <xpath expr="//filter[@name='my_Orders']" position="attributes">
                 <attribute name="string">My Purchase</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
@@ -20,17 +46,17 @@
                         invisible="context.get('default_purchase_type') not in ('pricing')"/>
                 <filter string="Inland" name="transport_type_id_inland" domain="[('transport_type_id','=',3)]"
                         invisible="context.get('default_purchase_type') not in ('pricing')"/>
-                <filter string="Purchase" name="purchase_type_purchase" domain="[('purchase_type','=','purchase')]"/>
-                <filter string="Pricing" name="purchase_type_pricing" domain="[('purchase_type','=','pricing')]"/>
-                <filter string="Pricing" name="purchase_type_pricing" domain="[('purchase_type','=','pricing')]"/>
+                <filter string="Purchase" name="purchase_type_purchase" domain="[('purchase_type','=','product')]"/>
+                <filter string="Pricing" name="purchase_type_freight" domain="[('purchase_type','=','freight')]"/>
             </xpath>
             <xpath expr="//filter[@name='vendor']" position="after">
                 <filter string="Transport Type" name="transport_type"
                         context="{'group_by':'transport_type_id'}"/>
-            </xpath>
+            </xpath> -->
 
         </field>
     </record>
+
 
     <record id="inherit_purchase_order_view_search_filter" model="ir.ui.view">
         <field name="name">inherit.purchase.order.view.filter</field>
@@ -46,6 +72,23 @@
 
             <xpath expr="//filter[@name='vendor']" position="before">
                 <filter name="studio_group_by_3a2_1i4m9qlo6" string="Purchase Type" context="{'group_by': 'purchase_type'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_purchase_order_view_search" model="ir.ui.view">
+        <field name="name">inherit.purchase.order.view.search</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_Orders']" position="after">
+                <filter domain="[('purchase_type', '=', 'freight')]" name="purchase_freight" string="Freight"/>
+                <filter domain="[('purchase_type', '=', 'product')]" name="purchase_product" string="Products"/>
+            </xpath>
+            <xpath expr="//filter[@name='starred']" position="replace"/>
+
+            <xpath expr="//filter[@name='vendor']" position="before">
+                <filter name="purchase_type_group_by" string="Purchase Type" context="{'group_by': 'purchase_type'}"/>
             </xpath>
         </field>
     </record>
@@ -78,7 +121,7 @@
                         name="action_open_price"
                         type="object"
                         icon="fa-file-text-o"
-			invisible="count_price_req == 0">
+                        invisible="count_price_req == 0">
                     <field string="Request Price" name="price_req_id" widget="statinfo"/>
                 </button>
 
@@ -87,55 +130,66 @@
                 <attribute name="domain">[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id), ('detailed_type', 'not in', ('charge_type', 'pricing'))]</attribute>
             </xpath>
             <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
-                <group name="request_info" string="Request Info" invisible="purchase_type in ['purchase']">
+                <group name="purchase_details" string="PURCHASE DETAILS" invisible="purchase_type in ['purchase']">
                     <group>
-                        <field name="expiration_date"/>
-                        <field name="transport_type_id"/>
+                        <field name="expiration_date" invisible="1"/>
+                        <field name="transport_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" invisible="purchase_type == 'product'"/>
+                         <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
+                               domain="[('type', '=', 'sea')]" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                        <field name="shipment_scope_id" invisible="transport_type_id not in [3]"
+                               domain="[('type', '=', 'inland')]" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="package_type" invisible="transport_type_id not in [1]"
                                domain="[('tag_type_ids.name', '=', 'AIR')]"
-                               options="{'no_edit': True, 'no_create': True}"/>
-                        <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
-                               domain="[('type', '=', 'sea')]"/>
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="container_type" invisible="shipment_scope_id not in [1,3]"
-                               options="{'no_edit': True, 'no_create': True}"/>
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="package_type_1" invisible="shipment_scope_id not in [2]"
-                               options="{'no_edit': True, 'no_create': True}"
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
                                domain="[('tag_type_ids.name', '=', 'LCL')]"/>
                         <field name="package_type_1" invisible="shipment_scope_id not in [4]"
-                               options="{'no_edit': True, 'no_create': True}"
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
                         />
-                        <field name="shipment_scope_id" invisible="transport_type_id not in [3]"
-                               domain="[('type', '=', 'inland')]"/>
 
-                        <field name="transit_time_dur"/>
-                        <field name="free_time_dur"/>
-                        <field name="commodity_id"/>
-                        <field name="commodity_equip"/>
+                        <label for="transit_time_dur" string="Transit Time Duration" invisible="transport_type_id in [1, 2, 3] or not shipment_scope_id or purchase_type == 'product'"/>
+                        <div style="display: flex; align-items: center;" invisible="transport_type_id in [1, 2, 3] or not shipment_scope_id or purchase_type == 'product'">
+                            <field name="transit_time_dur" />
+                            <div class="o_form_label">Days</div>
+                        </div>
+
+                        <label for="free_time_dur" string="Free Time Duration" invisible="shipment_scope_id != 1 or purchase_type == 'product'"/>
+                        <div style="display: flex; align-items: center;" invisible="shipment_scope_id != 1 or purchase_type == 'product'">
+                            <field name="free_time_dur"/>
+                            <div class="o_form_label">Days</div>
+                        </div>
+                        <field name="commodity_id" invisible="1"/>
+                        <field name="commodity_equip" invisible="1"/>
                         <field name="temperature" invisible="commodity_equip !='reefer'"/>
                         <field name="un_number" invisible="commodity_equip !='imo'"/>
                         <field name="attach_id" invisible="commodity_equip !='imo'"/>
                     </group>
                     <group>
-                        <field name="pol_id" domain="[('type_id', '=', transport_type_id)]"
-                               options="{'no_edit': True, 'no_create': True}"/>
-                        <field name="pod_id" domain="[('type_id', '=', transport_type_id)]"
-                               options="{'no_edit': True, 'no_create': True}"/>
+                        <field name="pol_id" domain="[('type_id', '=', transport_type_id)]" invisible="purchase_type == 'product'"
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                        <field name="pod_id" invisible="purchase_type == 'product'" domain="[('type_id', '=', transport_type_id)]"
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="shipping_line" invisible="transport_type_id not in [2]"
-                               options="{'no_edit': True, 'no_create': True}"/>
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                         <field name="scope_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="air_line" invisible="transport_type_id not in [1]"
-                               options="{'no_edit': True, 'no_create': True}"/>
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                         <field name="trucker" invisible="transport_type_id not in [3]"
-                               options="{'no_edit': True, 'no_create': True}"/>
-                        <field name="incoterms_id" options="{'no_edit': True, 'no_create': True}"/>
-                        <field name="pickup"/>
-                        <field name="delivery"/>
+                               options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                        <field name="incoterms_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" invisible="1"/>
+                        <field name="pickup" invisible="1"/>
+                        <field name="delivery" invisible="1"/>
 
                     </group>
                 </group>
                 <group>
                     <field name="package_ids" invisible="not package_ids">
                         <tree editable="bottom">
-                            <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
                             <field name="gw_kg"/>
                             <field name="length_cm"/>
@@ -150,7 +204,7 @@
                 <group invisible="shipment_scope_id not in [2]">
                     <field string="Containers" name="lcl_container_type_ids" invisible="not lcl_container_type_ids">
                         <tree editable="bottom">
-                            <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
                             <field name="gw_kg"/>
                             <field name="length_cm"/>
@@ -164,7 +218,7 @@
                 <group invisible="shipment_scope_id not in [4]">
                     <field string="Containers" name="lcl_container_type_ids" invisible="not lcl_container_type_ids">
                         <tree editable="bottom">
-                            <field name="package_type_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="package_type_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
                             <field name="gw_kg"/>
                             <field name="length_cm"/>
@@ -178,7 +232,7 @@
                 <group invisible="shipment_scope_id not in [1]">
                     <field string="Containers" name="fcl_container_type_ids" invisible="not fcl_container_type_ids">
                         <tree editable="bottom">
-                            <field name="container_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
                             <field name="gw_kg"/>
                         </tree>
@@ -188,29 +242,81 @@
                 <group invisible="shipment_scope_id not in [3]">
                     <field string="Containers" name="ftl_container_type_ids" invisible="not ftl_container_type_ids">
                         <tree editable="bottom">
-                            <field name="container_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="container_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
                             <field name="gw_kg"/>
                         </tree>
                     </field>
                 </group>
             </xpath>
-            <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
-                <page string="Charges" name="charges" invisible="purchase_type in ['purchase']">
+            <xpath expr="//form/sheet/notebook/page[@name='products']" position="before">
+                <page string="Charges" name="charges" invisible="purchase_type in ['purchase'] or purchase_type == 'product'">
                     <field name="fixed_charges_ids">
                         <tree editable="bottom">
-                            <field name="product_id" options="{'no_edit': True, 'no_create': True}"/>
-                            <field name="cost_price"/>
+                            <field name="product_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="package_type" string="Container/Package" column_invisible="(parent.transport_type_id in [2,3] and parent.shipment_scope_id in [3,1]) or (parent.transport_type_id and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="container_type" string="Container/Package" column_invisible="(parent.transport_type_id in [2,3] and parent.shipment_scope_id in [4,2]) or (parent.transport_type_id in [1]) or (parent.transport_type_id and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="qty"/>
-                            <field name="package_type" options="{'no_edit': True, 'no_create': True}"/>
-                            <field name="currency_id" options="{'no_edit': True, 'no_create': True}"/>
+                            <field name="cost_price"/>
+                            <field name="currency_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="ex_rate"/>
                             <field name="tot_cost_fr" column_invisible="1"/>
                             <field name="tot_cost"/>
+                            <field name="tax_id" widget="many2many_tags"/>   
+                            <field name="tot_cost_inc"/>
                             <field name="order_line" column_invisible="1"/>
+                            <field name="purchase_id" column_invisible="1"/>
                         </tree>
                     </field>
+                    <div class="row">
+                        <div name="rate_per_currency" class="col">
+                            <label for="rate_per_currency_ids">Cost Per Currency</label>
+                            <field name="rate_per_currency_ids" nolabel="1">
+                                <tree edit="0" delete="0" create="0" no_open="True">
+                                    <field name="currency_id"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field>
+                        </div>
+                        <div class="col">
+                            <!-- <label for="tot_sale">Sales Per Currency</label>
+                            <field name="tot_sale" nolabel="1">
+                                <tree edit="0" delete="0" create="0" no_open="True">
+                                    <field name="currency_id"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field> -->
+                        </div>
+                    </div>
+                    <group>
+                        <group>
+        
+                        </group>
+                        <group class="oe_subtotal_footer">
+                             <field name="charge_amount_untaxed"/>
+                             <field name="fixed_charge_tax_details"/>
+                             <field name="subtotal_w_o_whtax"/>
+                             <field name="total_amount"/>
+                            <div>
+                                <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/>
+                            </div>
+                            <field name="total_amount"/>
+                            <!-- <field name="subtotal_w_o_whtax" invisible="subtotal_w_o_whtax == 0"/> -->
+                            <!-- <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/> -->
+                        </group>
+                    </group>
+                    
                 </page>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[("partner_type_id", "in", [4, 5, 2, 7, 11, 12])]</attribute>
+                <attribute name="options">{"no_create_edit":true,"no_quick_create":true,"no_open":true}</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='currency_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/label[2]" position="attributes">
+                <attribute name="string">Expiration Date</attribute>
             </xpath>
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
