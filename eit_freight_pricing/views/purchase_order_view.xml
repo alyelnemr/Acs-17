@@ -288,6 +288,7 @@
                             </group>
                             <group class="oe_subtotal_footer">
                                 <field name="total_amount"/>
+                                <field name="tot_amount_usd_display" string="Total Amount (USD)"/>
                             </group>
                         </div>
                     </div>
