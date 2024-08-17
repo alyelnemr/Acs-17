@@ -176,8 +176,9 @@ class Task(models.Model):
                 break
 
             if len(current_invoices) > 0:
-                error_message = "Some of the selected records already have an invoice."
-                break
+                if current_invoices.mapped('move_id').mapped('state') in ['draft', 'posted']:
+                    error_message = "Some of the selected records already have an invoice."
+                    break
 
             invoice_vals = {
                 'move_type': 'out_invoice',
@@ -218,6 +219,8 @@ class Task(models.Model):
                     'price_unit': task_charge.sale_price,
                     'package_type_id': task_charge.package_type_id.id,
                     'container_type_id': task_charge.container_type_id.id,
+                    'invoice_project_task_charge_id': task_charge.id,
+                    'vendor_bill_project_task_charge_id': False,
                 }
                 invoice_line_ids.append((0, 0, line_vals))
                 task_charge_to_line_map[len(invoice_line_ids) - 1] = task_charge
@@ -275,8 +278,9 @@ class Task(models.Model):
                 break
 
             if len(previous_bills) > 0:
-                error_message = "Some of the selected records already have a Bill."
-                break
+                if previous_bills.mapped('move_id').mapped('state') in ['draft', 'posted']:
+                    error_message = "Some of the selected records already have a Bill."
+                    break
 
             invoice_vals = {
                 'move_type': 'in_invoice',
@@ -317,6 +321,8 @@ class Task(models.Model):
                     'price_unit': task_charge.cost_price,
                     'package_type_id': task_charge.package_type_id.id,
                     'container_type_id': task_charge.container_type_id.id,
+                    'invoice_project_task_charge_id': False,
+                    'vendor_bill_project_task_charge_id': task_charge.id,
                 }
                 invoice_line_ids.append((0, 0, line_vals))
                 task_charge_to_line_map[len(invoice_line_ids) - 1] = task_charge

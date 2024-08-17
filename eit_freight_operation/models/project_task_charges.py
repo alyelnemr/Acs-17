@@ -28,9 +28,14 @@ class ProjectTaskCharges(models.Model):
     vendor_bill_id = fields.Many2one('account.move.line', string="Bill Line")
 
     def unlink(self):
+        def check_linked_document(record, document, document_name):
+            if document and document.move_id.state != 'cancel':
+                raise UserError(f"You cannot delete this record because it is linked to an {document_name}.")
+
         for record in self:
-            if record.invoice_id or record.vendor_bill_id:
-                raise UserError("You cannot delete this record because it is linked to an Invoice or a Vendor Bill.")
+            check_linked_document(record, record.invoice_id, "Invoice")
+            check_linked_document(record, record.vendor_bill_id, "Vendor Bill")
+
         return super(ProjectTaskCharges, self).unlink()
 
     @api.depends('sale_price', 'ex_rate', 'qty', 'cost_price')
