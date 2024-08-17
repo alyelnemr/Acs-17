@@ -374,7 +374,7 @@ class PurchaseOrder(models.Model):
 
     @api.depends('fixed_charges_ids')
     def _onchange_fixed_charges_ids(self):
-        self.total_amount = sum(self.fixed_charges_ids.mapped('tax_inc_usd'))
+        self.total_amount_usd = sum(self.fixed_charges_ids.mapped('tax_inc_usd'))
 
     @api.depends('total_amount_usd')
     def _compute_total_amount_usd_display(self):
