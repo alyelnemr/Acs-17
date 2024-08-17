@@ -119,7 +119,7 @@
                         <group>
                             <field name="p_user_ids" widget="many2many_avatar_user"
                                    options="{'no_edit': True, 'no_create': True}"/>
-                            <field name="transport_type_id" readonly="id != False" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="transport_type_id" readonly="id != False" required="1" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <!--                            <field name="service_scope" invisible="transport_type_id not in (2, 3)"-->
                             <!--                                   required="transport_type_id in (2, 3)"/>-->
                             <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
