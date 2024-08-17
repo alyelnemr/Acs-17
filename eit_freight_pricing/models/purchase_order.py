@@ -66,6 +66,9 @@ class PurchaseOrder(models.Model):
         readonly=True
     )
 
+    # fixed_charge_tax_names = fields.Text(string='Tax Names', compute='_compute_fixed_charge_tax_details',)
+    # fixed_charge_tax_amounts = fields.Text(string='Tax Amounts', compute='_compute_fixed_charge_tax_details',)
+
     total_cost_in_usd = fields.Float(string="Total Amount (USD", compute="_onchange_pricing_charge_ids")
     total_amount = fields.Monetary(
         string='Total Amount',
@@ -76,6 +79,7 @@ class PurchaseOrder(models.Model):
     )
     total_amount_usd = fields.Float(
         string='Total Amount (USD)',
+        compute='_onchange_fixed_charges_ids',
         store=True,
         readonly=True,
     )
@@ -113,7 +117,7 @@ class PurchaseOrder(models.Model):
     def _onchange_fixed_charges_ids(self):
         # Force recompute if fixed charges are changed
         self._compute_subtotal_w_o_whtax()
-
+    
     @api.depends('fixed_charges_ids')
     def _compute_fixed_charge_tax_details(self):
         for order in self:
@@ -361,6 +365,10 @@ class PurchaseOrder(models.Model):
                 raise UserError(_('Please select another port.'
                                   'You cant choose the same port at two different locations.'))
 
+    @api.depends('fixed_charges_ids')
+    def _onchange_fixed_charges_ids(self):
+        self.total_amount = sum(self.fixed_charges_ids.mapped('tax_inc_usd'))
+
 
 class ProductCharges(models.Model):
     _name = 'product.charges'
@@ -380,6 +388,8 @@ class ProductCharges(models.Model):
                             compute='_compute_tot_price')
     tot_cost_inc = fields.Float(string="Tax Incl. (Main Currency)",
                             compute='_compute_tot_cost_inc')
+    tax_inc_usd = fields.Float(string="Tax Incl (USD))",
+                            compute='_compute_tax_inc_usd')
     
     order_line = fields.Many2one('purchase.order.line')
     tax_id = fields.Many2many(
@@ -425,6 +435,36 @@ class ProductCharges(models.Model):
         for record in self:
             taxes = sum(tax.amount for tax in record.tax_id)
             record.tot_cost_inc = record.tot_cost * (1 + taxes / 100)
+            
+    @api.depends('tot_cost_inc', 'ex_rate')
+    def _compute_tax_inc_usd(self):
+        for record in self:
+            if record.ex_rate:
+                currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
+                inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate
+                record.tax_inc_usd = record.tot_cost_inc * inverse_company_rate
+            else:
+                record.tax_inc_usd = 0
+
+    @api.model
+    def unlink(self):
+        PurchaseOrderLine = self.env['purchase.order.line']
+        for fixed_charge in self:
+            # Search for the corresponding purchase order line
+            purchase_order_line = PurchaseOrderLine.search([
+                ('order_id', '=', self.purchase_id.id),  # Assuming order_id is a common field
+                ('product_id', '=', fixed_charge.product_id.product_variant_id.id),
+                ('price_unit', '=', fixed_charge.cost_price * fixed_charge.ex_rate),
+                ('subtotal', '=', fixed_charge.tot_cost),
+                ('product_qty', '=', fixed_charge.qty),
+            ])
+
+            # Delete the corresponding purchase order line
+            if purchase_order_line:
+                purchase_order_line.unlink()
+
+        # Delete the fixed charge line itself
+        return super(ProductCharges, self).unlink()
 
     # @api.depends('qty', 'cost_price', 'currency_id')
     # def _compute_rate_per_currency(self):

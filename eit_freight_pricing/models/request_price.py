@@ -126,6 +126,7 @@ class RequestPrice(models.Model):
     def action_cancel(self):
         cancelled_stage = self.env.ref('eit_freight_pricing.stage_pricing_7')
         self.stage_id = cancelled_stage.id
+        self.active = False
 
     def action_reset(self):
         new_stage = self.env.ref('eit_freight_pricing.stage_pricing_5')
