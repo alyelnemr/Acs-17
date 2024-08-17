@@ -16,7 +16,14 @@ class InheritResPartner(models.Model):
             'name': 'Pricing',
             'target': 'current',
             'res_model': 'product.template',
-            'view_mode': 'tree,form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('eit_freight_pricing.product_template_form_view_pricing2').id,
+            'context': {
+            'default_partner_id': self.id,
+            'search_default_partner_id': self.id,
+            'default_detailed_type': 'pricing'
+        },
+
         }
     
     def get_price_count(self):

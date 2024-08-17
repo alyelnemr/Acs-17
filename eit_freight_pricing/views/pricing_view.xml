@@ -54,7 +54,7 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('purchase.purchase_order_view_tree')}),
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
             ]"/>
-        <!-- <field name="search_view_id" ref="purchase_freight_view_search_pricing"/> -->
+        <field name="search_view_id" ref="purchase_freight_view_search_pricing"/>
         <field name="context">{"default_purchase_type": "freight"}</field>
         <field name="domain">[('purchase_type', '=', 'freight')]</field>
         <field name="help" type="html">
