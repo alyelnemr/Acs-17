@@ -133,18 +133,18 @@ class Task(models.Model):
     def _compute_customer_invoice_count(self):
         for record in self:
             record.customer_invoice_count = len(
-                record.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice'))
+                record.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice' and x.state != 'cancel'))
 
     @api.depends('vendor_bill_ids')
     def _compute_vendor_bill_count(self):
         for record in self:
-            record.vendor_bill_count = len(record.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice'))
+            record.vendor_bill_count = len(record.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice' and x.state != 'cancel'))
 
     def action_view_customer_invoices(self):
         self.ensure_one()
         action = self.env.ref('eit_freight_operation.action_freight_move_out_invoice_type').read()[0]
         action['domain'] = [
-            ('id', 'in', self.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice').ids)]
+            ('id', 'in', self.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice' and x.state != 'cancel').ids)]
 
         action['context'] = dict(self.env.context)
 
@@ -153,7 +153,7 @@ class Task(models.Model):
     def action_view_vendor_bills(self):
         self.ensure_one()
         action = self.env.ref('eit_freight_operation.action_freight_move_in_invoice_type').read()[0]
-        action['domain'] = [('id', 'in', self.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice').ids)]
+        action['domain'] = [('id', 'in', self.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice' and x.state != 'cancel').ids)]
 
         # Optionally, update the context if needed
         action['context'] = dict(self.env.context)

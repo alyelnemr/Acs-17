@@ -15,6 +15,7 @@ class AccountMove(models.Model):
     project_task_id = fields.Many2one(comodel_name='project.task', string="Project Task")
     invoice_nature = fields.Selection(selection=[('taxable', 'Taxable'), ('nontaxable', 'Nontaxable')],
                                       string="Invoice Nature")
+    active = fields.Boolean(string="Active", default=True)
 
     def action_open_project_task(self):
         self.ensure_one()
@@ -47,6 +48,11 @@ class AccountMove(models.Model):
                 raise ValidationError(
                     "You cannot reset to draft because there are no project tasks valid for this invoice/bill.")
 
+        return res
+
+    def button_draft(self):
+        res = super().button_draft()
+        self.active = False
         return res
 
 

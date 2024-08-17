@@ -163,6 +163,9 @@
                     <filter string="Taxable" name="invoice_nature" domain="[('invoice_nature', '=', 'taxable')]"/>
                     <filter string="Non-Taxable" name="invoice_nature"
                             domain="[('invoice_nature', '=', 'nontaxable')]"/>
+                    <separator/>
+                    <filter name="archived" string="Canceled" domain="[('active', '=', False)]"/>
+                    <separator/>
                 </xpath>
                 <xpath expr="//group" position="inside">
                     <filter string="Invoice Nature" name="by_invoice_nature" domain="[]"
@@ -244,7 +247,8 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('view_freight_invoice_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_freight_move_form_inherited')}),
             ]"/>
-            <field name="domain">[('move_type', '=', 'out_invoice'), ('is_freight', '=', True)]</field>
+            <field name="domain">[('move_type', '=', 'out_invoice'), ('is_freight', '=', True)]
+            </field>
             <field name="context">{'default_move_type': 'out_invoice', 'default_is_freight': True}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -265,7 +269,8 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('view_freight_invoice_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_freight_move_form_inherited')}),
             ]"/>
-            <field name="domain">[('move_type', '=', 'in_invoice'), ('is_freight', '=', True)]</field>
+            <field name="domain">[('move_type', '=', 'in_invoice'), ('is_freight', '=', True)]
+            </field>
             <field name="context">{'default_move_type': 'in_invoice', 'default_is_freight': True,
                 'display_account_trust': True}
             </field>
@@ -286,9 +291,11 @@
 
         <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
             <field name="search_view_id" ref="view_account_move_filter_inherit"/>
+            <field name="domain">[('move_type', '=', 'out_invoice')]</field>
         </record>
         <record id="account.action_move_in_invoice_type" model="ir.actions.act_window">
             <field name="search_view_id" ref="view_account_move_filter_inherit"/>
+            <field name="domain">[('move_type', '=', 'in_invoice')]</field>
         </record>
         <record id="view_move_form_inherit_purchase_update" model="ir.ui.view">
             <field name="name">account.move.inherit.purchase.update</field>
