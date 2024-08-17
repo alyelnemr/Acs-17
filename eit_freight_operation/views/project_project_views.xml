@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
+        <record model="ir.rule" id="task_visibility_rule">
+            <field name="name">Project/Task: employees: follow required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">[
+            '|',
+                '&amp;',
+                    ('project_id', '!=', False),
+                    '|',
+                        ('project_id.privacy_visibility', 'not in', ('portal_followers', 'followers')),
+                        ('project_id.message_partner_ids', 'in', [user.partner_id.id]),
+                '|',
+                    ('message_partner_ids', 'in', [user.partner_id.id]),
+                    # to subscribe check access to the record, follower is not enough at creation
+                    ('user_ids', 'in', user.id)
+        ]</field>
+        <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+
     <record id="inherit_project_update_view_kanban" model="ir.ui.view">
         <field name="name">project.update.view.kanban.inherit</field>
         <field name="model">project.update</field>
