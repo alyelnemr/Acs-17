@@ -455,7 +455,7 @@ class ProductCharges(models.Model):
                 ('order_id', '=', self.purchase_id.id),  # Assuming order_id is a common field
                 ('product_id', '=', fixed_charge.product_id.product_variant_id.id),
                 ('price_unit', '=', fixed_charge.cost_price * fixed_charge.ex_rate),
-                ('subtotal', '=', fixed_charge.tot_cost),
+                ('price_subtotal', '=', fixed_charge.tot_cost),
                 ('product_qty', '=', fixed_charge.qty),
             ])
 
