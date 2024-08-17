@@ -63,7 +63,7 @@
             <field name="name">Project: See private tasks</field>
             <field name="model_id" ref="project.model_project_task"/>
             <field name="domain_force">[
-                ('project_id.privacy_visibility', 'not in', ('followers')),
+                ('project_id.privacy_visibility', '!=', 'followers'),
                 '|', '|', ('project_id', '!=', False),
                 ('parent_id', '!=', False),
                 ('user_ids', 'in', user.id),
