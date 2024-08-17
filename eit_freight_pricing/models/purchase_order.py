@@ -365,9 +365,22 @@ class PurchaseOrder(models.Model):
                 raise UserError(_('Please select another port.'
                                   'You cant choose the same port at two different locations.'))
 
+    tot_amount_usd_display = fields.Char(
+        string='Total Amount (USD) Display',
+        compute='_compute_total_amount_usd_display',
+        store=True,
+        readonly=True,
+    )
+
     @api.depends('fixed_charges_ids')
     def _onchange_fixed_charges_ids(self):
         self.total_amount = sum(self.fixed_charges_ids.mapped('tax_inc_usd'))
+
+    @api.depends('total_amount_usd')
+    def _compute_total_amount_usd_display(self):
+        for record in self:
+            # Format the amount with the currency symbol after the number
+            record.tot_amount_usd_display = "{:,.2f} $".format(record.total_amount_usd)
 
 
 class ProductCharges(models.Model):
