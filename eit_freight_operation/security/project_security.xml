@@ -24,10 +24,8 @@
         <delete model="ir.rule" id="project.burndown_chart_project_user_rule"/>
         <delete model="ir.rule" id="project.milestone_visibility_rule"/>
         <delete model="ir.rule" id="project.project_milestone_rule_portal_project_sharing"/>
+        <delete model="ir.rule" id="project.open_view_all_task_list_kanban"/>
 
-        <function model="ir.actions.act_window.view" name="unlink">
-           <value eval="[ref('project.open_view_all_task_list_kanban')]"/>
-        </function>
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
