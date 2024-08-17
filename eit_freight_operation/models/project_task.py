@@ -25,7 +25,7 @@ class Task(models.Model):
     port_id = fields.Many2one('port.cites', string="POL", domain="[('type_id', '=', transport_type_id)]")
     port_id_pod = fields.Many2one('port.cites', string="POD", domain="[('type_id', '=', transport_type_id)]")
     incoterm_id = fields.Many2one('account.incoterms', string="Incoterm")
-    commidity_id = fields.Many2one('commodity.data', string="Commodity")
+    commodity_id = fields.Many2one('commodity.data', string="Commodity")
     commodity_equip = fields.Selection(
         string='Commodity Equip',
         selection=[('dry', 'Dry'),
@@ -53,6 +53,7 @@ class Task(models.Model):
     eta = fields.Date(string="ETA")
     ata = fields.Date(string="Arrival (ATA)")
     transit_time = fields.Integer(string="Transit Time")
+    free_time = fields.Integer(string="Free Time")
     house_bl_id = fields.One2many('house.bl', 'bl_task_id', string="House B/L ")
     routing_types = fields.Selection(
         [('origin_route', 'Origin Route'), ('transist_route', 'Transit Route'), ('dest_route', 'Destination Route')],
@@ -104,11 +105,11 @@ class Task(models.Model):
     foreign_exporter_country_id = fields.Many2one(comodel_name='res.country', string="Foreign Exporter Country")
     acid_expiry_date = fields.Date(string="ACID Expiry Date")
     is_house_bl = fields.Boolean(string="House B/L", default=False)
-    house_bl_seq = fields.Char(string="House B/L Seq")
-    house_bl_seq_hide = fields.Boolean(string="Hide House B/L Seq", default=False)
+    house_bl_seq = fields.Char(string="House B/L Number")
+    house_bl_seq_hide = fields.Boolean(string="Hide House B/L", default=False)
     is_consolidation = fields.Boolean(string="Consolidation", default=False)
-    consolidation_seq = fields.Char(string="Consolidation Seq")
-    consolidation_seq_hide = fields.Boolean(string="Hide Consolidation Seq", default=False)
+    consolidation_seq = fields.Char(string="Consolidation Number")
+    consolidation_seq_hide = fields.Boolean(string="Hide Consolidation", default=False)
     terminal_port_warehouse_id = fields.Many2one(comodel_name='terminal.port', string="Warehouse",
                                                  domain="[('warehouse', '=', True)]")
     currency_id = fields.Many2one('res.currency', string="Currency")
