@@ -12,55 +12,18 @@
         <!--Delete Records from Project Module-->
         <!--Delete Records from Project Module-->
 
-<!--        <delete model="ir.rule" id="project.project_public_members_rule"/>-->
-<!--        <delete model="ir.rule" id="project.task_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.ir_rule_private_task"/>-->
-<!--        <delete model="ir.rule" id="project.project_project_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_collaborator_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_task_rule_portal"/>-->
-<!--        <delete model="ir.rule" id="project.project_task_rule_portal_project_sharing"/>-->
-<!--        <delete model="ir.rule" id="project.update_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.report_project_task_user_rule"/>-->
-<!--        <delete model="ir.rule" id="project.burndown_chart_project_user_rule"/>-->
-<!--        <delete model="ir.rule" id="project.milestone_visibility_rule"/>-->
-<!--        <delete model="ir.rule" id="project.project_milestone_rule_portal_project_sharing"/>-->
-
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_public_members_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.task_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.ir_rule_private_task')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_project_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_collaborator_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_task_rule_portal')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_task_rule_portal_project_sharing')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.update_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.report_project_task_user_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.burndown_chart_project_user_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.milestone_visibility_rule')]"/>
-        </function>
-        <function model="ir.rule" name="unlink">
-           <value eval="[ref('project.project_milestone_rule_portal_project_sharing')]"/>
-        </function>
+        <delete model="ir.rule" id="project.project_public_members_rule"/>
+        <delete model="ir.rule" id="project.task_visibility_rule"/>
+        <delete model="ir.rule" id="project.ir_rule_private_task"/>
+        <delete model="ir.rule" id="project.project_project_rule_portal"/>
+        <delete model="ir.rule" id="project.project_collaborator_rule_portal"/>
+        <delete model="ir.rule" id="project.project_task_rule_portal"/>
+        <delete model="ir.rule" id="project.project_task_rule_portal_project_sharing"/>
+        <delete model="ir.rule" id="project.update_visibility_rule"/>
+        <delete model="ir.rule" id="project.report_project_task_user_rule"/>
+        <delete model="ir.rule" id="project.burndown_chart_project_user_rule"/>
+        <delete model="ir.rule" id="project.milestone_visibility_rule"/>
+        <delete model="ir.rule" id="project.project_milestone_rule_portal_project_sharing"/>
 
         <function model="ir.actions.act_window.view" name="unlink">
            <value eval="[ref('project.open_view_all_task_list_kanban')]"/>
