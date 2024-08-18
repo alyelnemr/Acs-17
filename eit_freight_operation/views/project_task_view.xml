@@ -76,7 +76,7 @@
                     <attribute name="options">{}</attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='user_ids']" position="attributes">
-                    <attribute name="options">{"no_open":true,"no_quick_create":true,"no_create_edit":true}</attribute>
+                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}</attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='partner_id']" position="attributes">
                     <attribute name="force_save">1</attribute>
@@ -96,7 +96,7 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='sale_line_id'][2]" position="attributes">
-                    <attribute name="options">{"no_create_edit":true,"no_open":true}</attribute>
+                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}</attribute>
                     <attribute name="string">Booking Item</attribute>
                     <attribute name="readonly">stage_id == 3</attribute>
                 </xpath>
@@ -109,9 +109,9 @@
                 </xpath>
                 <xpath expr="//field[@name='tag_ids']" position="after">
                     <field name="transport_type_id" readonly="stage_id == 3" required="True"
-                           options="{'no_open': True, 'no_create': True}"/>
+                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                     <field name="clearence_type_id" readonly="stage_id == 3" required="True"
-                           options="{'no_open': True, 'no_create': True}"/>
+                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                     <field name="should_set_date_closing" invisible="1"/>
                     <field name="state_selectable" invisible="1"/>
                     <field name="show_packages" invisible="1"/>
@@ -141,19 +141,20 @@
                             <field name="shipment_scope_id"
                                    domain="dyn_filter_par" string="Shipment Scope" readonly="stage_id == 3"
                                    invisible="transport_type_id in (1) or transport_type_id not in (2, 3)"
-                                   options="{'no_open': True, 'no_create': True}"/>
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                             <field name="master_bl" options="{'line_breaks': False}" readonly="stage_id == 3"/>
+                            <field name="commodity_id" readonly="stage_id == 3" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                             <field name="commodity_equip" readonly="stage_id == 3"/>
                             <field name="temperature" invisible="commodity_equip != 'reefer'" readonly="stage_id == 3"/>
                             <field name="un_number" invisible="commodity_equip != 'imo'" readonly="stage_id == 3"/>
                             <field name="attach_id" invisible="commodity_equip != 'imo'" readonly="stage_id == 3"/>
                         </group>
                         <group>
-                            <field name="port_id" options="{'no_open': True, 'no_create': True}"
+                            <field name="port_id" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                    readonly="stage_id == 3"/>
-                            <field name="port_id_pod" options="{'no_open': True, 'no_create': True}"
+                            <field name="port_id_pod" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                    readonly="stage_id == 3"/>
-                            <field name="incoterm_id" options="{'no_open': True, 'no_create': True}"
+                            <field name="incoterm_id" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                    readonly="stage_id == 3"/>
                             <field name="services" widget="many2many_tags"
                                    options="{'no_create_edit': True, 'no_quick_create': True}"
@@ -204,72 +205,6 @@
                     <attribute name="force_save">1</attribute>
                     <attribute name="readonly">stage_id == 3</attribute>
                 </xpath>
-                <!-- <xpath expr="//field[@name='opt_partners_lines']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//field[@name='master_bl_in']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='booking_no']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='pol']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[1]/field[@name='pod']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][4]/group[1]/group[2]/field[@name='pickup_address']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath> -->
-                <!-- <xpath expr="//field[@name='delivery_address']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='vessel_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='voyage']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='etd']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='atd']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='eta']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='ata']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='transit_time']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='shippment_order_no']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath>
-                <xpath expr="//field[@name='house_bl_id']" position="attributes">
-                    <attribute name="force_save">1</attribute>
-                    <attribute name="readonly">stage_id == 3</attribute>
-                </xpath> -->
-
-                <!-- End Form Readonly for CLosed Stage -->
 
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -288,6 +223,11 @@
                                 <label for="transit_time" class="oe_inline" string="Transit Time"/>
                                 <div class="o_row">
                                     <field name="transit_time" readonly="stage_id == 3"/>
+                                    <span class="oe_inline">Days</span>
+                                </div>
+                                <label for="free_time" class="oe_inline" string="Free Time"/>
+                                <div class="o_row">
+                                    <field name="free_time" readonly="stage_id == 3"/>
                                     <span class="oe_inline">Days</span>
                                 </div>
                                 <field name="bill_of_lading_issuance" readonly="stage_id == 3"/>
@@ -340,23 +280,23 @@
                                 <div width="100%">
                                     <field name="is_house_bl" readonly="stage_id == 3"
                                            invisible="not show_containers or house_bl_seq_hide"/>
-                                    <button name="generate_house_bl_seq" type="object" string="Generate House B/L Seq"
-                                            invisible="not is_house_bl or house_bl_seq_hide"
+                                    <button name="generate_house_bl_seq" type="object" string="House B/L"
+                                            invisible="not show_containers or not is_house_bl or house_bl_seq_hide"
                                             class="btn-secondary"/>
                                     <br/>
                                     <field name="is_consolidation" readonly="stage_id == 3"
                                            invisible="not show_containers or consolidation_seq_hide"/>
                                     <br/>
                                     <button name="generate_consolidation_seq" type="object"
-                                            string="Generate Consolidation Seq"
-                                            invisible="not is_consolidation or consolidation_seq_hide"
+                                            string="Consolidation"
+                                            invisible="not show_containers or not is_consolidation or consolidation_seq_hide"
                                             class="btn-secondary"/>
                                 </div>
                             </group>
                             <group>
                                 <field name="terminal_port_warehouse_id" readonly="stage_id == 3"/>
                                 <field name="vessel_id" readonly="stage_id == 3"
-                                       options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="voyage_no" readonly="stage_id == 3"/>
                                 <field name="booking_no" readonly="stage_id == 3"/>
                             </group>
@@ -370,7 +310,7 @@
                             </group>
                             <group>
                                 <field name="foreign_exporter_country_id" readonly="stage_id == 3"
-                                       options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="acid_expiry_date" readonly="stage_id == 3"/>
                             </group>
                         </group>
@@ -380,9 +320,9 @@
                         <field name="opt_partners_lines" readonly="stage_id == 3">
                             <tree editable="bottom">
                                 <field name="partner_type_id"
-                                       options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="partner_id"
-                                       options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="phone"/>
                                 <field name="email"/>
                                 <field name="sales_person"/>
@@ -446,7 +386,7 @@
                                         </group>
                                         <group>
                                             <field name="container_type_id" required="1"
-                                                   options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <field name="container_is"/>
                                             <!-- <field name="tare_weight"/>
                                             <field name="net_wt" string="Net"/>
@@ -454,7 +394,7 @@
                                             <field name="gross_weight" string="Gross"/>
                                             <field name="vkm" string="VGM"/> -->
                                             <field name="temperature" invisible="container_is != 'reefer'"
-                                                   options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <!-- <field name="un_number" invisible="container_type not in ('dry')"/> -->
                                         </group>
                                     </group>
@@ -500,9 +440,9 @@
                                             <field name="package_line_ids">
                                                 <tree editable="bottom">
                                                     <field name="commodity_data_id"
-                                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                                     <field name="package_type_id"
-                                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                                     <field name="quantity" string="Qty"/>
                                                     <field name="gw"/>
                                                     <field name="cbm"/>
@@ -603,9 +543,9 @@
                                     <group>
                                         <group>
                                             <field name="package_type_id" required="True"
-                                                   options="{'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <field name="commodity_id"
-                                                   options="{'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <field name="quantity" string="Qty"/>
                                             <field name="imo" invisible="1"/>
                                             <field name="ref" invisible="1"/>
@@ -1217,11 +1157,11 @@
                             <tr>
                                 <td>
                                     <button string="Create Invoice" type="object"
-                                            name="action_create_customer_invoice"
+                                            name="action_open_create_customer_invoice_wizard"
                                             class="btn-primary" invisible="not project_task_charge_ids"/>
                                 </td>
                                 <td>
-                                    <button string="Create Bill" type="object" name="action_create_vendor_bill"
+                                    <button string="Create Bill" type="object" name="action_open_create_vendor_bill_wizard"
                                             class="btn-primary" invisible="not project_task_charge_ids"/>
                                 </td>
                             </tr>
@@ -1233,22 +1173,22 @@
                                 <field name="invoice_id" column_invisible="1"/>
                                 <field name="vendor_bill_id" column_invisible="1"/>
                                 <field name="product_id" readonly="invoice_id or vendor_bill_id"
-                                       options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="qty" readonly="invoice_id or vendor_bill_id"/>
                                 <field name="package_type_id"
                                        column_invisible="not parent.show_packages"
                                        readonly="invoice_id or vendor_bill_id"
-                                       options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                        optional="false"/>
                                 <field name="container_type_id"
                                        column_invisible="not parent.show_containers"
                                        readonly="invoice_id or vendor_bill_id"
-                                       options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                        optional="false"/>
                                 <field name="cost_price" widget="float" optional="show" readonly="vendor_bill_id"/>
                                 <field name="sale_price" widget="float" readonly="invoice_id"/>
                                 <field name="currency_id" readonly="invoice_id or vendor_bill_id"
-                                       options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                 <field name="ex_rate"/>
                                 <field name="cost_main_curr" optional="false"/>
                                 <field name="cost_usd" optional="false"/>
@@ -1374,6 +1314,9 @@
 
                 <xpath expr="//field[@name='tag_ids']" position="attributes">
                     <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_deadline']" position="attributes">
+                    <attribute name="string">Planned Date</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='project_id']" position="after">
@@ -1605,7 +1548,7 @@
                     <field name="port_id"/>
                     <field name="port_id_pod"/>
                     <field name="master_bl"/>
-                    <field name="commidity_id"/>
+                    <field name="commodity_id"/>
                     <field name="shipping_container_ids" string="Container Number"/>
                 </xpath>
             </field>

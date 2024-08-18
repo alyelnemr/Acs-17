@@ -21,9 +21,11 @@
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'no_edit': True, 'no_create': True,'no_open': True}</attribute>
+                    <attribute name="readonly">is_freight</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
                     <attribute name="options">{'no_edit': True, 'no_create': True,'no_open': True}</attribute>
+                    <attribute name="readonly">is_freight</attribute>
                 </xpath>
                 <xpath expr="//group[@id='header_right_group']/field[@name='currency_id']" position="attributes">
                     <attribute name="readonly">1</attribute>
@@ -139,16 +141,24 @@
                     <field name="is_freight" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="replace">
-                    <field name="product_id" string="Charge Type" column_invisible="not parent.is_freight"/>
-                    <field name="product_id" string="Product" column_invisible="parent.is_freight"/>
+                    <field name="product_id" string="Charge Type" column_invisible="not parent.is_freight"
+                           readonly="parent.is_freight"/>
+                    <field name="product_id" string="Product" column_invisible="parent.is_freight"
+                           readonly="not parent.is_freight"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="replace">
+                    <field name="quantity" optional="show" readonly="parent.is_freight"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="replace">
+                    <field name="price_unit" string="Price" readonly="parent.is_freight"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="replace">
                     <field name="package_type_id"
-                           column_invisible="not parent.show_packages"
+                           column_invisible="not parent.show_packages" readonly="1"
                            options="{'no_edit': True, 'no_create': True,'no_open': True}"
                            optional="hide"/>
                     <field name="container_type_id"
-                           column_invisible="not parent.show_containers"
+                           column_invisible="not parent.show_containers" readonly="1"
                            options="{'no_edit': True, 'no_create': True,'no_open': True}"
                            optional="hide"/>
                 </xpath>
@@ -163,6 +173,9 @@
                     <filter string="Taxable" name="invoice_nature" domain="[('invoice_nature', '=', 'taxable')]"/>
                     <filter string="Non-Taxable" name="invoice_nature"
                             domain="[('invoice_nature', '=', 'nontaxable')]"/>
+                    <separator/>
+                    <filter name="archived" string="Canceled" domain="[('active', '=', False)]"/>
+                    <separator/>
                 </xpath>
                 <xpath expr="//group" position="inside">
                     <filter string="Invoice Nature" name="by_invoice_nature" domain="[]"
@@ -244,7 +257,8 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('view_freight_invoice_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_freight_move_form_inherited')}),
             ]"/>
-            <field name="domain">[('move_type', '=', 'out_invoice'), ('is_freight', '=', True)]</field>
+            <field name="domain">[('move_type', '=', 'out_invoice'), ('is_freight', '=', True)]
+            </field>
             <field name="context">{'default_move_type': 'out_invoice', 'default_is_freight': True}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -265,7 +279,8 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('view_freight_invoice_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_freight_move_form_inherited')}),
             ]"/>
-            <field name="domain">[('move_type', '=', 'in_invoice'), ('is_freight', '=', True)]</field>
+            <field name="domain">[('move_type', '=', 'in_invoice'), ('is_freight', '=', True)]
+            </field>
             <field name="context">{'default_move_type': 'in_invoice', 'default_is_freight': True,
                 'display_account_trust': True}
             </field>
@@ -286,9 +301,11 @@
 
         <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
             <field name="search_view_id" ref="view_account_move_filter_inherit"/>
+            <field name="domain">[('move_type', '=', 'out_invoice')]</field>
         </record>
         <record id="account.action_move_in_invoice_type" model="ir.actions.act_window">
             <field name="search_view_id" ref="view_account_move_filter_inherit"/>
+            <field name="domain">[('move_type', '=', 'in_invoice')]</field>
         </record>
         <record id="view_move_form_inherit_purchase_update" model="ir.ui.view">
             <field name="name">account.move.inherit.purchase.update</field>

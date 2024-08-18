@@ -1,5 +1,6 @@
 <odoo>
 
+
     <record id="inherit_purchase_order_view_search_filter" model="ir.ui.view">
         <field name="name">inherit.purchase.order.view.filter</field>
         <field name="model">purchase.order</field>
