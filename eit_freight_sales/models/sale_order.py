@@ -30,15 +30,12 @@ class SaleOrder(models.Model):
         return res
 
     transport_type_id = fields.Many2one('transport.type', string="Transport Type", store=True)
-
-    shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True, )
-    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland',
-                                        invisible=True)
-    shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True, )
-    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl', invisible=True)
-    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl', invisible=True)
+    shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True)
+    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland')
+    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl')
+    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl')
     container_type = fields.Many2one('container.type', string='Container Type')
-    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air', invisible=True)
+    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air')
 
     @api.depends('transport_type_id')
     def _compute_is_air(self):
@@ -84,8 +81,8 @@ class SaleOrder(models.Model):
 
     transit_time_duration = fields.Integer(string='Transit Time Duration')
     free_time_duration = fields.Integer(string='Free Time Duration')
-    is_ocean = fields.Boolean(string="Is Ocean", compute='_compute_is_ocean', invisible=True)
-    is_inland = fields.Boolean(string='IS Inland', compute='_compute_is_inland', invisible=True)
+    is_ocean = fields.Boolean(string="Is Ocean", compute='_compute_is_ocean')
+    is_inland = fields.Boolean(string='IS Inland', compute='_compute_is_inland')
 
     @api.model
     def create(self, vals):
