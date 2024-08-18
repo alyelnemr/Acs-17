@@ -165,20 +165,20 @@ class Task(models.Model):
 
         return action
 
-    def validate_task(self, task, type):
+    def validate_task(self, task, invoice_type):
         error_message = ""
         selected_records = task.project_task_charge_ids.filtered(lambda x: x.is_selected)
         if len(selected_records) <= 0:
             error_message = "Please select at least one record."
         curr = selected_records.mapped('currency_id')
-        current_invoices = selected_records.mapped('invoice_id') if type == 'in_invoice' else selected_records.mapped(
+        current_invoices = selected_records.mapped('invoice_id') if invoice_type == 'invoice' else selected_records.mapped(
             'vendor_bill_id')
         if len(curr) > 1:
             error_message = "Please select only one currency for processing."
         if len(current_invoices) > 0:
             if any(state in ['draft', 'posted'] for state in current_invoices.mapped('move_id').mapped('state')):
                 error_message = "Some of the selected records already have " + (
-                    "an invoice." if type == 'invoice' else "a bill.")
+                    "an invoice." if invoice_type == 'invoice' else "a bill.")
 
         for task_charge in selected_records:
             if not task_charge.product_id:
@@ -196,7 +196,7 @@ class Task(models.Model):
         return error_message
 
     def action_open_create_customer_invoice_wizard(self):
-        error_message = self.validate_task(task=self, type='invoice')
+        error_message = self.validate_task(task=self, invoice_type='invoice')
         action_id = self.env.ref('eit_freight_operation.action_project_task_create_invoice_wizard')
         if error_message:
             return {
@@ -223,7 +223,7 @@ class Task(models.Model):
         }
 
     def action_open_create_vendor_bill_wizard(self):
-        error_message = self.validate_task(task=self, type='vendor_bill')
+        error_message = self.validate_task(task=self, invoice_type='vendor_bill')
         if error_message:
             return {
                 'type': 'ir.actions.client',
