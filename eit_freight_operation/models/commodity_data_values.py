@@ -9,8 +9,7 @@ class CommodityDataValues(models.Model):
     code = fields.Char(string="Hs Code", related="commodity_data_id.code")
     tax = fields.Integer(string="Import Tax", related="commodity_data_id.tax")
     vat = fields.Integer(string="Vat", related="commodity_data_id.vat")
-    type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], string="Equip",
-                            related="commodity_data_id.type")
+    type = fields.Selection(string="Equip", related="commodity_data_id.type")
     tag_ids = fields.Many2many('frieght.tags', string="Tags", related="commodity_data_id.tag_ids")
     export_approval = fields.Many2many('commodity.data.approval.export'
                                        , string="Export Approvals", )
