@@ -16,8 +16,7 @@ class CrmLeadAirPackageType(models.Model):
 
     lead_id = fields.Many2one('crm.lead', string="Lead", store=True)
     package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True, domain=lambda self: self._get_package_type_domain(),
-        onchange=True)
+        'package.type', string="Package Type", store=True, domain=lambda self: self._get_package_type_domain())
     qty = fields.Float(string="QTY", store=True)
     gw_kg = fields.Float(string="GW (KG)", store=True)
     length_cm = fields.Float(string="L (CM)", store=True)
