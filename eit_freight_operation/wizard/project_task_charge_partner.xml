@@ -1,0 +1,31 @@
+<odoo>
+    <record id="view_project_task_create_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">project.task.charge.invoice.partner.wizard.form</field>
+        <field name="model">project.task.charge.invoice.partner.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Invoice from Task">
+                <group>
+                    <field name="project_task_id" invisible="1"/>
+                    <field name="invoice_or_vendor_bill" invisible="1"/>
+                    <field name="opt_partner_wizard_ids" required="1"
+                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                </group>
+                <footer>
+                    <button string="Create Invoice" type="object" name="action_create_invoice"
+                            invisible="invoice_or_vendor_bill == 'vendor_bill'" class="btn-primary"/>
+                    <button string="Create Bill" type="object" name="action_create_invoice"
+                            invisible="invoice_or_vendor_bill == 'invoice'" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_project_task_create_invoice_wizard" model="ir.actions.act_window">
+        <field name="name">Create Invoice from Task</field>
+        <field name="res_model">project.task.charge.invoice.partner.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_project_task_create_invoice_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

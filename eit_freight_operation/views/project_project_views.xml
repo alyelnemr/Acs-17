@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="inherit_project_update_view_kanban" model="ir.ui.view">
+        <field name="name">project.update.view.kanban.inherit</field>
+        <field name="model">project.update</field>
+        <field name="inherit_id" ref="project.project_update_view_kanban"/>
+        <field name="arch" type="xml">
+            <!-- Select the specific div and b element by its position in the hierarchy -->
+            <xpath expr="//div[@class='o_kanban_detail_ungrouped row']/div[4]/b" position="replace">
+                <b>
+                    <field name="closed_task_count"/>
+                    /
+                    <field name="task_count"/>
+                    Operations
+                    <span invisible="not task_count">(<field name="closed_task_percentage"/>%)
+                    </span>
+                </b>
+            </xpath>
+        </field>
+    </record>
     <record id="inheirt_project_view_from" model="ir.ui.view">
         <field name="name">inheirt.project.view.from</field>
         <field name="model">project.project</field>
@@ -9,6 +27,14 @@
                 <attribute name="invisible">True</attribute>
                 <attribute name="string">Operations</attribute>
             </xpath>
+            <xpath expr="//header/button[1]" position="attributes">
+                <attribute name="invisible">privacy_visibility not in ('portal_followers', 'portal')</attribute>
+            </xpath>
+
+            <!-- Modify the second 'Share Editable' button -->
+            <xpath expr="//header/button[2]" position="attributes">
+                <attribute name="invisible">privacy_visibility not in ('portal_followers', 'portal')</attribute>
+            </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="force_save">True</attribute>
                 <attribute name="readonly">True</attribute>
@@ -16,8 +42,8 @@
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="domain">[("partner_type_id", "=", [1])]</attribute>
                 <attribute name="force_save">1</attribute>
-                <attribute name="options">{"no_create_edit":true}</attribute>
-                <attribute name="readonly">id != False</attribute>
+                <attribute name="options">{"no_quick_create":true,"no_create_edit":true}</attribute>
+                <!--                <attribute name="readonly">id != False</attribute>-->
                 <attribute name="required">True</attribute>
             </xpath>
             <xpath expr="//field[@name='date_start']" position="attributes">
@@ -80,34 +106,21 @@
         </field>
     </record>
 
-    <record id="project.open_view_project_all" model="ir.actions.act_window">
-        <field name="name">Profiles</field>
-    </record>
-
     <record id="inheirt_project_view_tree" model="ir.ui.view">
         <field name="name">inheirt.project.view.tree</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.view_project"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_tasks']" position="attributes">
+                <attribute name="string">View Operations</attribute>
+            </xpath>
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="column_invisible">True</attribute>
             </xpath>
             <xpath expr="//field[@name='display_name']" position="after">
                 <field name="created_on" optional="show"/>
                 <field name="industry_id" optional="show"/>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="inheirt_sale_project_edit_view_from" model="ir.ui.view">
-        <field name="name">inheirt.project.view.from</field>
-        <field name="model">project.project</field>
-        <field name="inherit_id" ref="sale_project.view_edit_project_inherit_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//button[@name='action_view_sos']/div/span[@class='o_stat_text']" position="replace">
-                <span class="o_stat_text">
-                    Booking
-                </span>
+                <field name="activity_type" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -127,9 +140,26 @@
             </xpath>
             <xpath expr="//field[@name='created_on']" position="after">
                 <field name="industry_id" display="full"/>
+                <field name="activity_type" display="full"/>
+            </xpath>
+            <xpath expr="//div[@class='o_primary me-5']/span[2]" position="replace">
             </xpath>
         </field>
     </record>
+
+    <record id="inheirt_sale_project_edit_view_from" model="ir.ui.view">
+        <field name="name">inheirt.project.view.from</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="sale_project.view_edit_project_inherit_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_sos']/div/span[@class='o_stat_text']" position="replace">
+                <span class="o_stat_text">
+                    Booking
+                </span>
+            </xpath>
+        </field>
+    </record>
+
 
     <record id="edit_project_document_form_inherit_readonly" model="ir.ui.view">
         <field name="name">project.project.form.inherit.readonly</field>
@@ -143,11 +173,34 @@
         </field>
     </record>
 
-    <!-- <record id="base.module_category_services_project" model="ir.module.category">
+    <record id="base.module_category_services_project" model="ir.module.category">
         <field name="name">Operations</field>
-        <field name="description">Helps you manage your operations and tasks by tracking them, generating plannings, etc...</field>
+        <field name="description">Helps you manage your operations and tasks by tracking them, generating plannings,
+            etc...
+        </field>
         <field name="sequence">3</field>
-    </record> -->
-
+    </record>
+    <record id="res_config_settings_view_form_inherit_project_rename" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.project.rename</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="project.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='project']" position="attributes">
+                <attribute name="string">Operations</attribute>
+            </xpath>
+            <xpath expr="//setting[@id='recurring_tasks_setting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//setting[@id='task_dependencies_setting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//setting[@id='project_stages']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//block[@name='project_time']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>

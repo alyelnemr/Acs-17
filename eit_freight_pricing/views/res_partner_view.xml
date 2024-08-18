@@ -1,0 +1,19 @@
+<odoo>
+    <record id="inherit_res_partner_view_form" model="ir.ui.view">
+        <field name="name">inherit.res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="price_count" invisible="1"/>
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_pricing" type="object" class="oe_stat_button" icon="fa-file-powerpoint-o"  invisible="price_count == 0">
+                        <field name="price_count" string="Pricing" widget="statinfo"/>
+                    </button>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

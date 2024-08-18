@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    <data noupdate="0">
         <record id="stage_open" model="project.task.type">
             <field name="sequence">1</field>
             <field name="name">Open</field>
+            <field name="is_default">True</field>
+        </record>
+        <record id="stage_plan_changed" model="project.task.type">
+            <field name="sequence">10</field>
+            <field name="name">Plan Changed</field>
+            <field name="is_default">True</field>
         </record>
         <record id="stage_invoice" model="project.task.type">
-            <field name="sequence">10</field>
+            <field name="sequence">20</field>
             <field name="name">Invoicing</field>
+            <field name="is_default">True</field>
         </record>
         <record id="stage_closed" model="project.task.type">
-            <field name="sequence">20</field>
+            <field name="sequence">30</field>
             <field name="name">Closed</field>
             <field name="fold" eval="True"/>
+            <field name="is_default">True</field>
         </record>
         <record id="stage_canceled" model="project.task.type">
-            <field name="sequence">30</field>
+            <field name="sequence">40</field>
             <field name="name">Cancelled</field>
             <field name="fold" eval="True"/>
+            <field name="is_default">True</field>
         </record>
 
         <record id="project_freight_forwarding" model="project.project">
             <field name="name">Freight Forwarding</field>
-            <field name="type_ids" eval="[(6, 0, [ref('stage_open'), ref('stage_invoice'), ref('stage_closed'), ref('stage_canceled')])]"/>
+            <field name="type_ids" eval="[(6, 0, [ref('stage_open'), ref('stage_plan_changed'), ref('stage_invoice'), ref('stage_closed'), ref('stage_canceled')])]"/>
         </record>
     </data>
     <!-- <data> -->
