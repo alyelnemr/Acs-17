@@ -21,9 +21,11 @@
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'no_edit': True, 'no_create': True,'no_open': True}</attribute>
+                    <attribute name="readonly">is_freight</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
                     <attribute name="options">{'no_edit': True, 'no_create': True,'no_open': True}</attribute>
+                    <attribute name="readonly">is_freight</attribute>
                 </xpath>
                 <xpath expr="//group[@id='header_right_group']/field[@name='currency_id']" position="attributes">
                     <attribute name="readonly">1</attribute>
@@ -139,16 +141,24 @@
                     <field name="is_freight" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="replace">
-                    <field name="product_id" string="Charge Type" column_invisible="not parent.is_freight"/>
-                    <field name="product_id" string="Product" column_invisible="parent.is_freight"/>
+                    <field name="product_id" string="Charge Type" column_invisible="not parent.is_freight"
+                           readonly="parent.is_freight"/>
+                    <field name="product_id" string="Product" column_invisible="parent.is_freight"
+                           readonly="not parent.is_freight"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="replace">
+                    <field name="quantity" optional="show" readonly="parent.is_freight"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="replace">
+                    <field name="price_unit" string="Price" readonly="parent.is_freight"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="replace">
                     <field name="package_type_id"
-                           column_invisible="not parent.show_packages"
+                           column_invisible="not parent.show_packages" readonly="1"
                            options="{'no_edit': True, 'no_create': True,'no_open': True}"
                            optional="hide"/>
                     <field name="container_type_id"
-                           column_invisible="not parent.show_containers"
+                           column_invisible="not parent.show_containers" readonly="1"
                            options="{'no_edit': True, 'no_create': True,'no_open': True}"
                            optional="hide"/>
                 </xpath>

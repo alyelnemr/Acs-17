@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 from dateutil.relativedelta import relativedelta
 
 from odoo import models, fields, api, _
@@ -138,13 +140,15 @@ class Task(models.Model):
     @api.depends('vendor_bill_ids')
     def _compute_vendor_bill_count(self):
         for record in self:
-            record.vendor_bill_count = len(record.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice' and x.state != 'cancel'))
+            record.vendor_bill_count = len(
+                record.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice' and x.state != 'cancel'))
 
     def action_view_customer_invoices(self):
         self.ensure_one()
         action = self.env.ref('eit_freight_operation.action_freight_move_out_invoice_type').read()[0]
         action['domain'] = [
-            ('id', 'in', self.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice' and x.state != 'cancel').ids)]
+            ('id', 'in',
+             self.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice' and x.state != 'cancel').ids)]
 
         action['context'] = dict(self.env.context)
 
@@ -153,16 +157,87 @@ class Task(models.Model):
     def action_view_vendor_bills(self):
         self.ensure_one()
         action = self.env.ref('eit_freight_operation.action_freight_move_in_invoice_type').read()[0]
-        action['domain'] = [('id', 'in', self.vendor_bill_ids.filtered(lambda x: x.move_type == 'in_invoice' and x.state != 'cancel').ids)]
+        action['domain'] = [('id', 'in', self.vendor_bill_ids.filtered(
+            lambda x: x.move_type == 'in_invoice' and x.state != 'cancel').ids)]
 
         # Optionally, update the context if needed
         action['context'] = dict(self.env.context)
 
         return action
 
-    def action_create_customer_invoice(self):
+    def validate_task(self, task, type):
+        error_message = ""
+        selected_records = task.project_task_charge_ids.filtered(lambda x: x.is_selected)
+        if len(selected_records) <= 0:
+            error_message = "Please select at least one record."
+        curr = selected_records.mapped('currency_id')
+        current_invoices = selected_records.mapped('invoice_id') if type == 'in_invoice' else selected_records.mapped(
+            'vendor_bill_id')
+        if len(curr) > 1:
+            error_message = "Please select only one currency for processing."
+        if len(current_invoices) > 0:
+            if any(state in ['draft', 'posted'] for state in current_invoices.mapped('move_id').mapped('state')):
+                error_message = "Some of the selected records already have " + (
+                    "an invoice." if type == 'invoice' else "a bill.")
+        return error_message
+
+    def action_open_create_customer_invoice_wizard(self):
+        error_message = self.validate_task(task=self, type='invoice')
+        action_id = self.env.ref('eit_freight_operation.action_project_task_create_invoice_wizard')
+        if error_message:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': "Operation Failed",
+                    'message': error_message,
+                    'type': 'warning',
+                    'sticky': False,
+                },
+            }
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.task.charge.invoice.partner.wizard',
+            'view_mode': 'form',
+            'view_id': False,
+            'target': 'new',
+            'context': {
+                'default_invoice_or_vendor_bill': 'invoice',
+                'default_project_task_id': self.id,
+            },
+            'name': 'Create Customer Invoice',
+        }
+
+    def action_open_create_vendor_bill_wizard(self):
+        error_message = self.validate_task(task=self, type='vendor_bill')
+        if error_message:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': "Operation Failed",
+                    'message': error_message,
+                    'type': 'warning',
+                    'sticky': False,
+                },
+            }
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.task.charge.invoice.partner.wizard',
+            'view_mode': 'form',
+            'view_id': False,
+            'target': 'new',
+            'context': {
+                'default_invoice_or_vendor_bill': 'vendor_bill',
+                'default_project_task_id': self.id,
+            },
+            'name': 'Create Vendor Bill',
+        }
+
+    def action_create_customer_invoice(self, partner_id):
         # This method will process the selected items
         error_message = ""
+        products = []
         for task in self:
             selected_records = task.project_task_charge_ids.filtered(lambda x: x.is_selected)
             if len(selected_records) <= 0:
@@ -176,14 +251,14 @@ class Task(models.Model):
                 break
 
             if len(current_invoices) > 0:
-                if current_invoices.mapped('move_id').mapped('state') in ['draft', 'posted']:
+                if any(state in ['draft', 'posted'] for state in current_invoices.mapped('move_id').mapped('state')):
                     error_message = "Some of the selected records already have an invoice."
                     break
 
             invoice_vals = {
                 'move_type': 'out_invoice',
                 'is_freight': True,
-                'partner_id': task.project_id.partner_id.id,
+                'partner_id': partner_id,
                 'invoice_date': fields.Date.context_today(self),
                 'project_task_id': task.id,
                 'transport_type_id': task.transport_type_id.id,
@@ -222,6 +297,7 @@ class Task(models.Model):
                     'invoice_project_task_charge_id': task_charge.id,
                     'vendor_bill_project_task_charge_id': False,
                 }
+                products.append(task_charge.product_id.name)
                 invoice_line_ids.append((0, 0, line_vals))
                 task_charge_to_line_map[len(invoice_line_ids) - 1] = task_charge
 
@@ -238,32 +314,19 @@ class Task(models.Model):
                     task_charge.write({'invoice_id': line.id})
 
             # Determine the notification type based on whether there was an error or success
-        if error_message:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': "Operation Failed",
-                    'message': error_message,
-                    'type': 'warning',
-                    'sticky': False,
-                },
-            }
-        else:
+        if not error_message:
             self.project_task_charge_ids.write({'is_selected': False})
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': "Customer Invoices Created Successfully",
-                    'type': 'success',
-                    'sticky': False,
-                },
-            }
+            partner = self.env['res.partner'].browse(partner_id)
+            formatted_products = os.linesep.join(f'-->{product}' for product in products)
+            self.message_post(body="Invoice created successfully " + (" for Partner: '" + str(
+                partner.name) + "'" if partner else '') + (
+                                       "and the following charge types:    " + formatted_products if products else ''))
+        return error_message
 
-    def action_create_vendor_bill(self):
+    def action_create_vendor_bill(self, partner_id):
         # This method will process the selected items
         error_message = ""
+        products = []
         for task in self:
             selected_records = task.project_task_charge_ids.filtered(lambda x: x.is_selected)
 
@@ -324,6 +387,7 @@ class Task(models.Model):
                     'invoice_project_task_charge_id': False,
                     'vendor_bill_project_task_charge_id': task_charge.id,
                 }
+                products.append(task_charge.product_id.name)
                 invoice_line_ids.append((0, 0, line_vals))
                 task_charge_to_line_map[len(invoice_line_ids) - 1] = task_charge
 
@@ -339,28 +403,14 @@ class Task(models.Model):
                     task_charge.write({'vendor_bill_id': line.id})
 
         # Determine the notification type based on whether there was an error or success
-        if error_message:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': "Operation Failed",
-                    'message': error_message,
-                    'type': 'warning',
-                    'sticky': False,
-                },
-            }
-        else:
+        if not error_message:
             self.project_task_charge_ids.write({'is_selected': False})
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': "Vendor Bills Created Successfully",
-                    'type': 'success',
-                    'sticky': False,
-                },
-            }
+            partner = self.env['res.partner'].browse(partner_id)
+            formatted_products = os.linesep.join(f'-->{product}' for product in products)
+            self.message_post(body="Bill created successfully " + (" for Partner: '" + str(
+                partner.name) + "'" if partner else '') + (
+                                       "and the following charge types:    " + formatted_products if products else ''))
+        return error_message
 
     @api.depends('project_task_charge_ids')
     def _onchange_project_task_charge_ids(self):
@@ -750,8 +800,8 @@ class OptPartners(models.Model):
     _description = "Opt partners"
 
     partner_type_id = fields.Many2one('partner.type', string="Partner Type", required=True)
-    partner_id = fields.Many2one('res.partner', string="Company Name",
-                                 domain="[('partner_type_id', '=', partner_type_id), ('is_company', '=', True)]")
+    partner_id = fields.Many2one('res.partner', string="Partner Name",
+                                 domain="[('partner_type_id', '=', partner_type_id)]")
     phone = fields.Char(related='partner_id.phone', string="Phone")
     email = fields.Char(related='partner_id.email', string="Email")
     sales_person = fields.Many2one(related='partner_id.user_id', string="Salesperson")
