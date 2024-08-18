@@ -8,9 +8,7 @@ class CrmLeadNonAirPackageType(models.Model):
     lead_id = fields.Many2one('crm.lead', string="Lead", store=True)
     package_type_id = fields.Many2one(
         'package.type', string="Package Type", store=True,
-        domain="[('tag_type_ids', 'in', [1])]",
-        onchange=True
-    )
+        domain="[('tag_type_ids', 'in', [1])]")
     container_type_id = fields.Many2one(comodel_name='container.type', string='Container Type')
     qty = fields.Float(string="QTY", store=True)
     gw_kg = fields.Float(string="GW (KG)", store=True)
