@@ -18,12 +18,11 @@ class CrmLead(models.Model):
                                 default=_default_date_deadline)
     opportunity_source = fields.Char(string="Opportunity Source", compute="compute_opportunity_source")
     transport_type_id = fields.Many2one('transport.type', string="Transport Type", store=True)
-    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland',
-                                        invisible=True)
+    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland')
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True)
-    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl', invisible=True)
-    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl', invisible=True)
-    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air', invisible=True)
+    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl')
+    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl')
+    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air')
     product_id_domain = fields.Char(compute="_compute_product_id_domain", readonly=True, store=False)
     name = fields.Char(
         'Opportunity', index='trigram', required=False,
