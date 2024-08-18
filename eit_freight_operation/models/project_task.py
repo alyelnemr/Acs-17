@@ -179,6 +179,20 @@ class Task(models.Model):
             if any(state in ['draft', 'posted'] for state in current_invoices.mapped('move_id').mapped('state')):
                 error_message = "Some of the selected records already have " + (
                     "an invoice." if type == 'invoice' else "a bill.")
+
+        for task_charge in selected_records:
+            if not task_charge.product_id:
+                error_message = "Please select a product."
+                break
+            if not task_charge.qty:
+                error_message = "Please enter quantity."
+                break
+            if not task_charge.sale_price:
+                error_message = "Please enter sale price."
+                break
+            if not task_charge.currency_id:
+                error_message = "Please select currency."
+                break
         return error_message
 
     def action_open_create_customer_invoice_wizard(self):
