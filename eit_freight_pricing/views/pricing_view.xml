@@ -416,6 +416,14 @@
 
     </menuitem>
 
+    <!--    <record id="purchase.purchase_form_action" model="ir.actions.act_window">-->
+    <!--        <field name="domain">[('purchase_type', '=', 'purchase')]</field>-->
+    <!--    </record>-->
+
+    <!--     <record id="purchase.purchase_rfq" model="ir.actions.act_window">-->
+    <!--        <field name="domain">[('purchase_type', '=', 'purchase')]</field>-->
+    <!--    </record>-->
+
     <record id="website_sale.product_template_action_website" model="ir.actions.act_window">
         <field name="name">Pricing</field>
         <field name="res_model">product.template</field>
@@ -439,14 +447,6 @@
             </p>
         </field>
     </record>
-
-    <!--    <record id="purchase.purchase_form_action" model="ir.actions.act_window">-->
-    <!--        <field name="domain">[('purchase_type', '=', 'purchase')]</field>-->
-    <!--    </record>-->
-
-    <!--     <record id="purchase.purchase_rfq" model="ir.actions.act_window">-->
-    <!--        <field name="domain">[('purchase_type', '=', 'purchase')]</field>-->
-    <!--    </record>-->
 
     <record model="ir.ui.menu" id="website_sale.menu_ecommerce">
         <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
