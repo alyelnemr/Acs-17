@@ -203,10 +203,7 @@ class PricePackageType(models.Model):
     _description = "Price package type"
 
     package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True,
-        onchange=True
-    )
-
+        'package.type', string="Package Type", store=True)
     qty = fields.Float(string="QTY", )
     gw_kg = fields.Float(string="GW (KG)")
     length_cm = fields.Float(string="L (CM)")
@@ -262,9 +259,7 @@ class LclContainerType(models.Model):
     _description = "Lcl container type"
 
     package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True,
-        onchange=True
-    )
+        'package.type', string="Package Type", store=True)
 
     qty = fields.Float(string="QTY")
     gw_kg = fields.Float(string="GW (KG)", )
@@ -285,9 +280,7 @@ class LtlContainerType(models.Model):
     _description = "Ltl container type"
 
     package_type_id = fields.Many2one(
-        'package.type', string="Package Type", store=True,
-        onchange=True
-    )
+        'package.type', string="Package Type", store=True)
 
     qty = fields.Float(string="QTY")
     gw_kg = fields.Float(string="GW (KG)", )
