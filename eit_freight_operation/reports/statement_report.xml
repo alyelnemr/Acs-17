@@ -4,569 +4,571 @@
         <!-- Define the Report Action -->
 
         <template id="report_project_task_charges_main">
-            <!-- Full-Page Frame -->
-            <div style="border: 5px solid black; padding: 20px; margin: 0px; height: 100%; box-sizing: border-box; font-family: 'Georgia', Times, serif;font-size:larger">
-                <!-- Centered Title with the 'name' field from account.move -->
-                <h2 style="text-align: center;">
-                    <t t-if="print_invoice">
-                        <strong>Invoice.</strong>
-                    </t>
-                    <t t-else="">
-                        <strong>Statement No.</strong>
-                    </t>
-                    <t t-out="doc_name"/>
-                </h2>
-                <br/>
-                <br/>
+            <t t-call="web.external_layout">
+                <!-- Full-Page Frame -->
+                <div style="border: 5px solid black; padding: 20px; margin: 0px; height: 100%; box-sizing: border-box; font-family: 'Georgia', Times, serif;font-size:larger">
+                    <!-- Centered Title with the 'name' field from account.move -->
+                    <h2 style="text-align: center;">
+                        <t t-if="print_invoice">
+                            <strong>Invoice.</strong>
+                        </t>
+                        <t t-else="">
+                            <strong>Statement No.</strong>
+                        </t>
+                        <t t-out="doc_name"/>
+                    </h2>
+                    <br/>
+                    <br/>
 
-                <!-- Additional Fields from account.move in a 100% width table with auto-sized cells -->
-                <hr/>
-                <table t-if="print_invoice" style="width: 100%; margin-top: 10px;">
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Bill To:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.partner_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Inv. Date:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.create_date.date()"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Address:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.partner_id.street"/>
-                            <t t-if="doc.partner_id.street2">
-                                <t t-out="doc.partner_id.street2"/>
-                                <br/>
-                            </t>
-                            <t t-out="doc.partner_id.city"/>,
-                            <t t-out="doc.partner_id.state_id.name"/>
-                            <t t-out="doc.partner_id.zip"/>
-                            <br/>
-                            <t t-out="doc.partner_id.country_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.invoice_date_due">
-                                <strong>Due Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.invoice_date_due"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">
-                            <hr/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Operation:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Currency:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.currency_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>MB/L No:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.master_bl"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>HB/L No:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.house_bl_seq"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>POL:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.port_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>POD:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.port_id_pod.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.atd">
-                                <strong>Departure Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.atd"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.ata">
-                                <strong>Arrival Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.ata"/>
-                        </td>
-                    </tr>
-                    <tr t-if="doc.project_task_id.show_containers">
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_container_ids">
-                                <strong>Containers Quantity:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="container_qty > 0" t-out="container_qty"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_container_ids">
-                                <strong>Container Type:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="container_type"/>
-                        </td>
-                    </tr>
-                    <tr t-if="doc.project_task_id.show_packages">
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_package_ids">
-                                <strong>Packages:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="package"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_package_ids">
-                                <strong>Package Quantity:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="package_qty > 0" t-out="package_qty"/>
-                        </td>
-                    </tr>
-                </table>
-                <table t-if="not print_invoice" style="width: 100%; margin-top: 10px;">
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Bill To:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.partner_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Inv. Date:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.create_date.date()"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Address:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.partner_id.street"/>
-                            <t t-if="doc.partner_id.street2">
-                                <t t-out="doc.partner_id.street2"/>
-                                <br/>
-                            </t>
-                            <t t-out="doc.partner_id.city"/>,
-                            <t t-out="doc.partner_id.state_id.name"/>
-                            <t t-out="doc.partner_id.zip"/>
-                            <br/>
-                            <t t-out="doc.partner_id.country_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.invoice_date_due">
-                                <strong>Due Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.invoice_date_due"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">
-                            <hr/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Operation:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Created By:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.create_uid.partner_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Creation Date:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.create_date.date()"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Direction:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.clearence_type_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Invoices:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;" colspan="3">
-                            <t t-set="invoice_names"
-                               t-value="','.join([inv.name for inv in doc.project_task_id.customer_invoice_ids.filtered(lambda x: x.state == 'posted')])"/>
-                            <t t-esc="invoice_names"/>
-                        </td>
-                    </tr>
-                    <tr t-if="container_type_counts and doc.project_task_id.show_containers">
-                        <td style="white-space: nowrap;">
-                            <strong>Cargo Containers:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="container_type_counts">
-                                <t t-foreach="container_type_counts.items()" t-as="ct">
-                                    <t t-esc="ct[0]"/>:
-                                    <t t-esc="ct[1]"/>
-                                    ,
-                                </t>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr t-if="package_type_counts and doc.project_task_id.show_packages">
-                        <td style="white-space: nowrap;">
-                            <strong>Cargo Packages:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="package_type_counts">
-                                <t t-foreach="container_type_counts.items()" t-as="ct">
-                                    <t t-esc="ct[0]"/>:
-                                    <t t-esc="ct[1]"/>
-                                    ,
-                                </t>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Departure Date:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.atd"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>Arrival Date:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.ata"/>
-                        </td>
-                    </tr>
-                    <tr t-if="doc.project_task_id.show_containers">
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_container_ids">
-                                <strong>Containers:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;" colspan="3">
-                            <t t-out="container"/>
-                        </td>
-                    </tr>
-                    <tr t-if="doc.project_task_id.show_containers">
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_container_ids">
-                                <strong>Container Type:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="container_type"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_container_ids">
-                                <strong>Containers Quantity:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="container_qty > 0" t-out="container_qty"/>
-                        </td>
-                    </tr>
-                    <tr t-if="doc.project_task_id.show_packages">
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_package_ids">
-                                <strong>Packages:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="package"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.shipping_package_ids">
-                                <strong>Package Quantity:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="package_qty > 0" t-out="package_qty"/>
-                        </td>
-                    </tr>
-                    <tr t-if="shipping_line">
-                        <td style="white-space: nowrap;">
-                            <strong>Shipping Line:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="shipping_line"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-
-                        </td>
-                        <td style="white-space: nowrap;">
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>Commodity:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.commodity_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-
-                        </td>
-                        <td style="white-space: nowrap;">
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>POL:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.port_id.name"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>POD:</strong>
-
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.port_id_pod.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <strong>MB/L No:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.master_bl"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <strong>HB/L No:</strong>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.house_bl_seq"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.atd">
-                                <strong>Departure Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.atd"/>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-if="doc.project_task_id.ata">
-                                <strong>Arrival Date:</strong>
-                            </t>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <t t-out="doc.project_task_id.ata"/>
-                        </td>
-                    </tr>
-                </table>
-                <br/>
-                <br/>
-
-                <!-- Additional Fields from account.move in a 100% width table with auto-sized cells -->
-                <hr/>
-                <table t-if="print_invoice" style="width: 100%; margin-top: 10px;" border="1">
-                    <th>
-                        <strong>Charge Type</strong>
-                    </th>
-                    <th>
-                        <strong>Price</strong>
-                    </th>
-                    <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
+                    <!-- Additional Fields from account.move in a 100% width table with auto-sized cells -->
+                    <hr/>
+                    <table t-if="print_invoice" style="width: 100%; margin-top: 10px;">
                         <tr>
                             <td style="white-space: nowrap;">
-                                <strong>
-                                    <t t-out="product_line.product_id.name"/>
-                                </strong>
+                                <strong>Bill To:</strong>
                             </td>
-                            <td style="white-space: nowrap; text-align: center">
-                                <t t-out="product_line.sale_price"/>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.partner_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Inv. Date:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.create_date.date()"/>
                             </td>
                         </tr>
-                    </t>
-                </table>
-                <table t-if="not print_invoice" style="width: 100%; margin-top: 10px;" border="1">
-                    <th>
-                        <strong>Charge Type</strong>
-                    </th>
-                    <th>
-                        <strong>Cose Price</strong>
-                    </th>
-                    <th>
-                        <strong>Sale Price</strong>
-                    </th>
-                    <th>
-                        <strong>Currency</strong>
-                    </th>
-                    <th>
-                        <strong>Profit</strong>
-                    </th>
-                    <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
                         <tr>
                             <td style="white-space: nowrap;">
-                                <strong>
-                                    <t t-out="product_line.product_id.name"/>
-                                </strong>
+                                <strong>Address:</strong>
                             </td>
-                            <td style="white-space: nowrap; text-align: center">
-                                <t t-out="product_line.cost_price"/>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.partner_id.street"/>
+                                <t t-if="doc.partner_id.street2">
+                                    <t t-out="doc.partner_id.street2"/>
+                                    <br/>
+                                </t>
+                                <t t-out="doc.partner_id.city"/>,
+                                <t t-out="doc.partner_id.state_id.name"/>
+                                <t t-out="doc.partner_id.zip"/>
+                                <br/>
+                                <t t-out="doc.partner_id.country_id.name"/>
                             </td>
-                            <td style="white-space: nowrap; text-align: center">
-                                <t t-out="product_line.sale_price"/>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.invoice_date_due">
+                                    <strong>Due Date:</strong>
+                                </t>
                             </td>
-                            <td style="white-space: nowrap; text-align: center">
-                                <t t-out="product_line.currency_id"/>
-                            </td>
-                            <td style="white-space: nowrap; text-align: center">
-                                <t t-out="product_line.sale_price - product_line.cost_price"/>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.invoice_date_due"/>
                             </td>
                         </tr>
-                    </t>
-                </table>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
+                        <tr>
+                            <td colspan="4">
+                                <hr/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Operation:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Currency:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.currency_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>MB/L No:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.master_bl"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>HB/L No:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.house_bl_seq"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>POL:</strong>
 
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.port_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>POD:</strong>
 
-                <table t-if="not print_invoice" style="width: 100%;">
-                    <tr>
-                        <!-- Cost Per Currency Table -->
-                        <td style="vertical-align: top; width: 50%;">
-                            <table class="table table-sm" border="1" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th colspan="2" style="text-align:left;">Cost Per Currency</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Currency</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="doc.project_task_id.total_cost_line_ids" t-as="cost_line">
-                                        <tr>
-                                            <td>
-                                                <span t-field="cost_line.currency_id"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="cost_line.amount"
-                                                      t-options='{"widget": "monetary", "display_currency": cost_line.currency_id}'/>
-                                            </td>
-                                        </tr>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.port_id_pod.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.atd">
+                                    <strong>Departure Date:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.atd"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.ata">
+                                    <strong>Arrival Date:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.ata"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.project_task_id.show_containers">
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                    <strong>Containers Quantity:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="container_qty > 0" t-out="container_qty"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                    <strong>Container Type:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="container_type"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.project_task_id.show_packages">
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                    <strong>Packages:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="package"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                    <strong>Package Quantity:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="package_qty > 0" t-out="package_qty"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <table t-if="not print_invoice" style="width: 100%; margin-top: 10px;">
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Bill To:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.partner_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Inv. Date:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.create_date.date()"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Address:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.partner_id.street"/>
+                                <t t-if="doc.partner_id.street2">
+                                    <t t-out="doc.partner_id.street2"/>
+                                    <br/>
+                                </t>
+                                <t t-out="doc.partner_id.city"/>,
+                                <t t-out="doc.partner_id.state_id.name"/>
+                                <t t-out="doc.partner_id.zip"/>
+                                <br/>
+                                <t t-out="doc.partner_id.country_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.invoice_date_due">
+                                    <strong>Due Date:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.invoice_date_due"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Operation:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Created By:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.create_uid.partner_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Creation Date:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.create_date.date()"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Direction:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.clearence_type_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Invoices:</strong>
+
+                            </td>
+                            <td style="white-space: nowrap;" colspan="3">
+                                <t t-set="invoice_names"
+                                   t-value="','.join([inv.name for inv in doc.project_task_id.customer_invoice_ids.filtered(lambda x: x.state == 'posted')])"/>
+                                <t t-esc="invoice_names"/>
+                            </td>
+                        </tr>
+                        <tr t-if="container_type_counts and doc.project_task_id.show_containers">
+                            <td style="white-space: nowrap;">
+                                <strong>Cargo Containers:</strong>
+
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="container_type_counts">
+                                    <t t-foreach="container_type_counts.items()" t-as="ct">
+                                        <t t-esc="ct[0]"/>:
+                                        <t t-esc="ct[1]"/>
+                                        ,
                                     </t>
-                                </tbody>
-                            </table>
-                        </td>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr t-if="package_type_counts and doc.project_task_id.show_packages">
+                            <td style="white-space: nowrap;">
+                                <strong>Cargo Packages:</strong>
 
-                        <!-- Sales Per Currency Table -->
-                        <td style="vertical-align: top; width: 50%;">
-                            <table class="table table-sm" border="1" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th colspan="2" style="text-align:left;">Sales Per Currency</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Currency</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="doc.project_task_id.total_sale_line_ids" t-as="sale_line">
-                                        <tr>
-                                            <td>
-                                                <span t-field="sale_line.currency_id"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="sale_line.amount"
-                                                      t-options='{"widget": "monetary", "display_currency": sale_line.currency_id}'/>
-                                            </td>
-                                        </tr>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="package_type_counts">
+                                    <t t-foreach="container_type_counts.items()" t-as="ct">
+                                        <t t-esc="ct[0]"/>:
+                                        <t t-esc="ct[1]"/>
+                                        ,
                                     </t>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-                <br/>
-                <br/>
-                <table t-if="not print_invoice" style="width: 100%;">
-                    <tr>
-                        <td style="width: 50%;"></td>
-                        <td style="width: 50%; text-align:right;">
-                            <span t-field="doc.project_task_id.currency_id" t-options="{'invisible': True}"/>
-                            <div>Total Sale in USD:
-                                <span t-field="doc.project_task_id.total_sale_in_usd"/>
-                            </div>
-                            <br/>
-                            <div>Total Cost in USD:
-                                <span t-field="doc.project_task_id.total_cost_in_usd"/>
-                            </div>
-                            <br/>
-                            <div>Expected Revenue:
-                                <span t-field="doc.project_task_id.expected_revenue"/>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Departure Date:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.atd"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>Arrival Date:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.ata"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.project_task_id.show_containers">
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                    <strong>Containers:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;" colspan="3">
+                                <t t-out="container"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.project_task_id.show_containers">
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                    <strong>Container Type:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="container_type"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                    <strong>Containers Quantity:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="container_qty > 0" t-out="container_qty"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.project_task_id.show_packages">
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                    <strong>Packages:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="package"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                    <strong>Package Quantity:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="package_qty > 0" t-out="package_qty"/>
+                            </td>
+                        </tr>
+                        <tr t-if="shipping_line">
+                            <td style="white-space: nowrap;">
+                                <strong>Shipping Line:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="shipping_line"/>
+                            </td>
+                            <td style="white-space: nowrap;">
 
-            </div>
+                            </td>
+                            <td style="white-space: nowrap;">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>Commodity:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.commodity_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+
+                            </td>
+                            <td style="white-space: nowrap;">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>POL:</strong>
+
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.port_id.name"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>POD:</strong>
+
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.port_id_pod.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <strong>MB/L No:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.master_bl"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <strong>HB/L No:</strong>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.house_bl_seq"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.atd">
+                                    <strong>Departure Date:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.atd"/>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-if="doc.project_task_id.ata">
+                                    <strong>Arrival Date:</strong>
+                                </t>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <t t-out="doc.project_task_id.ata"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <br/>
+
+                    <!-- Additional Fields from account.move in a 100% width table with auto-sized cells -->
+                    <hr/>
+                    <table t-if="print_invoice" style="width: 100%; margin-top: 10px;" border="1">
+                        <th>
+                            <strong>Charge Type</strong>
+                        </th>
+                        <th>
+                            <strong>Price</strong>
+                        </th>
+                        <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
+                            <tr>
+                                <td style="white-space: nowrap;">
+                                    <strong>
+                                        <t t-out="product_line.product_id.name"/>
+                                    </strong>
+                                </td>
+                                <td style="white-space: nowrap; text-align: center">
+                                    <t t-out="product_line.sale_price"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                    <table t-if="not print_invoice" style="width: 100%; margin-top: 10px;" border="1">
+                        <th>
+                            <strong>Charge Type</strong>
+                        </th>
+                        <th>
+                            <strong>Cose Price</strong>
+                        </th>
+                        <th>
+                            <strong>Sale Price</strong>
+                        </th>
+                        <th>
+                            <strong>Currency</strong>
+                        </th>
+                        <th>
+                            <strong>Profit</strong>
+                        </th>
+                        <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
+                            <tr>
+                                <td style="white-space: nowrap;">
+                                    <strong>
+                                        <t t-out="product_line.product_id.name"/>
+                                    </strong>
+                                </td>
+                                <td style="white-space: nowrap; text-align: center">
+                                    <t t-out="product_line.cost_price"/>
+                                </td>
+                                <td style="white-space: nowrap; text-align: center">
+                                    <t t-out="product_line.sale_price"/>
+                                </td>
+                                <td style="white-space: nowrap; text-align: center">
+                                    <t t-out="product_line.currency_id"/>
+                                </td>
+                                <td style="white-space: nowrap; text-align: center">
+                                    <t t-out="product_line.sale_price - product_line.cost_price"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+
+
+                    <table t-if="not print_invoice" style="width: 100%;">
+                        <tr>
+                            <!-- Cost Per Currency Table -->
+                            <td style="vertical-align: top; width: 50%;">
+                                <table class="table table-sm" border="1" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" style="text-align:left;">Cost Per Currency</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Currency</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.project_task_id.total_cost_line_ids" t-as="cost_line">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="cost_line.currency_id"/>
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    <span t-field="cost_line.amount"
+                                                          t-options='{"widget": "monetary", "display_currency": cost_line.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <!-- Sales Per Currency Table -->
+                            <td style="vertical-align: top; width: 50%;">
+                                <table class="table table-sm" border="1" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" style="text-align:left;">Sales Per Currency</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Currency</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.project_task_id.total_sale_line_ids" t-as="sale_line">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="sale_line.currency_id"/>
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    <span t-field="sale_line.amount"
+                                                          t-options='{"widget": "monetary", "display_currency": sale_line.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <br/>
+                    <table t-if="not print_invoice" style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%;"></td>
+                            <td style="width: 50%; text-align:right;">
+                                <span t-field="doc.project_task_id.currency_id" t-options="{'invisible': True}"/>
+                                <div>Total Sale in USD:
+                                    <span t-field="doc.project_task_id.total_sale_in_usd"/>
+                                </div>
+                                <br/>
+                                <div>Total Cost in USD:
+                                    <span t-field="doc.project_task_id.total_cost_in_usd"/>
+                                </div>
+                                <br/>
+                                <div>Expected Revenue:
+                                    <span t-field="doc.project_task_id.expected_revenue"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
         </template>
 
 
