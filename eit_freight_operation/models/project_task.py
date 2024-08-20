@@ -39,7 +39,6 @@ class Task(models.Model):
     attach_id = fields.Binary('Attachment')
     master_bl = fields.Text(string="Master B/L")
     opt_partners_lines = fields.One2many('opt.partners', 'task_id', string="Opt. Partners")
-    shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Information")
     shipping_package_ids = fields.One2many('shipping.package', 'task_id_shipping', string="Shipping Package")
     shipping_container_ids = fields.One2many('shipping.container', 'project_task_id', string="Container")
     master_bl_in = fields.Text(string="Master B/L(Info)", compute="compute_master_bl")
