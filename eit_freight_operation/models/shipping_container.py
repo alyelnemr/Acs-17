@@ -56,7 +56,7 @@ class ShippingContainerData(models.Model):
                         'tare_weight': vals.get('tare_weight', res.tare_weight),
                     })
                 else:
-                    self.env['container.data'].create({
+                    self.env['container.data'].sudo().create({
                         'name': vals.get('name', res.name),
                         'container_type_id': vals.get('container_type_id', res.container_type_id.id),
                         'container_is': vals.get('container_is', res.container_is),
