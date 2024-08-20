@@ -485,7 +485,7 @@
                 <br/>
 
 
-                <table style="width: 100%;">
+                <table t-if="not print_invoice" style="width: 100%;">
                     <tr>
                         <!-- Cost Per Currency Table -->
                         <td style="vertical-align: top; width: 50%;">
@@ -546,7 +546,7 @@
                 </table>
                 <br/>
                 <br/>
-                <table style="width: 100%;">
+                <table t-if="not print_invoice" style="width: 100%;">
                     <tr>
                         <td style="width: 50%;"></td>
                         <td style="width: 50%; text-align:right;">
