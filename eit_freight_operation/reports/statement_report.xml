@@ -249,7 +249,7 @@
                             <t t-esc="invoice_names"/>
                         </td>
                     </tr>
-                    <tr t-if="container_type_counts">
+                    <tr t-if="container_type_counts and doc.project_task_id.show_containers">
                         <td style="white-space: nowrap;">
                             <strong>Cargo Containers:</strong>
 
@@ -264,7 +264,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr t-if="package_type_counts">
+                    <tr t-if="package_type_counts and doc.project_task_id.show_packages">
                         <td style="white-space: nowrap;">
                             <strong>Cargo Packages:</strong>
 
