@@ -17,6 +17,7 @@
         'data/project_task_type.xml',
         'data/project_task_cron.xml',
         'wizard/project_task_charge_partner.xml',
+        'reports/statement_report.xml',
         'views/account_move.xml',
         'views/project_project_views.xml',
         'views/project_task_type_view.xml',
