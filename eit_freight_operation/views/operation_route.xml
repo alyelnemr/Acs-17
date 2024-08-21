@@ -1,0 +1,64 @@
+<odoo>
+    <record id="operation_route_from_view" model="ir.ui.view">
+        <field name="name">operation.route.form</field>
+        <field name="model">operation.route</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="routing_types" widget="selection"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="port_id_origin_from" widget="selection" invisible="routing_types != 'origin'"/>
+                            <field name="port_id_transit_from" widget="selection"
+                                   invisible="routing_types != 'transit'"/>
+                            <field name="port_id_destination_from" widget="selection"
+                                   invisible="routing_types != 'destination'"/>
+                            <field name="planned_date_start" placeholder="Planned Date" class="oe_inline ps-1"
+                                   widget="daterange"
+                                   options="{'end_date_field': 'planned_date_end'}"
+                                   required="planned_date_start or planned_date_end"/>
+                            <field name="transport_type_id" invisible="1"/>
+                            <field name="planned_date_start" invisible="1"/>
+                            <field name="planned_date_end" invisible="1"/>
+                            <field name="project_task_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="port_id_origin_to" widget="selection" invisible="routing_types != 'origin'"/>
+                            <field name="port_id_transit_to" widget="selection" invisible="routing_types != 'transit'"/>
+                            <field name="port_id_destination_to" widget="selection"
+                                   invisible="routing_types != 'destination'"/>
+                            <field name="loaded" widget="boolean_toggle" invisible="loaded == True"/>
+                            <field name="loaded" widget="boolean_toggle" string="Loaded Done"
+                                   invisible="loaded == False"/>
+                        </group>
+                        <group>
+                            <field name="pickup_address" invisible="routing_types != 'origin'"/>
+                            <field name="delivery_address" invisible="routing_types != 'destination'"/>
+                            <field name="routing_types" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Services">
+                            <field name="operation_route_services_ids">
+                                <tree editable="bottom">
+                                    <field name="service_scope_id" widget="selection"/>
+                                    <field name="description"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Create" name="create_operation_route" type="object"
+                            class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

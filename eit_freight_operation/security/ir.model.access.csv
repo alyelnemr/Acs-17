@@ -3,6 +3,7 @@ access_opt_partners,opt.partners,model_opt_partners,,1,1,1,1
 access_shipping_package,shipping.package,model_shipping_package,,1,1,1,1
 access_house_bl,house.bl,model_house_bl,,1,1,1,1
 access_origin_route,origin.route,model_origin_route,,1,1,1,1
+access_operation_route,operation.route,model_operation_route,,1,1,1,1
 access_origin_services,origin.services,model_origin_services,,1,1,1,1
 access_transit_route,transit.route,model_transit_route,,1,1,1,1
 access_destination_route,destination.route,model_destination_route,,1,1,1,1
@@ -23,3 +24,5 @@ access_total_cost_currency_all_users,total_cost_currency_all_users,model_total_c
 access_total_sale_currency_all_users,total_sale_currency_all_users,model_total_sale_line,base.group_user,1,1,1,1
 access_project_task_charge_invoice_partner_wizard,access_project_task_charge_invoice_partner_wizard,model_project_task_charge_invoice_partner_wizard,base.group_user,1,1,1,1
 access_project_task_charge_partners_wizard_all,access_project_task_charge_partners_wizard_all,model_project_task_charge_partners_wizard,base.group_user,1,1,1,1
+access_main_carriage_wizard_user,access_main_carriage_wizard_user,model_main_carriage_wizard,base.group_user,1,1,1,1
+access_operation_route_services_all_users,access_operation_route_services_all_users,model_operation_route_services,base.group_user,1,1,1,1
