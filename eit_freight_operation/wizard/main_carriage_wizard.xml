@@ -16,6 +16,8 @@
                             </group>
                             <group>
                                 <field name="port_id_pod" readonly="1"/>
+                                <field name="planned_date_from" readonly="1"/>
+                                <field name="planned_date_to" readonly="1"/>
                                 <field name="transit_time" readonly="1"/>
                             </group>
                         </group>
