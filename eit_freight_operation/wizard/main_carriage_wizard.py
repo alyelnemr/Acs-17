@@ -7,8 +7,8 @@ class MainCarriageWizard(models.TransientModel):
 
     # Define fields as Char and readonly
     port_id = fields.Char(string='Port', readonly=True)
-    planned_date_from = fields.Char(string='Planned Date From', readonly=True)
-    planned_date_to = fields.Char(string='Planned Date To', readonly=True)
+    planned_date_from = fields.Datetime(string='Planned Date From', readonly=True)
+    planned_date_to = fields.Datetime(string='Planned Date To', readonly=True)
     vessel_id = fields.Char(string='Vessel', readonly=True)
     flight_no = fields.Char(string='Flight Number', readonly=True)
     truck_no = fields.Char(string='Truck Number', readonly=True)
@@ -25,8 +25,8 @@ class MainCarriageWizard(models.TransientModel):
             # Assuming the task has the corresponding fields and using 'name' instead of 'id'
             res.update({
                 'port_id': task.port_id.name if task.port_id else '',
-                'planned_date_from': task.planned_date_from if task.planned_date_from else '',
-                'planned_date_to': task.planned_date_to if task.planned_date_to else '',
+                'planned_date_from': task.planned_date_begin if task.planned_date_begin else '',
+                'planned_date_to': task.date_deadline if task.date_deadline else '',
                 'vessel_id': task.vessel_id.name if task.vessel_id else '',
                 'flight_no': task.flight_no or '',
                 'truck_no': task.truck_no or '',
