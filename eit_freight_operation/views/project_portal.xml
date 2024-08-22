@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home_inherit" name="Disable Projects/Tasks in Portal"
+                  inherit_id="project.portal_my_home">
+            <xpath expr="//div[@id='portal_service_category']" position="replace">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/project/static/src/img/tasks.svg'"/>
+                    <t t-set="title">My Shipments</t>
+                    <t t-set="url" t-value="'/my/tasks'"/>
+                    <t t-set="text">Follow and comments tasks of your projects</t>
+                    <t t-set="placeholder_count" t-value="'task_count'"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="portal_my_shipments" inherit_id="project.portal_my_tasks" name="My Tasks">
+
+            <xpath expr="//t[@t-set='title']" position="replace">
+                <t t-set="title">My Shipments</t>
+            </xpath>
+
+            <!-- Rename the alert message when there are no tasks -->
+            <xpath expr="//div[@class='alert alert-warning']" position="replace">
+                position="replace">
+                <div class="alert alert-warning" role="alert">
+                    There are no shipments.
+                </div>
+            </xpath>
+        </template>
+        <template id="portal_my_shipment_portal_my_task" inherit_id="project.portal_my_task" name="My Tasks">
+            <xpath expr="//div[1]" position="replace">
+
+                <div class="row o_project_portal_sidebar">
+                    <t t-call="portal.portal_record_sidebar">
+                        <t t-set="classes" t-value="'col-lg-3 col-xl-4 d-print-none'"/>
+
+                        <t t-set="entries">
+                            <div class="d-flex flex-wrap flex-column gap-4">
+                                <div id="task-nav" class="d-flex align-items-center flex-grow-1 p-0" t-ignore="true"
+                                     role="complementary">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item" id="nav-header">
+                                            <a class="nav-link p-0" href="#card_header">
+                                                Shipment
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" id="nav-chat">
+                                            <a class="nav-link p-0" href="#task_chat">
+                                                History
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="task-links" t-if="task_link_section"
+                                     class="d-flex align-items-center flex-grow-1 ps-0" t-ignore="true"
+                                     role="complementary">
+                                    <ul class="nav flex-column">
+                                        <t t-foreach="task_link_section" t-as="task_link">
+                                            <li class="nav-item">
+                                                <a class="nav-link p-0" t-att-href="task_link['access_url']">
+                                                    <t t-out="task_link['title']"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+
+                                <div t-if="task.user_ids or task.partner_id" class="d-flex flex-column gap-4">
+                                    <div class="col-12" t-if="task.user_ids">
+                                        <h6 class="flex-basis-100">
+                                            <small class="text-muted">Assignees</small>
+                                        </h6>
+                                        <t t-foreach="task.user_ids" t-as="user">
+                                            <div t-attf-class="o_portal_contact_details d-flex flex-column gap-2 {{ 'mb-3' if len(task.user_ids) > 1 else '' }}">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    <img class="o_avatar o_portal_contact_img rounded"
+                                                         t-att-src="image_data_uri(user.avatar_128)"/>
+                                                    <h6 class="mb-0" t-field="user.name"></h6>
+                                                </div>
+                                                <div t-out="user"
+                                                     t-options='{"widget": "contact", "fields": ["email", "phone"]}'/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="col-12 d-flex flex-column" t-if="task.partner_id">
+                                        <h6>
+                                            <small class="text-muted">Customer</small>
+                                        </h6>
+                                        <t t-if="task.partner_id">
+                                            <div class="o_portal_contact_details d-flex flex-column gap-2">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    <img class="o_avatar o_portal_contact_img rounded"
+                                                         t-att-src="image_data_uri(task.partner_id.avatar_512)"/>
+                                                    <h6 class="mb-0" t-out="task.partner_id.name"></h6>
+                                                </div>
+                                                <div t-field="task.partner_id"
+                                                     t-options='{"widget": "contact", "fields": ["email", "phone"]}'/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                    <div id="task_content" class="o_portal_content col-12 col-lg-9 col-xl-8">
+                        <div id="card">
+                            <div id="card_header" data-anchor="true">
+                                <div class="row justify-content-between align-items-end mb-3">
+                                    <div class="col-12 col-md-9">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <t t-call="project.portal_my_tasks_priority_widget_template">
+                                                <t t-set="classes" t-translation="off">fs-4</t>
+                                            </t>
+                                            <h3 t-field="task.name" class="text-truncate my-0"/>
+                                            <small class="text-muted d-none d-md-inline align-self-end">(#<span
+                                                    t-field="task.id"/>)
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <small class="text-end">Stage:</small>
+                                        <span t-field="task.stage_id.name" class=" badge rounded-pill text-bg-info"
+                                              title="Current stage of this task"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="card_body">
+                                <div class="float-end">
+                                    <t t-call="project.portal_my_tasks_state_widget_template">
+                                        <t t-set="path" t-value="'task'"/>
+                                    </t>
+                                </div>
+                                <div class="row mb-4 container"
+                                     style="background-color: #d9def3; border-radius: 15px; padding: 20px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+                                    <div class="col-12 col-md-6 flex-grow-1">
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">Transport Type:</strong>
+                                            <span t-field="task.transport_type_id.name"/>
+                                        </div>
+                                        <br/>
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">Direction:</strong>
+                                            <span t-field="task.clearence_type_id.name"/>
+                                        </div>
+                                        <br/>
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">Master B/L:</strong>
+                                            <span t-field="task.master_bl"/>
+                                        </div>
+                                        <br/>
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">POL:</strong>
+                                            <span t-field="task.port_id.name"/>
+                                        </div>
+                                        <br/>
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">POD:</strong>
+                                            <span t-field="task.port_id_pod.name"/>
+                                        </div>
+                                        <br/>
+                                        <div style="color: #333; font-family: Arial, sans-serif;">
+                                            <strong style="color: #0056b3;">Commodity:</strong>
+                                            <span t-field="task.port_id_pod.name"/>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                    </div>
+                                    <div class="o_portal_tabs" style="margin-top: 20px;">
+                                        <ul class="nav nav-pills" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" data-bs-toggle="tab" href="#tab1" role="tab"
+                                                   aria-selected="false"
+                                                   style="background-color: #0056b3; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Bill Of Leading
+                                                </a>
+                                            </li>
+                                            <li class="nav-item active" t-if="task.show_containers">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab2" role="tab"
+                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Containers
+                                                </a>
+                                            </li>
+                                            <li class="nav-item active" t-if="task.show_packages">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab3" role="tab"
+                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Packages
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content"
+                                             style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; margin-top: 10px; background-color: #f5f5f5;">
+                                            <div id="tab1" class="tab-pane active with-3d-shadow with-transitions"
+                                                 role="tabpanel">
+                                                <div t-if="task.atd"
+                                                     style="color: #333; font-family: Arial, sans-serif;">
+                                                    <strong style="color: #0056b3;">Departure Date:</strong>
+                                                    <span t-field="task.atd"/>
+                                                </div>
+                                                <br/>
+                                                <div t-if="task.ata"
+                                                     style="color: #333; font-family: Arial, sans-serif;">
+                                                    <strong style="color: #0056b3;">Arrival Date:</strong>
+                                                    <span t-field="task.ata"/>
+                                                </div>
+                                                <br/>
+                                                <div t-if="task.transit_time"
+                                                     style="color: #333; font-family: Arial, sans-serif;">
+                                                    <strong style="color: #0056b3;">Transit Time:</strong>
+                                                    <span t-field="task.transit_time"/>
+                                                    Days
+                                                </div>
+                                                <br/>
+                                                <div t-if="task.vessel_id"
+                                                     style="color: #333; font-family: Arial, sans-serif;">
+                                                    <strong style="color: #0056b3;">Vessel:</strong>
+                                                    <span t-field="task.vessel_id.name"/>
+                                                </div>
+                                                <br/>
+                                                <div t-if="task.house_bl_seq"
+                                                     style="color: #333; font-family: Arial, sans-serif;">
+                                                    <strong style="color: #0056b3;">Vessel:</strong>
+                                                    <span t-field="task.house_bl_seq"/>
+                                                </div>
+                                                <br/>
+                                            </div>
+                                            <div id="tab2" class="tab-pane" role="tabpanel">
+                                                <p>
+                                                    <div t-attf-class="oe_kanban_global_click">
+                                                        <t t-foreach="task.shipping_container_ids" t-as="container">
+                                                            <table style="width: 100%; border: 1px solid #ddd">
+                                                                <!-- Iterate over each shipping container in shipping_container_ids -->
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Container No:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="container.name"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Container Type:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="container.container_type_id.name"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Container Is:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="container.container_is"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Gross Weight:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="container.gross_weight"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            <br/>
+                                                            <br/>
+                                                        </t>
+                                                    </div>
+                                                </p>
+                                            </div>
+                                            <div id="tab3" class="tab-pane" role="tabpanel">
+                                                <p>
+                                                    <div t-attf-class="oe_kanban_global_click">
+                                                        <t t-foreach="task.shipping_package_ids" t-as="package">
+                                                            <table style="width: 100%">
+                                                                <!-- Iterate over each shipping container in shipping_container_ids -->
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Package:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="package.package_type_id.name"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Commodity:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="package.commodity_id.name"/>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Quantity:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="package.quantity"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Gross Weight:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="package.gross_weight"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </t>
+                                                    </div>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row" t-if="task.description or task.attachment_ids">
+                                    <div t-if="not is_html_empty(task.description)"
+                                         t-attf-class="col-12 mb-4 mb-md-0 {{'col-lg-6' if task.attachment_ids else 'col-lg-12'}}">
+                                        <hr class="mb-1"/>
+                                        <div class="d-flex my-2">
+                                            <h5>Description</h5>
+                                        </div>
+                                        <div class="py-1 px-2 bg-100 small table-responsive"
+                                             t-field="task.description"/>
+                                    </div>
+                                    <div t-if="task.attachment_ids"
+                                         t-attf-class="col-12 o_project_portal_attachments {{'col-lg-6' if task.description else 'col-lg-12'}}">
+                                        <hr class="mb-1 d-none d-lg-block"/>
+                                        <strong class="d-block mb-2">Attachments</strong>
+                                        <div class="row">
+                                            <div t-attf-class="col {{'col-lg-6' if not task.description else 'col-lg-12'}}">
+                                                <ul class="list-group">
+                                                    <a class="list-group-item list-group-item-action d-flex align-items-center oe_attachments py-1 px-2"
+                                                       t-foreach='task.attachment_ids' t-as='attachment'
+                                                       t-attf-href="/web/content/#{attachment.id}?download=true&amp;access_token=#{attachment.access_token}"
+                                                       target="_blank" data-no-post-process="">
+                                                        <div class='oe_attachment_embedded o_image o_image_small me-2 me-lg-3'
+                                                             t-att-title="attachment.name"
+                                                             t-att-data-mimetype="attachment.mimetype"
+                                                             t-attf-data-src="/web/image/#{attachment.id}/50x40?access_token=#{attachment.access_token}"/>
+                                                        <div class='oe_attachment_name text-truncate'>
+                                                            <t t-esc='attachment.name'/>
+                                                        </div>
+                                                    </a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+                        <div id="task_chat" data-anchor="true">
+                            <h3>Communication history</h3>
+                            <t t-call="portal.message_thread">
+                                <t t-set="token" t-value="task.access_token"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+        <template id="portal_layout_inherit_rename_tasks" name="Rename Tasks to Shipments in Breadcrumbs"
+                  inherit_id="project.portal_layout" priority="50">
+            <xpath expr="//li[a[contains(text(), 'Tasks')]]" position="replace">
+                <li t-if="page_name == 'task' or (task and not project)"
+                    t-attf-class="breadcrumb-item #{'active ' if not task else ''}">
+                    <a t-if="task" t-attf-href="/my/tasks?{{ keep_query() }}">Shipments</a>
+                    <t t-else="">Shipments</t>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_tasks_list_inherit_add_fields" name="Add Master BL and Date Deadline to Tasks List"
+                  inherit_id="project.portal_tasks_list">
+            <xpath expr="//th[1]" position="replace">
+                <th t-attf-colspan="{{1 if groupby != 'priority' else 1}}"/>
+            </xpath>
+            <xpath expr="//td[@class='text-start']/following-sibling::td[2]" position="replace">
+            </xpath>
+            <xpath expr="//td[@class='text-start']" position="after">
+                <td>
+                    <a t-attf-href="/my/#{task_url}/#{task.id}?{{ keep_query() }}">
+                        <span t-att-title="task.name" t-field="task.name"/>
+                    </a>
+                </td>
+                <td>
+                    <span t-esc="task.transport_type_id.name"/>
+                </td>
+                <td>
+                    <span t-esc="task.master_bl"/>
+                </td>
+                <td>
+                    <span t-field="task.port_id"/>
+                </td>
+                <td>
+                    <span t-field="task.port_id_pod"/>
+                </td>
+                <td>
+                    <span t-field="task.planned_date_begin"/>
+                </td>
+                <td>
+                    <span t-field="task.date_deadline"/>
+                </td>
+            </xpath>
+            <xpath expr="//span[@t-esc='task.project_id.name']" position="replace">
+                <!-- Replace with an empty TD -->
+                <span/>
+            </xpath>
+            <xpath expr="//th[text()='Project']" position="replace">
+                <!-- Replace with an empty TH -->
+                <th/>
+            </xpath>
+
+            <xpath expr="//th[text()='Name']" position="after">
+                <t t-set="grouped_tasks_colspan" t-value="15"/>
+                <th>Type</th>
+                <th>Master BL</th>
+                <th>POL</th>
+                <th>POD</th>
+                <th>Planned Date From</th>
+                <th>Planned Date To</th>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

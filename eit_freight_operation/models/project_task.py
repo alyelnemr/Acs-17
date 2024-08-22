@@ -57,9 +57,10 @@ class Task(models.Model):
     free_time = fields.Integer(string="Free Time")
     house_bl_id = fields.One2many('house.bl', 'bl_task_id', string="House B/L ")
     routing_types = fields.Selection(
-        [('origin_route', 'Origin Route'), ('transist_route', 'Transit Route'), ('dest_route', 'Destination Route')],
+        [('origin', 'Origin Route'), ('transit', 'Transit Route'), ('destination', 'Destination Route')],
         string="Route")
     deatination_route = fields.Many2many('destination.route', string="Destination Route", readonly=True)
+    operation_route_ids = fields.Many2many('operation.route', string="Operation Route")
     origin_route = fields.Many2many('origin.route', string="Origin Route", readonly=True)
     transit_route = fields.Many2many('transit.route', string="Transit Route", readonly=True)
     service_ids = fields.Many2many('origin.services', compute="_compute_service_ids", readonly=False)
@@ -170,7 +171,8 @@ class Task(models.Model):
         if len(selected_records) <= 0:
             error_message = "Please select at least one record."
         curr = selected_records.mapped('currency_id')
-        current_invoices = selected_records.mapped('invoice_id') if invoice_type == 'invoice' else selected_records.mapped(
+        current_invoices = selected_records.mapped(
+            'invoice_id') if invoice_type == 'invoice' else selected_records.mapped(
             'vendor_bill_id')
         if len(curr) > 1:
             error_message = "Please select only one currency for processing."
@@ -518,6 +520,51 @@ class Task(models.Model):
         for rec in self:
             services_ids = self.env['origin.services'].search([('task_id', '=', rec.id)])
             rec.service_ids = services_ids.ids
+
+    def show_main_carriage(self):
+        if not self.port_id or not self.port_id_pod:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Error'),
+                    'message': _('Please enter POL and POD to open the Main Carriage.'),
+                    'type': 'danger',
+                    'sticky': False,
+                }
+            }
+        return {
+            'name': _('Main Carriage'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'main.carriage.wizard',  # The model for the wizard
+            'view_id': self.env.ref('eit_freight_operation.view_main_carriage_wizard_form').id,
+            # Replace 'your_module_name' with the actual module name
+            'target': 'new',
+            'context': {
+                'active_id': self.id,  # Pass the current task ID
+                'active_model': 'project.task',  # Specify that the active model is 'project.task'
+            }
+        }
+
+    def add_operation_route(self):
+        self.routing_types = 'origin'
+        return {
+            'name': _('Operation Route'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'operation.route',
+            'view_id': self.env.ref(
+                'eit_freight_operation.operation_route_from_view').id,
+            'target': 'new',
+            'context': {
+                'default_routing_types': self.routing_types,
+                'default_transport_type_id': self.transport_type_id.id,
+                'default_task_id': self.id,
+                'default_incoterm_id': self.incoterm_id.id,
+                'default_shipment_scope_id': self.shipment_scope_id.id
+            }
+        }
 
     def origin_routing(self):
         self.routing_types = 'origin_route'
