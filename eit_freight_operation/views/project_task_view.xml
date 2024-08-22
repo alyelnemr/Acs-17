@@ -112,9 +112,9 @@
                     </attribute>
                 </xpath>
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="transport_type_id" readonly="stage_id == 3" required="True"
+                    <field name="transport_type_id" readonly="stage_id == 3 or name != 'NEW'" required="True"
                            options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
-                    <field name="clearence_type_id" readonly="stage_id == 3" required="True"
+                    <field name="clearence_type_id" readonly="stage_id == 3 or name != 'NEW'" required="True"
                            options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                     <field name="should_set_date_closing" invisible="1"/>
                     <field name="state_selectable" invisible="1"/>
