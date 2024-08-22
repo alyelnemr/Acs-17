@@ -19,6 +19,7 @@
         'wizard/main_carriage_wizard.xml',
         'wizard/project_task_charge_partner.xml',
         'reports/statement_report.xml',
+        'views/project_portal.xml',
         'views/operation_route.xml',
         'views/account_move.xml',
         'views/project_project_views.xml',
