@@ -688,21 +688,6 @@ class Task(models.Model):
                 if rec.shipment_scope_id.code == 'FTL':
                     rec.show_containers = True
 
-    @api.onchange('transport_type_id', 'clearence_type_id')
-    def create_sequence(self):
-        self.shipment_scope_id = False
-        if self.transport_type_id and self.clearence_type_id:
-            name = self.env['ir.sequence'].next_by_code('project.task') if self.name == 'NEW' else "X" + \
-                                                                                                   self.name.split('/')[
-                                                                                                       -1]
-            current_year = datetime.datetime.now().year
-            year_str = str(current_year)[-3:].zfill(3)
-            transport_code = self.transport_type_id.code if self.transport_type_id and self.transport_type_id.code else ''
-            clearance_code = self.clearence_type_id.code if self.clearence_type_id and self.clearence_type_id.code else ''
-
-            seequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
-            self.name = name.replace("X", seequence)
-
     def generate_house_bl_seq(self):
         current_year = fields.Date.today().year
         last_two_digits = str(current_year)[-2:]
@@ -752,6 +737,21 @@ class Task(models.Model):
             rec.consolidation_seq_hide = True
         return True
 
+    def create_sequence(self, transport_type_id=None, clearence_type_id=None):
+        name = ''
+        if transport_type_id and clearence_type_id:
+            transport_type = self.env['transport.type'].browse(transport_type_id)
+            clearence_type = self.env['clearence.type'].browse(clearence_type_id)
+            name = self.env['ir.sequence'].next_by_code('project.task')
+            current_year = datetime.datetime.now().year
+            year_str = str(current_year)[-3:].zfill(3)
+            transport_code = transport_type.code if transport_type and transport_type.code else ''
+            clearance_code = clearence_type.code if clearence_type and clearence_type.code else ''
+
+            sequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
+            name = name.replace("X", sequence)
+        return name
+
     @api.model
     def create(self, vals):
         project = self.env['project.project'].browse(vals.get('project_id'))
@@ -769,6 +769,8 @@ class Task(models.Model):
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
         elif vals.get('state') == '1_canceled':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
+        vals['name'] = self.create_sequence(transport_type_id=vals.get('transport_type_id'),
+                                            clearence_type_id=vals.get('clearence_type_id'))
         tasks = super(Task, self).create(vals)
 
         for task in tasks:
