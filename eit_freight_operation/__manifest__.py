@@ -24,6 +24,7 @@
         'views/account_move.xml',
         'views/project_project_views.xml',
         'views/project_task_type_view.xml',
+        'views/container_views.xml',
         'views/project_task_view.xml',
         'wizard/origin_route_view.xml',
         'wizard/trasit_route_view.xml',

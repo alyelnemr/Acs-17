@@ -47,21 +47,32 @@ class ShippingContainerData(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if self.check_container_number(vals['name']):
+                # Call super to create the record
                 res = super(ShippingContainerData, self).create(vals)
+
+                # Search for the existing container data record
                 container_id = self.env['container.data'].search([('name', '=', res.name)], limit=1)
+
                 if container_id:
+                    # If the container already exists, update it
                     container_id.write({
                         'container_type_id': vals.get('container_type_id', res.container_type_id.id),
                         'container_is': vals.get('container_is', res.container_is),
                         'tare_weight': vals.get('tare_weight', res.tare_weight),
                     })
+                    # Set the container_id on the new record
+                    res.container_id = container_id.id
                 else:
-                    self.env['container.data'].sudo().create({
+                    # If the container doesn't exist, create a new one
+                    new_container_id = self.env['container.data'].sudo().create({
                         'name': vals.get('name', res.name),
                         'container_type_id': vals.get('container_type_id', res.container_type_id.id),
                         'container_is': vals.get('container_is', res.container_is),
                         'tare_weight': vals.get('tare_weight', res.tare_weight),
                     })
+                    # Set the container_id on the new record
+                    res.container_id = new_container_id.id
+
                 return res
 
     def write(self, vals):
@@ -74,13 +85,15 @@ class ShippingContainerData(models.Model):
                     'container_is': vals.get('container_is', record.container_is),
                     'tare_weight': vals.get('tare_weight', record.tare_weight),
                 })
+                vals['container_id'] = container_id.id
             else:
-                self.env['container.data'].create({
+                new_container_id = self.env['container.data'].create({
                     'name': vals.get('name', record.name),
                     'container_type_id': vals.get('container_type_id', record.container_type_id.id),
                     'container_is': vals.get('container_is', record.container_is),
                     'tare_weight': vals.get('tare_weight', record.tare_weight),
                 })
+                vals['container_id'] = new_container_id.id
             return res
 
     @api.onchange('name')
@@ -90,6 +103,7 @@ class ShippingContainerData(models.Model):
             if container_id:
                 self.container_type_id = container_id.container_type_id
                 self.container_is = container_id.container_is
+                self.container_id = container_id.id
 
     def check_container_number(self, name=None):
         container_name = self.name or name
