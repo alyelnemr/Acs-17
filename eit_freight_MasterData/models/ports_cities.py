@@ -11,34 +11,35 @@ class PortCitiesTemplate(models.Model):
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")
     country_id = fields.Many2one('res.country', string="Country", required=True)
-    country_group_ids = fields.Many2many('res.country.group', string='Country Group')
+    # country_group_ids = fields.Many2many('res.country.group', string='Country Group')
     display_name = fields.Char(string="Display Name", compute="compute_display_name")
-    type = fields.Selection([('air', 'Air'), ('sea', 'Sea'), ('island', 'Inland')], 'Is')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Active', readonly=True)
     active = fields.Boolean(string='Status', default=True)
     type_id = fields.Many2many('transport.type', string="Port Is")
-    country_group_id_1 = fields.Many2one('res.country.group', string='Country Group1',
-                                         compute="compute_country_group_id", store=True)
+    country_group_id = fields.Many2one('res.country.group', string='Country Group',
+                                       compute="compute_country_group_id", store=True)
+    is_city = fields.Boolean(string='Is City', default=False)
 
     @api.onchange('country_id')
     def _onchange_country_id(self):
-        if self.country_id:
-            self.country_group_ids = self.country_id.country_group_ids
+        if self.country_id and len(self.country_id.country_group_ids) > 0:
+            self.country_group_id = self.country_id.country_group_ids[0].id
 
     @api.depends('country_id')
     def compute_country_group_id(self):
         for rec in self:
-            if rec.country_id and rec.country_id.country_group_ids:
-                rec.country_group_id_1 = rec.country_id.country_group_ids[0].id
+            if rec.country_id and len(rec.country_id.country_group_ids) > 0:
+                rec.country_group_id = rec.country_id.country_group_ids[0].id
             else:
-                rec.country_group_id_1 = None
+                rec.country_group_id = None
 
-    @api.depends('country_id', 'code')
+    @api.depends('country_id', 'name')
     def compute_display_name(self):
         for rec in self:
-            display_name = rec.name if rec.name else ""
-            display_name = (display_name + "-" + rec.country_id.name) if rec.country_id else display_name
-            rec.display_name = display_name
+            if rec.name and rec.country_id:
+                rec.display_name = f"{rec.name}, {rec.country_id.name}"
+            else:
+                rec.display_name = rec.name or ""
 
     @api.onchange('active')
     def _onchange_active(self):
@@ -47,39 +48,41 @@ class PortCitiesTemplate(models.Model):
                 rec.toggle_active()
 
     def create(self, vals):
-        record = super(PortCitiesTemplate, self).create(vals)
-        if 'country_group_ids' in vals and 'country_id' in vals:
-            country = self.env['res.country'].browse(vals['country_id'])
-            new_groups = []
-            for operation in vals['country_group_ids']:
-                if operation[0] == 4:
-                    new_groups.append(operation[1])
-                elif operation[0] == 6:
-                    new_groups = operation[2]
-                    break
-            if set(new_groups) != set(country.country_group_ids.ids):
-                country.sudo().write({'country_group_ids': [(6, 0, new_groups)]})
+        lnd_transport_type = self.env['transport.type'].search([('code', '=', 'LND')])
 
+        if vals.get('is_city', False):
+            # Ensure that the type_id includes LND
+            vals['type_id'] = [(4, lnd_transport_type.id)]
+        else:
+            if 'type_id' in vals:
+                # Add the selected type_ids plus LND
+                selected_type_ids = vals.get('type_id', [])
+                if isinstance(selected_type_ids, list):
+                    type_ids = [op[1] for op in selected_type_ids if op[0] in [4, 6]]
+                    if lnd_transport_type.id not in type_ids:
+                        vals['type_id'].append((4, lnd_transport_type.id))
+        vals['is_city'] = False
+        record = super(PortCitiesTemplate, self).create(vals)
         return record
 
     def write(self, vals):
-        result = super(PortCitiesTemplate, self).write(vals)
-        if 'country_group_ids' in vals:
-            new_groups = set()
-            for operation in vals['country_group_ids']:
-                if operation[0] == 4:  # Link operation
-                    new_groups.add(operation[1])
-                elif operation[0] == 6:
-                    new_groups = operation[2]
-                elif operation[0] == 3:  # Unlink operation
-                    if operation[1] in new_groups:
-                        new_groups.remove(operation[1])
+        lnd_transport_type = self.env['transport.type'].search([('code', '=', 'LND')])
 
-            for record in self:
-                if record.country_id:
-                    current_groups = set(record.country_id.country_group_ids.ids)
-                    if current_groups != new_groups:
-                        record.country_id.sudo().write({'country_group_ids': [(6, 0, list(new_groups))]})
+        if vals.get('is_city', False):
+            # Ensure that the type_id includes LND
+            if 'type_id' in vals:
+                vals['type_id'].append((4, lnd_transport_type.id))
+            else:
+                vals['type_id'] = [(4, lnd_transport_type.id)]
+        else:
+            if 'type_id' in vals:
+                selected_type_ids = vals.get('type_id', [])
+                if isinstance(selected_type_ids, list):
+                    type_ids = [op[1] for op in selected_type_ids if op[0] in [4, 6]]
+                    if lnd_transport_type.id not in type_ids:
+                        vals['type_id'].append((4, lnd_transport_type.id))
+        vals['is_city'] = False
+        result = super(PortCitiesTemplate, self).write(vals)
         return result
 
 

@@ -14,16 +14,6 @@
                         </button>
                     </div>
                 </xpath>
-                <xpath expr="//sheet/group" position="after">
-                    <group groups="base.group_no_one">
-                        <field name="shipping_container_ids">
-                            <tree editable="bottom">
-                                <field name="container_id"/>
-                                <field name="project_task_id"/>
-                            </tree>
-                        </field>
-                    </group>
-                </xpath>
             </field>
         </record>
 

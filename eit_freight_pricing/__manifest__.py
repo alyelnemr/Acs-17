@@ -18,6 +18,7 @@
         'security/pricing_security.xml',
         'security/ir.model.access.csv',
         'security/stage_pricing_data.xml',
+        'data/pricing_category.xml',
         'views/product_template_view.xml',
         'views/pricing_view.xml',
         'views/request_price_view.xml',

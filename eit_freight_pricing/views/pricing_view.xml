@@ -17,8 +17,20 @@
     <record model="ir.actions.act_window" id="rounting_action">
         <field name="name">Routing</field>
         <field name="res_model">product.supplierinfo</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <!-- <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('product.product_supplierinfo_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_supplierinfo_form_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('product.view_product_supplierinfo_kanban')}),
+            ]"/> -->
     </record>
+
+    <!-- <record id="action_product_supplierinfo_kanban_view" model="ir.actions.act_window.view">
+        <field eval="3" name="sequence"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_product_supplierinfo_kanban"/>
+        <field name="act_window_id" ref="rounting_action"/>
+    </record> -->
 
     <record model="ir.actions.act_window" id="action_ecomerse_sale">
         <field name="name">eBookings</field>

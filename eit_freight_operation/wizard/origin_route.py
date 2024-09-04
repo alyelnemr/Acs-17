@@ -178,7 +178,7 @@ class OriginServices(models.Model):
             rec.customer = customer
             rec.vendor = vendor
 
-    def create_new_coomodity(self):
+    def create_new_commodity(self):
         return {
             'name': _('Create New Commodity'),
             'type': 'ir.actions.act_window',

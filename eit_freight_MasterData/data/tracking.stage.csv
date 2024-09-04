@@ -1,4 +1,4 @@
-id,name,code,stage_clearence,stage_frieght
+id,name,code,stage_clearance,stage_freight
 tracking_stage_1,Release Letter Issued,RLI,TRUE,FALSE
 tracking_stage_2,Delivery Order Issued,DO,TRUE,FALSE
 tracking_stage_3,Shipping Order Issued,SO,FALSE,TRUE

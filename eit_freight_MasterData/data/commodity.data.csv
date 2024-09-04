@@ -1,4 +1,4 @@
-id,code,name,group_id:id
+id,code,name,commodity_group_ids/id
 commodity_data_1,8051000000,Orange,commodity_group_4
 commodity_data_2,7019690090,Non Woven Fabrics,commodity_group_1
 commodity_data_3,8441300000,Paper Production Line,commodity_group_2

@@ -15,7 +15,9 @@ class CommodityData(models.Model):
     code = fields.Char(string="Hs Code", required=True)
     tax = fields.Integer(string="Import Tax")
     vat = fields.Integer(string="Vat")
-    group_id = fields.Many2one('commodity.group', string="Commodity Group")
+    commodity_group_ids = fields.Many2many(comodel_name='commodity.group', relation='commodity_group_commodity_rel',
+                                           column1='commodity_id', column2='commodity_group_id',
+                                           string="Commodity Group")
     type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('imo', 'IMO')], 'Commodity Type')
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status', readonly=True)
     active = fields.Boolean(string='Active', default=True)

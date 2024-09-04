@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="category_air" model="product.public.category">
+            <field name="sequence">1</field>
+            <field name="name">AIR</field>
+        </record>
+        <record id="category_sea" model="product.public.category">
+            <field name="sequence">2</field>
+            <field name="name">SEA</field>
+        </record>
+        <record id="category_land" model="product.public.category">
+            <field name="sequence">3</field>
+            <field name="name">LAND</field>
+        </record>
+    </data>
+</odoo>

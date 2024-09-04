@@ -1,5 +1,8 @@
 from . import friegt_settings
-from . import service_settings
+from . import service_scope
+from . import clearance_type
+from . import tracking_stage
+from . import activity_type
 from . import account_incoterms
 from . import res_country
 from . import res_partner
@@ -10,6 +13,7 @@ from . import product_template
 from . import container_type
 from . import container_data
 from . import ports_cities
+from . import terminal_port
 from . import document_type
 from . import freight_conditions
 from . import freight_tags

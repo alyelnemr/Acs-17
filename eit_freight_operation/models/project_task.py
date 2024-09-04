@@ -18,6 +18,11 @@ CLOSED_STATES = {
 class Task(models.Model):
     _inherit = "project.task"
 
+    def _get_closing_task_type(self):
+        x = self.env['project.task.type'].search([('name', '=', 'Closed')], limit=1).id or 0
+        self.closing_stage_id = x
+
+    closing_stage_id = fields.Integer(string="Closing Stage", compute=_get_closing_task_type, store=False)
     transport_type_id = fields.Many2one('transport.type', string="Transport Type")
     clearence_type_id = fields.Many2one('clearence.type', string="Direction")
     name = fields.Char(string="Opt ID", readonly=False, required=True,
@@ -38,6 +43,7 @@ class Task(models.Model):
     un_number = fields.Char('UN Number')
     attach_id = fields.Binary('Attachment')
     master_bl = fields.Text(string="Master B/L")
+    master_bl_show = fields.Boolean(string="Show Master B/L for portal users", default=False)
     opt_partners_lines = fields.One2many('opt.partners', 'task_id', string="Opt. Partners")
     shipping_package_ids = fields.One2many('shipping.package', 'task_id_shipping', string="Shipping Package")
     shipping_container_ids = fields.One2many('shipping.container', 'project_task_id', string="Container")
@@ -60,10 +66,17 @@ class Task(models.Model):
         [('origin', 'Origin Route'), ('transit', 'Transit Route'), ('destination', 'Destination Route')],
         string="Route")
     deatination_route = fields.Many2many('destination.route', string="Destination Route", readonly=True)
-    operation_route_ids = fields.Many2many('operation.route', string="Operation Route")
+    operation_route_ids = fields.One2many('operation.route', inverse_name='project_task_id', string="Operation Route")
+    operation_route_main_carriage_ids = fields.One2many('operation.route', inverse_name='project_task_id',
+                                                        string="Service",
+                                                        domain=[('is_main_carriage', '=', True)])
+    operation_route_other_ids = fields.One2many('operation.route', inverse_name='project_task_id',
+                                                string="Service",
+                                                domain=[('is_main_carriage', '=', False)])
     origin_route = fields.Many2many('origin.route', string="Origin Route", readonly=True)
     transit_route = fields.Many2many('transit.route', string="Transit Route", readonly=True)
-    service_ids = fields.Many2many('origin.services', compute="_compute_service_ids", readonly=False)
+    service_scope_ids = fields.Many2many('service.scope', string="Services", compute="_compute_service_ids",
+                                         readonly=False, store=False)
     dyn_filter_par = fields.Binary(string='Pol filter ', compute='_compute_pol_domain')
     sale_count = fields.Integer(string="Sale Orers", compute='get_sale_count')
     state = fields.Selection([
@@ -81,9 +94,8 @@ class Task(models.Model):
         ('1_done', 'Closed',),
         ('1_canceled', 'Canceled'),
     ], string='State', copy=False, default='01_in_progress', required=True)
-    expecting_date_closing = fields.Date(string="Expecting Date Closing")
+    expecting_date_closing = fields.Date(string="Expected Closing Date")
     should_set_date_closing = fields.Boolean(string="Should Set Date Closing", default=False)
-    services = fields.Many2many('service.scope', string="Services")
     show_packages = fields.Boolean(string="Show Packages", default=False)
     show_containers = fields.Boolean(string="Show Containers", default=False)
     show_transportation = fields.Boolean(string="Show Transportation", default=False)
@@ -102,9 +114,14 @@ class Task(models.Model):
     flight_no = fields.Char(string="Flight No")
     truck_no = fields.Char(string="Truck No")
     acid_no = fields.Char(string="ACID No")
+    acid_importer_tax_id = fields.Char(string="Importer Tax ID")
     acid_issuance_date = fields.Date(string="ACID Issuance Date")
     foreign_exporter_id = fields.Char(string="Foreign Exporter ID")
+    exporter_registry_type = fields.Selection(selection=[('reg', 'Registration Number'), ('vat', 'VAT Number')],
+                                              string="Registration Type")
     foreign_exporter_country_id = fields.Many2one(comodel_name='res.country', string="Foreign Exporter Country")
+    foreign_exporter_country_id_code = fields.Char(string="Country Code",
+                                                   related='foreign_exporter_country_id.code')
     acid_expiry_date = fields.Date(string="ACID Expiry Date")
     is_house_bl = fields.Boolean(string="House B/L", default=False)
     house_bl_seq = fields.Char(string="House B/L Number")
@@ -130,6 +147,16 @@ class Task(models.Model):
     customer_invoice_count = fields.Integer(string="Customer Invoice Count", compute="_compute_customer_invoice_count",
                                             store=False)
     vendor_bill_count = fields.Integer(string="Vendor Bill Count", compute="_compute_vendor_bill_count", store=False)
+    operation_tracking_stages = fields.One2many(comodel_name='operation.tracking.stages',
+                                                inverse_name='project_task_id', string="Tracking Stages")
+
+    @api.onchange('acid_importer_tax_id')
+    def _onchange_acid_importer_tax_id(self):
+        if self.acid_importer_tax_id:
+            for partner in self.opt_partners_lines.filtered(
+                    lambda x: x.partner_id and any(pt.code == 'CNEE' for pt in x.partner_id.partner_type_id)):
+                if partner.vat != self.acid_importer_tax_id:
+                    partner.vat = self.acid_importer_tax_id
 
     @api.depends('customer_invoice_ids')
     def _compute_customer_invoice_count(self):
@@ -188,8 +215,11 @@ class Task(models.Model):
             if not task_charge.qty:
                 error_message = "Please enter quantity."
                 break
-            if not task_charge.sale_price:
+            if not task_charge.sale_price and invoice_type == 'invoice':
                 error_message = "Please enter sale price."
+                break
+            if not task_charge.cost_price and invoice_type == 'vendor_bill':
+                error_message = "Please enter cost price."
                 break
             if not task_charge.currency_id:
                 error_message = "Please select currency."
@@ -363,7 +393,7 @@ class Task(models.Model):
             invoice_vals = {
                 'move_type': 'in_invoice',
                 'is_freight': True,
-                'partner_id': task.project_id.partner_id.id,
+                'partner_id': partner_id,
                 'invoice_date': fields.Date.context_today(self),
                 'project_task_id': task.id,
                 'transport_type_id': task.transport_type_id.id,
@@ -470,7 +500,8 @@ class Task(models.Model):
         tasks = self.env['project.task'].sudo().search(
             [('expecting_date_closing', '=', today), ('state', '!=', '1_done')])
         for task in tasks:
-            task.sudo().write({'state': '1_done'})
+            task.sudo().write({'state': '1_done', 'state_selectable': '1_done',
+                               'stage_id': self.env.ref('eit_freight_operation.stage_closed').id})
 
     @api.onchange('is_consolidation', 'is_house_bl')
     def _on_consolidation_house_bl_change(self):
@@ -498,7 +529,7 @@ class Task(models.Model):
             else:
                 record.dyn_filter_par = [('id', 'in', [])]
 
-    def create_new_coomodity(self):
+    def create_new_commodity(self):
         return {
             'name': _('Create New Commodity'),
             'type': 'ir.actions.act_window',
@@ -515,11 +546,11 @@ class Task(models.Model):
             task.access_warning = _(
                 "The task cannot be shared with the recipient(s) because the privacy of the project is too restricted. Set the privacy of the project to 'Visible by following customers' in order to make it accessible by the recipient(s).")
 
-    @api.depends('deatination_route', 'origin_route', 'transit_route')
+    @api.depends('operation_route_ids')
     def _compute_service_ids(self):
         for rec in self:
-            services_ids = self.env['origin.services'].search([('task_id', '=', rec.id)])
-            rec.service_ids = services_ids.ids
+            services_ids = rec.operation_route_ids.mapped('service_scope_id')
+            rec.service_scope_ids = services_ids.ids
 
     def show_main_carriage(self):
         if not self.port_id or not self.port_id_pod:
@@ -547,22 +578,31 @@ class Task(models.Model):
             }
         }
 
-    def add_operation_route(self):
+    def add_service_operation_route(self):
         self.routing_types = 'origin'
+        air_line_partner_id = self.opt_partners_lines.filtered(lambda x: x.partner_type_id.code == 'ARL')
+        if air_line_partner_id:
+            air_line_partner_id = air_line_partner_id[0].partner_id.id if air_line_partner_id else False
         return {
-            'name': _('Operation Route'),
+            'name': _('Add Service Operation'),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'operation.route',
             'view_id': self.env.ref(
-                'eit_freight_operation.operation_route_from_view').id,
+                'eit_freight_operation.operation_route_form_view').id,
             'target': 'new',
             'context': {
                 'default_routing_types': self.routing_types,
-                'default_transport_type_id': self.transport_type_id.id,
-                'default_task_id': self.id,
-                'default_incoterm_id': self.incoterm_id.id,
-                'default_shipment_scope_id': self.shipment_scope_id.id
+                'default_port_id_from': self.port_id.id,
+                'default_port_id_to': self.port_id_pod.id,
+                'default_clearance_type_id': self.clearence_type_id.id,
+                'default_planned_date_start': self.planned_date_begin,
+                'default_planned_date_end': self.date_deadline,
+                'default_transit_time': self.transit_time,
+                'default_atd': self.atd,
+                'default_ata': self.ata,
+                'default_air_line_partner_id': air_line_partner_id,
+                'default_project_task_id': self.id,
             }
         }
 
@@ -688,6 +728,23 @@ class Task(models.Model):
                 if rec.shipment_scope_id.code == 'FTL':
                     rec.show_containers = True
 
+    @api.onchange('transport_type_id', 'clearence_type_id')
+    def create_sequence(self):
+        self.shipment_scope_id = False
+        if self.transport_type_id and self.clearence_type_id:
+            name = ''
+            if self.name == 'NEW':
+                name = self.env['ir.sequence'].next_by_code('project.task')
+            else:
+                name = "X" + self.name.split('/')[-1]
+            current_year = datetime.datetime.now().year
+            year_str = str(current_year)[-3:].zfill(3)
+            transport_code = self.transport_type_id.code if self.transport_type_id and self.transport_type_id.code else ''
+            clearance_code = self.clearence_type_id.code if self.clearence_type_id and self.clearence_type_id.code else ''
+
+            seequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
+            self.name = name.replace("X", seequence)
+
     def generate_house_bl_seq(self):
         current_year = fields.Date.today().year
         last_two_digits = str(current_year)[-2:]
@@ -737,21 +794,6 @@ class Task(models.Model):
             rec.consolidation_seq_hide = True
         return True
 
-    def create_sequence(self, transport_type_id=None, clearence_type_id=None):
-        name = ''
-        if transport_type_id and clearence_type_id:
-            transport_type = self.env['transport.type'].browse(transport_type_id)
-            clearence_type = self.env['clearence.type'].browse(clearence_type_id)
-            name = self.env['ir.sequence'].next_by_code('project.task')
-            current_year = datetime.datetime.now().year
-            year_str = str(current_year)[-3:].zfill(3)
-            transport_code = transport_type.code if transport_type and transport_type.code else ''
-            clearance_code = clearence_type.code if clearence_type and clearence_type.code else ''
-
-            sequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
-            name = name.replace("X", sequence)
-        return name
-
     @api.model
     def create(self, vals):
         project = self.env['project.project'].browse(vals.get('project_id'))
@@ -769,24 +811,75 @@ class Task(models.Model):
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
         elif vals.get('state') == '1_canceled':
             vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
-        vals['name'] = self.create_sequence(transport_type_id=vals.get('transport_type_id'),
-                                            clearence_type_id=vals.get('clearence_type_id'))
         tasks = super(Task, self).create(vals)
 
         for task in tasks:
             if task.project_id.privacy_visibility == 'portal_followers':
                 task._portal_ensure_token()
+                if 'opt_partners_lines' in vals:
+                    for partner_line_vals in vals['opt_partners_lines']:
+                        if isinstance(partner_line_vals, (list, tuple)) and partner_line_vals[0] == 0:
+                            partner_line_data = partner_line_vals[2]
+                            partner_id = partner_line_data.get('partner_id')
+                            partner = self.env['res.partner'].browse(partner_id)
+
+                            if partner and any(pt.code == 'CNEE' for pt in partner.partner_type_id):
+                                # Update the consignee_partner_id field in the opt.partners model
+                                partner_line_data['consignee_partner_id'] = partner_id
+
+                                if task.show_acid_details:
+                                    # Update the task fields with the VAT of the partner
+                                    task.write({'acid_importer_tax_id': partner.vat})
         return tasks
 
     def write(self, vals):
         # Prevent recursion by checking if the stage change is necessary
         for task in self:
+            if 'opt_partners_lines' in vals:
+                for task in self:
+                    for partner_line_vals in vals['opt_partners_lines']:
+                        if isinstance(partner_line_vals, (list, tuple)):
+                            # Handling creation of new opt.partners records
+                            if partner_line_vals[0] == 0:  # (0, 0, {vals}) - Create
+                                partner_line_data = partner_line_vals[2]
+                                partner_id = partner_line_data.get('partner_id')
+                                partner = self.env['res.partner'].browse(partner_id)
+
+                                if partner and any(pt.code == 'CNEE' for pt in partner.partner_type_id):
+                                    partner_line_data['consignee_partner_id'] = partner_id
+
+                                    if task.show_acid_details:
+                                        task.write({'acid_importer_tax_id': partner.vat})
+
+                            # Handling updates to existing opt.partners records
+                            elif partner_line_vals[0] == 1:  # (1, ID, {vals}) - Update
+                                partner_line_id = partner_line_vals[1]
+                                partner_line_data = partner_line_vals[2]
+                                opt_partner = self.env['opt.partners'].browse(partner_line_id)
+                                partner_id = partner_line_data.get('partner_id', opt_partner.partner_id.id)
+                                partner = self.env['res.partner'].browse(partner_id)
+
+                                if partner and any(pt.code == 'CNEE' for pt in partner.partner_type_id):
+                                    partner_line_data['consignee_partner_id'] = partner_id
+
+                                    if task.show_acid_details:
+                                        task.write({'acid_importer_tax_id': partner.vat})
+
+                            # Handling deletion of opt.partners records if needed
+                            elif partner_line_vals[0] == 2:  # (2, ID) - Remove
+                                partner_line_id = partner_line_vals[1]
+                                opt_partner = self.env['opt.partners'].browse(partner_line_id)
+                                if opt_partner.partner_id and any(
+                                        pt.code == 'CNEE' for pt in opt_partner.partner_id.partner_type_id):
+                                    # Clear the task fields if the CNEE partner is removed (optional logic)
+                                    task.write({'acid_importer_tax_id': False})
+
             new_state = vals.get('state_selectable', False)
             is_admin = self.env.user.has_group('eit_freight_MasterData.group_freight_admin')
             if new_state:
                 vals['should_set_date_closing'] = False
                 if new_state != '1_done' and task.state == '1_done' and not is_admin:
-                    raise UserError('Only Admin can restore task from closed state')
+                    raise UserError('Only Admin can restore operation from closed state')
                 if new_state != '1_done' and task.state == '1_done' and is_admin:
                     vals['should_set_date_closing'] = True
                     vals['expecting_date_closing'] = datetime.date.today() + timedelta(days=1)
@@ -870,7 +963,9 @@ class OptPartners(models.Model):
     # activity_ids = fields.One2many(related='partner_id.activity_ids', string="Activities")
     country_id = fields.Many2one(related='partner_id.country_id', string="Country")
     task_id = fields.Many2one('project.task')
-    company_id = fields.Many2one('res.company', string="Company")
+    company_id = fields.Many2one(comodel_name='res.company', string="Company")
+    consignee_partner_id = fields.Many2one(comodel_name='res.partner', string="Consignee",
+                                           compute="get_consignee_partner_id")
 
 
 class HouseBl(models.Model):

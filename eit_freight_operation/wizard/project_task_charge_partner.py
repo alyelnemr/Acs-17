@@ -19,13 +19,14 @@ class ProjectTaskCreateInvoiceWizard(models.TransientModel):
                 # Populate the wizard with opt_partners from the task
                 opt_partner_wizard_data = []
                 for partner_line in task.opt_partners_lines:
-                    # Create the selection option as a concatenation of partner_type and partner_id.name
-                    option_label = f"({partner_line.partner_type_id.name}) {partner_line.partner_id.name}"
-                    opt_partner_wizard_data.append({
-                        'partner_type_partner': option_label,
-                        'partner_type_partner_id': partner_line.partner_id.id,
-                        'project_task_id': task.id,
-                    })
+                    if partner_line.partner_id:
+                        # Create the selection option as a concatenation of partner_type and partner_id.name
+                        option_label = f"({partner_line.partner_type_id.name}) {partner_line.partner_id.name}"
+                        opt_partner_wizard_data.append({
+                            'partner_type_partner': option_label,
+                            'partner_type_partner_id': partner_line.partner_id.id,
+                            'project_task_id': task.id,
+                        })
 
                 if opt_partner_wizard_data:
                     self.env['project.task.charge.partners.wizard'].create(opt_partner_wizard_data)

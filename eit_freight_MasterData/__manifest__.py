@@ -21,6 +21,7 @@
         'views/freight_vessels.xml',
         'views/freight_airplane.xml',
         'views/configuration_view.xml',
+        'views/commodity.xml',
         'views/inherit_res_users_view.xml',
         'views/res_partner_view.xml',
         'views/charge_types_view.xml',

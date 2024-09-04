@@ -1,0 +1,1083 @@
+<odoo>
+
+    <data>
+        <record id="view_project_task_inherit_form" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="%(action_project_task_statement_wizard)d" string="Print" type="action"
+                            class="btn-primary"
+                            context="{'default_task_id': active_id}"/>
+                </xpath>
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <field name="customer_invoice_count" invisible="1"/>
+                    <field name="vendor_bill_count" invisible="1"/>
+                    <button name="action_view_customer_invoices"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="not customer_invoice_count">
+                        <field string="Invoices" name="customer_invoice_count" widget="statinfo"/>
+                    </button>
+
+                    <!-- Smart Button for Vendor Bills -->
+                    <button name="action_view_vendor_bills"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text-o"
+                            invisible="not vendor_bill_count">
+                        <field string="Bills" name="vendor_bill_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='action_open_parent_task']" position="after">
+                    <button name="action_view_bookings" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            invisible="sale_count == 0">
+                        <field widget="statinfo" name="sale_count" string="Bookings"/>
+                    </button>
+                </xpath>
+                <!--            <xpath expr="//field[@name='name']" position="attributes">-->
+                <!--                <attribute name="readonly">True</attribute>-->
+                <!--            </xpath>-->
+                <xpath expr="//field[@widget='project_task_state_selection']" position="replace">
+                    <field name="state_selectable" widget="state_selection" force_save="1"/>
+                </xpath>
+                <xpath expr="//form[1]" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="delete">false</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='user_ids']" position="attributes">
+                    <attribute name="string">Opt. Executors</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="options">{}</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='user_ids']" position="attributes">
+                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True,
+                        'no_quick_create': True}
+                    </attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='partner_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/div[not(@name)][1]/h1[1]/div[1]/field[@name='name']"
+                       position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">True</attribute>
+                </xpath>
+
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='milestone_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='sale_line_id'][2]" position="attributes">
+                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True,
+                        'no_quick_create': True}
+                    </attribute>
+                    <attribute name="string">Booking Item</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/label[1]" position="attributes">
+                    <attribute name="string">Expected Arrival</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='tag_ids']" position="attributes">
+                    <attribute name="options">{"color_field": "color", "no_create_edit": true, "no_create": true}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="closing_stage_id" invisible="1"/>
+                    <field name="transport_type_id" readonly="name != '' and transport_type_id"
+                           required="True" force_save="1"
+                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                    <field name="clearence_type_id" readonly="name != '' and clearence_type_id"
+                           required="True" force_save="1"
+                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                    <field name="should_set_date_closing" invisible="1"/>
+                    <field name="state_selectable" invisible="1"/>
+                    <field name="show_packages" invisible="1"/>
+                    <field name="show_transportation" invisible="1"/>
+                    <field name="show_transportation_inland" invisible="1"/>
+                    <field name="show_bill_leading_details" invisible="1"/>
+                    <field name="show_acid_details" invisible="1"/>
+                    <field name="show_containers" invisible="1"/>
+                    <field name="house_bl_seq_hide" invisible="1"/>
+                    <field name="consolidation_seq_hide" invisible="1"/>
+                    <label for="expecting_date_closing" class="o_form_label custom_red_label"
+                           invisible="not should_set_date_closing"/>
+                    <field name="expecting_date_closing" nolabel="1"
+                           readonly="stage_id == closing_stage_id"
+                           invisible="not should_set_date_closing"
+                           required="should_set_date_closing"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="customer_ref" options="{'line_breaks': False}"/>
+                    <field name="dyn_filter_par" invisible="1"/>
+                    <!-- <field name="shipment_scope_id"
+                            domain="dyn_filter_par"
+                            string="Shipment Scope"
+                            invisible="transport_type_id in (1) or transport_type_id not in (2, 3)"
+                            options="{'no_open': True, 'no_create': True}"/> -->
+                </xpath>
+
+                <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+                    <group string="SHIPMENT DETAILS">
+                        <group>
+                            <field name="shipment_scope_id"
+                                   domain="dyn_filter_par" string="Shipment Scope"
+                                   readonly="stage_id == closing_stage_id"
+                                   invisible="transport_type_id in (1) or transport_type_id not in (2, 3)"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                            <field name="master_bl" options="{'line_breaks': False}"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="master_bl_show" readonly="stage_id == closing_stage_id"/>
+                            <field name="commodity_id" readonly="stage_id == closing_stage_id"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                            <field name="commodity_equip" readonly="stage_id == closing_stage_id" force_save="1"/>
+                            <field name="temperature" invisible="commodity_equip != 'reefer'"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="un_number" invisible="commodity_equip != 'imo'"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="attach_id" invisible="commodity_equip != 'imo'"
+                                   readonly="stage_id == closing_stage_id"/>
+                        </group>
+                        <group>
+                            <field name="port_id"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="port_id_pod"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="incoterm_id"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                   readonly="stage_id == closing_stage_id"/>
+                            <field name="service_scope_ids" widget="many2many_tags"
+                                   options="{'no_create_edit': True, 'no_quick_create': True}"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                </xpath>
+
+                <xpath expr="//page[@name='extra_info']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <!-- Start Form Readonly for CLosed Stage -->
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='tag_ids']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/div[1]/field[@name='date_deadline']"
+                       position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='customer_ref']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='master_bl']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[2]/group[2]/field[@name='port_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='port_id_pod']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[2]/group[2]/field[@name='incoterm_id']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">stage_id == closing_stage_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='service_scope_ids']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='description_page']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='description_page']" position="after">
+                    <page string="Bill of Lading">
+                        <group>
+                            <group string="Dates and Transit Time">
+                                <field name="atd" readonly="stage_id == closing_stage_id"/>
+                                <field name="ata" readonly="stage_id == closing_stage_id"/>
+                                <label for="transit_time" class="oe_inline" string="Transit Time"/>
+                                <div class="o_row">
+                                    <field name="transit_time" readonly="stage_id == closing_stage_id"/>
+                                    <span class="oe_inline">Days</span>
+                                </div>
+                                <label for="free_time" class="oe_inline" string="Free Time"/>
+                                <div class="o_row">
+                                    <field name="free_time" readonly="stage_id == closing_stage_id"/>
+                                    <span class="oe_inline">Days</span>
+                                </div>
+                                <field name="bill_of_lading_issuance" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                            <group string="Locations">
+                                <field name="terminal_port_id" invisible="not show_containers"
+                                       readonly="stage_id == closing_stage_id"
+                                       context="{'default_terminal': True}"/>
+                                <field name="terminal_port_warehouse_id" invisible="show_containers"
+                                       readonly="stage_id == closing_stage_id"
+                                       context="{'default_warehouse': True}"/>
+                                <field name="pickup_address" readonly="stage_id == closing_stage_id"/>
+                                <field name="delivery_address" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                        </group>
+                        <group string="Transportations" invisible="not show_transportation">
+                            <group>
+                                <field name="bill_lading_type_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="bill_lading_collection" widget="radio"
+                                       readonly="stage_id == closing_stage_id"/>
+                                <field name="delivery_order_no" readonly="stage_id == closing_stage_id"/>
+                                <field name="is_house_bl" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                            <group>
+                                <field name="plane_name" readonly="stage_id == closing_stage_id"/>
+                                <field name="flight_no" readonly="stage_id == closing_stage_id"/>
+                                <field name="booking_no" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                        </group>
+                        <group string="Transportations" invisible="not show_transportation_inland">
+                            <group>
+                                <field name="bill_lading_type_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="bill_lading_collection" widget="radio"
+                                       readonly="stage_id == closing_stage_id"/>
+                                <field name="delivery_order_no" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                            <group>
+                                <field name="truck_no" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                        </group>
+                        <group string="Bill Of Lading Details" invisible="not show_bill_leading_details">
+                            <group>
+                                <field name="bill_lading_type_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="bill_lading_collection" widget="radio"
+                                       readonly="stage_id == closing_stage_id"/>
+                                <field name="delivery_order_no" readonly="stage_id == closing_stage_id"/>
+                                <field name="house_bl_seq" readonly="1" invisible="not house_bl_seq_hide"/>
+                                <field name="consolidation_seq" readonly="1" invisible="not consolidation_seq_hide"/>
+                                <div class="col-3" style="font-weight: bold;">
+                                    <b>
+                                        <label for="is_house_bl" style="font-weight: bold;" string="House B/L"
+                                               invisible="not show_containers or house_bl_seq_hide"/>
+                                        <label for="is_consolidation" style="font-weight: bold;"
+                                               string="Consolidation"
+                                               invisible="not show_containers or consolidation_seq_hide"/>
+                                    </b>
+                                </div>
+                                <div width="100%">
+                                    <field name="is_house_bl" readonly="stage_id == closing_stage_id"
+                                           invisible="not show_containers or house_bl_seq_hide"/>
+                                    <button name="generate_house_bl_seq" type="object" string="House B/L"
+                                            invisible="not show_containers or not is_house_bl or house_bl_seq_hide"
+                                            class="btn-secondary"/>
+                                    <br/>
+                                    <field name="is_consolidation" readonly="stage_id == closing_stage_id"
+                                           invisible="not show_containers or consolidation_seq_hide"/>
+                                    <br/>
+                                    <button name="generate_consolidation_seq" type="object"
+                                            string="Consolidation"
+                                            invisible="not show_containers or not is_consolidation or consolidation_seq_hide"
+                                            class="btn-secondary"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="vessel_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="voyage_no" readonly="stage_id == closing_stage_id"/>
+                                <field name="booking_no" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                        </group>
+                        <group invisible="not show_acid_details">
+                            <group string="ACID Details">
+                                <field name="acid_no" readonly="stage_id == closing_stage_id"/>
+                                <field name="acid_importer_tax_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="acid_issuance_date" readonly="stage_id == closing_stage_id"/>
+                                <field name="acid_expiry_date" readonly="stage_id == closing_stage_id"/>
+                            </group>
+                            <group string="Foreign Exporter">
+                                <field name="exporter_registry_type" readonly="stage_id == closing_stage_id"/>
+                                <field name="foreign_exporter_id" readonly="stage_id == closing_stage_id"/>
+                                <field name="foreign_exporter_country_id" string="Country"
+                                       readonly="stage_id == closing_stage_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name="foreign_exporter_country_id_code" readonly="1"/>
+                            </group>
+                        </group>
+
+                    </page>
+                    <page string="Partners">
+                        <field name="opt_partners_lines" readonly="stage_id == closing_stage_id">
+                            <tree editable="bottom">
+                                <field name="partner_type_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name="partner_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name="phone"/>
+                                <field name="email"/>
+                                <field name="sales_person"/>
+                                <!-- <field name="activity_ids" optional="show" widget="list_activity"/> -->
+                                <field name="country_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Containers"
+                          invisible="not show_containers">
+                        <field name="shipping_container_ids" readonly="stage_id == closing_stage_id">
+                            <kanban>
+                                <field name="container_id"/>
+                                <field name="container_type_id"/>
+                                <field name="container_is"/>
+                                <field name="tare_weight"/>
+                                <field name="gross_weight"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_global_click">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Container No:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="name"/>
+                                                    </td>
+                                                    <td>
+                                                        <strong>Container:</strong>
+                                                    </td>
+                                                    <td width="25%">
+                                                        <field name="container_type_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>VGM:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="vkm"/>
+                                                    </td>
+
+                                                    <td>
+                                                        <strong>CBM:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="vol_cbm"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="name" required="True"/>
+                                        </group>
+                                        <group>
+                                            <field name="container_type_id" required="1"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                            <field name="container_is"/>
+                                            <!-- <field name="tare_weight"/>
+                                            <field name="net_wt" string="Net"/>
+                                            <field name="vol_cbm" string="CBM"/>
+                                            <field name="gross_weight" string="Gross"/>
+                                            <field name="vkm" string="VGM"/> -->
+                                            <field name="temperature" invisible="container_is != 'reefer'"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                            <!-- <field name="un_number" invisible="container_type not in ('dry')"/> -->
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <!-- <field name="description" /> -->
+                                            <field name="carrier_seal" options="{'line_breaks': False}"/>
+                                        </group>
+                                        <group>
+                                            <!-- <field name="carrier_seal"/> -->
+                                        </group>
+                                    </group>
+                                    <!-- <h4>VOL WEIGHT (Kg)</h4> -->
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <label for="net_wt" string="Net Weight (KG)"/>
+                                            <field name="net_wt"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="gross_weight" string="Gross Weight (KG)"/>
+                                            <field name="gross_weight"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="tare_weight" string="Tare Weight (KG)"/>
+                                            <field name="tare_weight"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="vkm" string="VGM"/>
+                                            <field name="vkm"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="vol_cbm" string="CBM"/>
+                                            <field name="vol_cbm"/>
+                                        </div>
+                                    </div>
+                                    <group>
+                                        <group>
+                                            <field name="loading_instruction" string="Notes"/>
+                                        </group>
+                                    </group>
+                                    <notebook>
+                                        <page string="Container Details">
+                                            <field name="package_line_ids">
+                                                <tree editable="bottom">
+                                                    <field name="commodity_data_id"
+                                                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                                    <field name="package_type_id"
+                                                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                                    <field name="quantity" string="Qty"/>
+                                                    <field name="gw"/>
+                                                    <field name="cbm"/>
+                                                </tree>
+                                            </field>
+
+                                        </page>
+                                        <!-- <page string="Loading Instruction">
+                                            <field name="loading_instruction"/>
+                                        </page> -->
+                                    </notebook>
+
+                                </sheet>
+
+                            </form>
+                        </field>
+                    </page>
+                    <page string="Packages"
+                          invisible="not show_packages">
+                        <field name="shipping_package_ids" string="Package" readonly="stage_id == closing_stage_id">
+                            <kanban>
+                                <field name="package_type_id"/>
+                                <field name="commodity_id"/>
+                                <field name="quantity"/>
+                                <field name="volume"/>
+                                <field name="net_wight"/>
+                                <field name="gross_weight"/>
+                                <field name="length"/>
+                                <field name="width"/>
+                                <field name="height"/>
+                                <field name="imo"/>
+                                <field name="un_number"/>
+                                <field name="chw"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_global_click">
+                                            <table width="100%">
+                                                <tr width="100%">
+                                                    <td width="25%">
+                                                        <strong>Package:</strong>
+                                                    </td>
+                                                    <td width="75%">
+                                                        <field name="package_type_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr width="100%">
+                                                    <td>
+                                                        <strong>Commodity:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="commodity_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Qty:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="quantity"/>
+                                                    </td>
+                                                    <td>
+                                                        <strong>CBM:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="volume"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Net KG:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="net_wight"/>
+                                                    </td>
+                                                    <td>
+                                                        <strong>Gross KG:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="gross_weight"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="parent.transport_type_id != 1">
+                                                    <td>
+                                                        <strong>CHW:</strong>
+                                                    </td>
+                                                    <td>
+                                                        <field name="chw"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </t>
+                                </templates>
+
+                            </kanban>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="package_type_id" required="True"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                            <field name="commodity_id"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                            <field name="quantity" string="Qty"/>
+                                            <field name="imo" invisible="1"/>
+                                            <field name="ref" invisible="1"/>
+                                            <field name="temperature" invisible="1"/>
+                                            <field name="un_number" widget="many2many_binary" invisible="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="length"/>
+                                            <field name="width"/>
+                                            <field name="height"/>
+                                            <field name="volume"/>
+                                            <field name="volume_wt" invisible="1"/>
+                                            <field name="chw" invisible="parent.transport_type_id != 1"/>
+                                            <field name="net_wight"/>
+                                            <field name="gross_weight"/>
+                                        </group>
+
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+
+                    </page>
+                    <page string="Logistics" invisible="not port_id or not port_id_pod">
+                        <style>
+                            .btn-secondary {
+                            color: #374151;
+                            background-color: #e7e9ed;
+                            border-color: #e7e9ed;
+                            box-shadow: 0;
+                            margin: 10px;
+                            }
+                        </style>
+                        <field name="routing_types" widget="selection_badge" invisible="1"/>
+                        <br/>
+                        <label for="operation_route_ids" string="Routes and Services"/>
+                        <field name="operation_route_ids" width="100%">
+                            <kanban default_order="is_main_carriage desc, service_scope_id">
+                                <field name="service_scope_id"/>
+                                <field name="service_scope_id_code"/>
+                                <field name="is_main_carriage"/>
+                                <field name="planned_date_start"/>
+                                <field name="planned_date_end"/>
+                                <field name="transport_type_id"/>
+                                <field name="project_task_id"/>
+                                <field name="loaded" widget="boolean_toggle"/>
+                                <field name="pickup_address"/>
+                                <field name="delivery_address"/>
+                                <field name="routing_types"/>
+                                <templates>
+                                    <t t-name="kanban-box"
+                                       style="width: 400px; overflow: hidden; padding: 10px; position: relative;">
+                                        <div t-attf-class="oe_kanban_global_click"
+                                             style="width: 100%; position: relative; padding: 15px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); border-radius: 5px;">
+
+                                            <!-- Conditional Ribbon for Main Carriage -->
+                                            <t t-if="record.is_main_carriage.raw_value">
+                                                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; overflow: hidden;">
+                                                    <div style="position: absolute; top: 25px; right: -45px; width: 200px; height: 30px; background-color: red; color: white; text-align: center; line-height: 30px; transform: rotate(45deg); font-weight: bold; box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);">
+                                                        Main Carriage
+                                                    </div>
+                                                </div>
+                                            </t>
+
+                                            <!-- Conditional Background Color for the Table -->
+                                            <table t-att-style="'background-color: ' + (record.is_main_carriage.raw_value and '#fffaf0' or '#f5f5dc') + '; width: 100%; table-layout: fixed;'">
+                                                <tr>
+                                                    <td colspan="2" style="padding-bottom: 10px;">
+                                                        <strong>
+                                                            <field name="service_scope_id"/>
+                                                            <field name="service_scope_id_code" invisible="1"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Route:</strong>
+                                                        <field name="routing_types"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Direction:</strong>
+                                                        <field name="clearance_type_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Location:</strong>
+                                                        <field name="service_location_id"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Commodity:</strong>
+                                                        <field name="service_commodity_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Service Date:</strong>
+                                                        <field name="service_date"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <span/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+
+                            <form>
+                                <sheet>
+                                    <div class="d-flex justify-content-center">
+                                        <span style="font-weight: bold; margin-right: 10px;" class="o_form_label">
+                                            Service Scope
+                                        </span>
+                                        <field name="service_scope_id" force_save="1"/>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <hr style="width: 50%;"/>
+                                    </div>
+                                    <group invisible="1" string="Hidden fields">
+                                        <field name="show_containers" invisible="1"/>
+                                        <field name="is_main_carriage_readonly" invisible="1"/>
+                                        <field name="routing_types_is_hidden" invisible="1"/>
+                                        <field name="service_scope_id_code" invisible="1"/>
+                                        <field name="show_free_time" invisible="1"/>
+                                        <field name="transport_type_id" invisible="1" force_save="1"/>
+                                        <field name="project_task_id" invisible="1" force_save="1"/>
+                                        <field name="show_inland_for_export" invisible="1" force_save="1"/>
+                                    </group>
+                                    <group invisible="not service_scope_id">
+                                        <group>
+                                            <field name="is_main_carriage" readonly="is_main_carriage_readonly"
+                                                   force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="loaded" widget="boolean_toggle"
+                                                   invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')"
+                                                   force_save="1"/>
+                                            <field name="routing_types" invisible="routing_types_is_hidden"
+                                                   force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')">
+                                        <group>
+                                            <field name="port_id_from"
+                                                   invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')"
+                                                   widget="selection" force_save="1"/>
+                                            <field name="port_id_to"
+                                                   invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')"
+                                                   widget="selection" force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="planned_date_start" force_save="1"/>
+                                            <field name="planned_date_end" force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="not service_scope_id_code or service_scope_id_code in ('AIR', 'SEA', 'LND', 'WH', 'INS', 'CCL', 'ILT')">
+                                        <group>
+                                            <field name="service_location_id" force_save="1"/>
+                                            <field name="service_date" force_save="1"/>
+                                            <field name="service_description" force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="service_commodity_id" force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="service_scope_id_code not in ('CCL')">
+                                        <group>
+                                            <field name="clearance_port_id"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                   force_save="1"/>
+                                            <field name="planned_date_end" string="ETA" force_save="1"/>
+                                            <field name="commodity_id" force_save="1"/>
+                                            <field name="commodity_id_code" force_save="1"/>
+                                            <field name="notes" force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="document_type_ids" widget="many2many_tags"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                   force_save="1"/>
+                                            <label for="free_time" class="oe_inline" string="Free Time"
+                                                   invisible="not show_free_time"/>
+                                            <div class="o_row" invisible="not show_free_time">
+                                                <field name="free_time" readonly="1" invisible="not show_free_time"/>
+                                                <span class="oe_inline" invisible="not show_free_time">
+                                                    Days
+                                                </span>
+                                            </div>
+                                        </group>
+                                    </group>
+                                    <group invisible="service_scope_id_code not in ('ILT')">
+                                        <group>
+                                            <field name="loading_port_id" invisible="show_inland_for_export"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                   force_save="1"/>
+                                            <field name="loading_date" invisible="show_inland_for_export"
+                                                   force_save="1"/>
+                                            <field name="discharge_port_id" invisible="not show_inland_for_export"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                   force_save="1"/>
+                                            <field name="discharge_date" invisible="not show_inland_for_export"
+                                                   force_save="1"/>
+                                            <field name="terminal_warehouse_id"
+                                                   domain="[('port_city_id', '=', loading_port_id)]" force_save="1"/>
+                                            <field name="notes" force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="loading_date" invisible="not show_inland_for_export"
+                                                   force_save="1"/>
+                                            <field name="discharge_date" invisible="show_inland_for_export"
+                                                   force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="service_scope_id_code not in ('WH')">
+                                        <group>
+                                            <field name="terminal_warehouse_id" force_save="1"/>
+                                            <field name="storage_date" force_save="1"/>
+                                            <field name="release_date" force_save="1"/>
+                                            <field name="storage_instructions" force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="warehousing_commodity_id" force_save="1"/>
+                                            <field name="warehousing_commodity_equip" force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="service_scope_id_code not in ('INS')">
+                                        <group>
+                                            <field name="cargo_value" force_save="1"/>
+                                            <field name="cargo_document_date" force_save="1"/>
+                                            <field name="cargo_supplier_partner_id"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                   force_save="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="clearance_type_id" force_save="1"/>
+                                            <field name="incoterm_id" force_save="1"/>
+                                            <field name="commodity_id" force_save="1"/>
+                                            <field name="notes" force_save="1"/>
+                                        </group>
+                                    </group>
+                                    <notebook invisible="not service_scope_id">
+                                        <page string="Warehouse" invisible="service_scope_id_code not in ('ILT')">
+                                            <group>
+                                                <group>
+                                                    <field name="location_url" force_save="1"/>
+                                                    <field name="contact_person_name" force_save="1"/>
+                                                    <field name="contact_person_phone" force_save="1"/>
+                                                    <field name="destination_address" invisible="show_inland_for_export"
+                                                           force_save="1"/>
+                                                    <field name="loading_address" invisible="not show_inland_for_export"
+                                                           force_save="1"/>
+                                                </group>
+                                                <group>
+                                                </group>
+                                            </group>
+                                        </page>
+                                        <page string="Truck and Driver"
+                                              invisible="service_scope_id_code not in ('ILT')">
+                                            <group>
+                                                <group>
+                                                    <field name="truck_number" force_save="1"/>
+                                                    <field name="trucker_partner_id" force_save="1"/>
+                                                    <field name="driver_name" force_save="1"/>
+                                                    <field name="driver_phone" force_save="1"/>
+                                                </group>
+                                                <group>
+                                                </group>
+                                            </group>
+                                        </page>
+                                        <page string="Customs" invisible="service_scope_id_code not in ('CCL')">
+                                            <group>
+                                                <group>
+                                                    <field name="custom_certificate_number" force_save="1"/>
+                                                    <field name="custom_certificate_date" force_save="1"/>
+                                                    <field name="incoterm_id" force_save="1"/>
+                                                </group>
+                                                <group>
+                                                    <field name="broker_partner_id" force_save="1"/>
+                                                    <field name="procedure_end_date" force_save="1"/>
+                                                    <field name="release_date" force_save="1"/>
+                                                </group>
+                                            </group>
+                                        </page>
+                                        <page string="Documents" invisible="service_scope_id_code not in ('CCL')">
+                                            <field name="document_ids">
+                                                <tree string="Documents" editable="bottom">
+                                                    <field name="document_type_id"
+                                                           options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                                           width="50%"/>
+                                                    <field name="reviewed" width="20%"/>
+                                                    <field name="received_in" width="30%"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                        <page string="Actual"
+                                              invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')">
+                                            <group>
+                                                <group>
+                                                    <label for="transit_time" class="oe_inline" string="Transit Time"/>
+                                                    <div class="o_row">
+                                                        <field name="transit_time" force_save="1"/>
+                                                        <span class="oe_inline">Days</span>
+                                                    </div>
+                                                    <field name="air_line_partner_id"
+                                                           invisible="service_scope_id_code != 'AIR'" force_save="1"/>
+                                                    <label for="free_time" class="oe_inline" string="Free Time"
+                                                           invisible="service_scope_id_code != 'SEA'"/>
+                                                    <div class="o_row" invisible="service_scope_id_code != 'SEA'">
+                                                        <field name="free_time" readonly="1"
+                                                               invisible="service_scope_id_code != 'SEA'"/>
+                                                        <span class="oe_inline"
+                                                              invisible="service_scope_id_code != 'SEA'">
+                                                            Days
+                                                        </span>
+                                                    </div>
+                                                    <field name="shipping_line_partner_id"
+                                                           invisible="service_scope_id_code != 'SEA'" force_save="1"/>
+                                                    <field name="trucker_partner_id"
+                                                           invisible="service_scope_id_code != 'LND'" force_save="1"/>
+                                                    <field name="plane_name" invisible="service_scope_id_code != 'AIR'"
+                                                           force_save="1"/>
+                                                    <field name="driver_name" invisible="service_scope_id_code != 'LND'"
+                                                           force_save="1"/>
+                                                    <field name="driver_phone"
+                                                           invisible="service_scope_id_code != 'LND'" force_save="1"/>
+                                                </group>
+                                                <group>
+                                                    <field name="atd" force_save="1"/>
+                                                    <field name="ata" force_save="1"/>
+                                                    <field name="flight_no" invisible="service_scope_id_code != 'AIR'"
+                                                           force_save="1"/>
+                                                    <field name="vessel_id" invisible="service_scope_id_code != 'SEA'"
+                                                           force_save="1"/>
+                                                    <field name="voyage_no" invisible="service_scope_id_code != 'SEA'"
+                                                           force_save="1"/>
+                                                    <field name="truck_no" invisible="service_scope_id_code != 'LND'"
+                                                           force_save="1"/>
+                                                </group>
+                                            </group>
+                                        </page>
+                                    </notebook>
+                                </sheet>
+                            </form>
+
+                        </field>
+                        <br/>
+                        <label for="operation_tracking_stages" string="Tracking Stages"/>
+                        <field name="operation_tracking_stages" width="100%">
+                            <kanban string="Tracking Stages">
+                                <field name="tracking_type"/>
+                                <field name="tracking_stage"/>
+                                <field name="is_done"/>
+                                <field name="tracking_date"/>
+
+                                <templates>
+                                    <t t-name="kanban-box"
+                                       style="width: 400px; overflow: hidden; padding: 10px; position: relative;">
+                                        <div t-attf-class="oe_kanban_global_click"
+                                             style="width: 100%; position: relative; padding: 15px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); border-radius: 5px;">
+
+                                            <!-- Conditional Background Color for the Table -->
+                                            <table t-att-style="'background-color: ' + (record.is_done.raw_value and '#e6ffe6' or '#f5f5dc') + '; width: 100%; table-layout: fixed;'">
+                                                <tr>
+                                                    <td colspan="2" style="padding-bottom: 10px;">
+                                                        <strong>Tracking Type:</strong>
+                                                        <div>
+                                                            <field name="tracking_type"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Tracking Stage:</strong>
+                                                        <div>
+                                                            <field name="tracking_stage"/>
+                                                        </div>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Tracking Date:</strong>
+                                                        <div>
+                                                            <field name="tracking_date"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="padding-bottom: 5px;">
+                                                        <strong>Description:</strong>
+                                                        <div>
+                                                            <field name="description"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </t>
+                                </templates>
+
+                            </kanban>
+                            <form string="Tracking Stage">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="tracking_type"/>
+                                            <field name="description"/>
+                                            <field name="tracking_stage_domain" invisible="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="tracking_stage" domain="tracking_stage_domain"/>
+                                            <field name="is_done" widget="boolean_toggle"/>
+                                            <field name="tracking_date"/>
+                                        </group>
+                                    </group>
+                                    <div class="d-flex justify-content-center">
+                                        <hr style="width: 50%;"/>
+                                    </div>
+                                    <group>
+                                        <group>
+                                            <field name="next_tracking_stage" domain="tracking_stage_domain"/>
+                                            <field name="expected_date"/>
+                                            <field name="next_description"/>
+                                        </group>
+                                        <group>
+
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
+                    <page string="Charges">
+                        <table>
+                            <tr>
+                                <td>
+                                    <button string="Create Invoice" type="object"
+                                            name="action_open_create_customer_invoice_wizard"
+                                            class="btn-primary" invisible="not project_task_charge_ids"/>
+                                </td>
+                                <td>
+                                    <button string="Create Bill" type="object"
+                                            name="action_open_create_vendor_bill_wizard"
+                                            class="btn-primary" invisible="not project_task_charge_ids"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <field name="project_task_charge_ids" readonly="stage_id == closing_stage_id">
+                            <tree editable="bottom">
+                                <field name="is_selected" string=""/>
+                                <field name="invoice_id" column_invisible="1"/>
+                                <field name="vendor_bill_id" column_invisible="1"/>
+                                <field name="product_id" readonly="invoice_id or vendor_bill_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name="qty" readonly="invoice_id or vendor_bill_id"/>
+                                <field name="package_type_id"
+                                       column_invisible="not parent.show_packages"
+                                       readonly="invoice_id or vendor_bill_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                       optional="false"/>
+                                <field name="container_type_id"
+                                       column_invisible="not parent.show_containers"
+                                       readonly="invoice_id or vendor_bill_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
+                                       optional="false"/>
+                                <field name="cost_price" widget="float" optional="show" readonly="vendor_bill_id"/>
+                                <field name="sale_price" widget="float" readonly="invoice_id"/>
+                                <field name="currency_id" readonly="invoice_id or vendor_bill_id"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name="ex_rate"/>
+                                <field name="cost_main_curr" optional="false"/>
+                                <field name="cost_usd" optional="false"/>
+                                <field name="sale_main_curr" optional="false"/>
+                                <field name="sale_usd"/>
+                                <field name="company_id" column_invisible="1"/>
+                            </tree>
+                        </field>
+                        <div class="row">
+                            <div name="total_cost_line_ids" class="col">
+                                <label for="total_cost_line_ids">Cost Per Currency</label>
+                                <field name="total_cost_line_ids" nolabel="1">
+                                    <tree edit="0" delete="0" create="0" no_open="True">
+                                        <field name="currency_id"/>
+                                        <field name="amount"/>
+                                    </tree>
+                                </field>
+                            </div>
+                            <div name="total_sale_line_ids" class="col">
+                                <label for="total_sale_line_ids">Sales Per Currency</label>
+                                <field name="total_sale_line_ids" nolabel="1">
+                                    <tree edit="0" delete="0" create="0" no_open="True">
+                                        <field name="currency_id"/>
+                                        <field name="amount"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col" style="text-align:right">
+                                <field name="currency_id" invisible="1"/>
+                                Total Sale in USD
+                                <field name="total_sale_in_usd"/>
+                                <br/>
+                                Total Cost in USD
+                                <field name="total_cost_in_usd"/>
+                                <br/>
+                                Expected Revenue
+                                <field name="expected_revenue"/>
+                            </div>
+                        </div>
+
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

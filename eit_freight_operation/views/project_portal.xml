@@ -2,6 +2,36 @@
 <odoo>
     <data>
 
+        <template id="portal_my_home_sale_inherited" name="Show Bookings Instead of Sales Orders and Quotations"
+                  inherit_id="sale.portal_my_home_sale">
+            <!-- Replace the div containing "Sales Orders" -->
+            <xpath expr="//div[@id='portal_client_category']" position="replace">
+                <div id="portal_client_category" position="inside">
+                    <t t-call="portal.portal_docs_entry">
+                        <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                        <t t-set="title">Bookings</t>
+                        <t t-set="url" t-value="'/my/orders'"/>
+                        <t t-set="text">Follow, view or pay your bookings</t>
+                        <t t-set="placeholder_count" t-value="'order_count'"/>
+                    </t>
+                </div>
+            </xpath>
+
+            <!-- Replace the div containing "Quotations" -->
+            <xpath expr="//div[@id='portal_alert_category']" position="replace">
+                <div id="portal_alert_category" position="inside">
+                    <t t-call="portal.portal_docs_entry">
+                        <t t-set="bg_color" t-value="'alert alert-primary'"/>
+                        <t t-set="placeholder_count" t-value="'quotation_count'"/>
+                        <t t-set="title">Bookings to review</t>
+                        <t t-set="url" t-value="'/my/quotes'"/>
+                        <t t-set="show_count" t-value="True"/>
+                    </t>
+                </div>
+            </xpath>
+        </template>
+
+
         <template id="portal_my_home_inherit" name="Disable Projects/Tasks in Portal"
                   inherit_id="project.portal_my_home">
             <xpath expr="//div[@id='portal_service_category']" position="replace">
@@ -9,7 +39,7 @@
                     <t t-set="icon" t-value="'/project/static/src/img/tasks.svg'"/>
                     <t t-set="title">My Shipments</t>
                     <t t-set="url" t-value="'/my/tasks'"/>
-                    <t t-set="text">Follow and comments tasks of your projects</t>
+                    <t t-set="text">Follow up your shipments</t>
                     <t t-set="placeholder_count" t-value="'task_count'"/>
                 </t>
             </xpath>
@@ -114,9 +144,6 @@
                                                 <t t-set="classes" t-translation="off">fs-4</t>
                                             </t>
                                             <h3 t-field="task.name" class="text-truncate my-0"/>
-                                            <small class="text-muted d-none d-md-inline align-self-end">(#<span
-                                                    t-field="task.id"/>)
-                                            </small>
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -135,35 +162,55 @@
                                 <div class="row mb-4 container"
                                      style="background-color: #d9def3; border-radius: 15px; padding: 20px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
                                     <div class="col-12 col-md-6 flex-grow-1">
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">Transport Type:</strong>
-                                            <span t-field="task.transport_type_id.name"/>
-                                        </div>
-                                        <br/>
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">Direction:</strong>
-                                            <span t-field="task.clearence_type_id.name"/>
-                                        </div>
-                                        <br/>
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">Master B/L:</strong>
-                                            <span t-field="task.master_bl"/>
-                                        </div>
-                                        <br/>
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">POL:</strong>
-                                            <span t-field="task.port_id.name"/>
-                                        </div>
-                                        <br/>
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">POD:</strong>
-                                            <span t-field="task.port_id_pod.name"/>
-                                        </div>
-                                        <br/>
-                                        <div style="color: #333; font-family: Arial, sans-serif;">
-                                            <strong style="color: #0056b3;">Commodity:</strong>
-                                            <span t-field="task.port_id_pod.name"/>
-                                        </div>
+                                        <t t-if="task.transport_type_id">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">Transport Type:</strong>
+                                                <span t-field="task.transport_type_id.name"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.clearence_type_id">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">Direction:</strong>
+                                                <span t-field="task.clearence_type_id.name"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.house_bl_seq">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">House B/L:</strong>
+                                                <span t-field="task.house_bl_seq"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.master_bl_show">
+                                            <div
+                                                    style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">Master B/L:</strong>
+                                                <span t-field="task.master_bl"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.port_id">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">POL:</strong>
+                                                <span t-field="task.port_id.name"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.port_id_pod">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">POD:</strong>
+                                                <span t-field="task.port_id_pod.name"/>
+                                            </div>
+                                            <br/>
+                                        </t>
+                                        <t t-if="task.port_id_pod">
+                                            <div style="color: #333; font-family: Arial, sans-serif;">
+                                                <strong style="color: #0056b3;">Commodity:</strong>
+                                                <span t-field="task.port_id_pod.name"/>
+                                            </div>
+                                        </t>
                                         <br/>
                                         <br/>
                                     </div>
@@ -197,33 +244,33 @@
                                                      style="color: #333; font-family: Arial, sans-serif;">
                                                     <strong style="color: #0056b3;">Departure Date:</strong>
                                                     <span t-field="task.atd"/>
+                                                    <br/>
                                                 </div>
-                                                <br/>
                                                 <div t-if="task.ata"
                                                      style="color: #333; font-family: Arial, sans-serif;">
                                                     <strong style="color: #0056b3;">Arrival Date:</strong>
                                                     <span t-field="task.ata"/>
+                                                    <br/>
                                                 </div>
-                                                <br/>
                                                 <div t-if="task.transit_time"
                                                      style="color: #333; font-family: Arial, sans-serif;">
                                                     <strong style="color: #0056b3;">Transit Time:</strong>
                                                     <span t-field="task.transit_time"/>
                                                     Days
+                                                    <br/>
                                                 </div>
-                                                <br/>
                                                 <div t-if="task.vessel_id"
                                                      style="color: #333; font-family: Arial, sans-serif;">
                                                     <strong style="color: #0056b3;">Vessel:</strong>
                                                     <span t-field="task.vessel_id.name"/>
+                                                    <br/>
                                                 </div>
-                                                <br/>
-                                                <div t-if="task.house_bl_seq"
+                                                <div t-if="task.house_bl_seq_hide"
                                                      style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">Vessel:</strong>
+                                                    <strong style="color: #0056b3;">House BL:</strong>
                                                     <span t-field="task.house_bl_seq"/>
+                                                    <br/>
                                                 </div>
-                                                <br/>
                                             </div>
                                             <div id="tab2" class="tab-pane" role="tabpanel">
                                                 <p>
@@ -372,11 +419,13 @@
         <template id="portal_tasks_list_inherit_add_fields" name="Add Master BL and Date Deadline to Tasks List"
                   inherit_id="project.portal_tasks_list">
             <xpath expr="//th[1]" position="replace">
-                <th t-attf-colspan="{{1 if groupby != 'priority' else 1}}"/>
+                <th t-attf-colspan="{{1 if groupby != 'priority' else 2}}">Name</th>
+            </xpath>
+            <xpath expr="//th[2]" position="replace">
             </xpath>
             <xpath expr="//td[@class='text-start']/following-sibling::td[2]" position="replace">
             </xpath>
-            <xpath expr="//td[@class='text-start']" position="after">
+            <xpath expr="//td[@class='text-start']" position="replace">
                 <td>
                     <a t-attf-href="/my/#{task_url}/#{task.id}?{{ keep_query() }}">
                         <span t-att-title="task.name" t-field="task.name"/>
@@ -386,7 +435,7 @@
                     <span t-esc="task.transport_type_id.name"/>
                 </td>
                 <td>
-                    <span t-esc="task.master_bl"/>
+                    <span t-esc="task.house_bl_seq"/>
                 </td>
                 <td>
                     <span t-field="task.port_id"/>
@@ -413,13 +462,26 @@
             <xpath expr="//th[text()='Name']" position="after">
                 <t t-set="grouped_tasks_colspan" t-value="15"/>
                 <th>Type</th>
-                <th>Master BL</th>
-                <th>POL</th>
-                <th>POD</th>
-                <th>Planned Date From</th>
-                <th>Planned Date To</th>
+                <th title="Bill of Leading Number">BL No.</th>
+                <th title="Port of Loading">From</th>
+                <th title="Port of Discharging">To</th>
+                <th title="Estimated Time of Departure">ETD</th>
+                <th title="Estimated Time of Arrival">ETA</th>
             </xpath>
         </template>
 
+        <template id="remove_odoo_powered_footer" inherit_id="portal.portal_record_sidebar">
+            <xpath expr="//div[@id='sidebar_content']" position="replace">
+                <div class="o_portal_sidebar_content d-lg-inline-block mb-4 mb-lg-0 p-3 p-lg-0" id="sidebar_content">
+                <div t-if="title" class="position-relative d-flex align-items-center justify-content-md-center justify-content-lg-between flex-wrap gap-2">
+                    <t t-out="title"/>
+                </div>
+                <t t-if="entries" t-out="entries"/>
+                <div class="d-none d-lg-block mt-5 small text-center text-muted">
+                    Deisgned and Implemented by <a href="https://www.eit-hub.com/">EIT Hub</a>
+                </div>
+            </div>
+            </xpath>
+        </template>
     </data>
 </odoo>

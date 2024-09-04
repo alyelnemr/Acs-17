@@ -1,20 +1,14 @@
 <odoo>
     <data>
 
-        <!-- Define the Report Action -->
 
-        <template id="report_project_task_charges_main">
+        <template id="report_project_task_op_charges_main">
             <t t-call="web.external_layout">
                 <!-- Full-Page Frame -->
                 <div style="border: 5px solid black; padding: 20px; margin: 0px; height: 100%; box-sizing: border-box; font-family: 'Georgia', Times, serif;font-size:larger">
                     <!-- Centered Title with the 'name' field from account.move -->
                     <h2 style="text-align: center;">
-                        <t t-if="print_invoice">
-                            <strong>Invoice.</strong>
-                        </t>
-                        <t t-else="">
-                            <strong>Statement No.</strong>
-                        </t>
+                        <strong>Statement No.</strong>
                         <t t-out="doc_name"/>
                     </h2>
                     <br/>
@@ -53,14 +47,6 @@
                                 <br/>
                                 <t t-out="doc.partner_id.country_id.name"/>
                             </td>
-                            <td style="white-space: nowrap;">
-                                <t t-if="doc.invoice_date_due">
-                                    <strong>Due Date:</strong>
-                                </t>
-                            </td>
-                            <td style="white-space: nowrap;">
-                                <t t-out="doc.invoice_date_due"/>
-                            </td>
                         </tr>
                         <tr>
                             <td colspan="4">
@@ -72,7 +58,7 @@
                                 <strong>Operation:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.name"/>
+                                <t t-out="doc.name"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>Currency:</strong>
@@ -86,13 +72,13 @@
                                 <strong>MB/L No:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.master_bl"/>
+                                <t t-out="doc.master_bl"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>HB/L No:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.house_bl_seq"/>
+                                <t t-out="doc.house_bl_seq"/>
                             </td>
                         </tr>
                         <tr>
@@ -101,37 +87,37 @@
 
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.port_id.name"/>
+                                <t t-out="doc.port_id.name"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>POD:</strong>
 
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.port_id_pod.name"/>
+                                <t t-out="doc.port_id_pod.name"/>
                             </td>
                         </tr>
                         <tr>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.atd">
+                                <t t-if="doc.atd">
                                     <strong>Departure Date:</strong>
                                 </t>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.atd"/>
+                                <t t-out="doc.atd"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.ata">
+                                <t t-if="doc.ata">
                                     <strong>Arrival Date:</strong>
                                 </t>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.ata"/>
+                                <t t-out="doc.ata"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.project_task_id.show_containers">
+                        <tr t-if="doc.show_containers">
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                <t t-if="doc.shipping_container_ids">
                                     <strong>Containers Quantity:</strong>
                                 </t>
                             </td>
@@ -139,7 +125,7 @@
                                 <t t-if="container_qty > 0" t-out="container_qty"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                <t t-if="doc.shipping_container_ids">
                                     <strong>Container Type:</strong>
                                 </t>
                             </td>
@@ -147,9 +133,9 @@
                                 <t t-out="container_type"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.project_task_id.show_packages">
+                        <tr t-if="doc.show_packages">
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                <t t-if="doc.shipping_package_ids">
                                     <strong>Packages:</strong>
                                 </t>
                             </td>
@@ -157,7 +143,7 @@
                                 <t t-out="package"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                <t t-if="doc.shipping_package_ids">
                                     <strong>Package Quantity:</strong>
                                 </t>
                             </td>
@@ -197,14 +183,6 @@
                                 <br/>
                                 <t t-out="doc.partner_id.country_id.name"/>
                             </td>
-                            <td style="white-space: nowrap;">
-                                <t t-if="doc.invoice_date_due">
-                                    <strong>Due Date:</strong>
-                                </t>
-                            </td>
-                            <td style="white-space: nowrap;">
-                                <t t-out="doc.invoice_date_due"/>
-                            </td>
                         </tr>
                         <tr>
                             <td colspan="4">
@@ -216,13 +194,13 @@
                                 <strong>Operation:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.name"/>
+                                <t t-out="doc.name"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>Created By:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.create_uid.partner_id.name"/>
+                                <t t-out="doc.create_uid.partner_id.name"/>
                             </td>
                         </tr>
                         <tr>
@@ -230,13 +208,13 @@
                                 <strong>Creation Date:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.create_date.date()"/>
+                                <t t-out="doc.create_date.date()"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>Direction:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.clearence_type_id.name"/>
+                                <t t-out="doc.clearence_type_id.name"/>
                             </td>
                         </tr>
                         <tr>
@@ -246,11 +224,11 @@
                             </td>
                             <td style="white-space: nowrap;" colspan="3">
                                 <t t-set="invoice_names"
-                                   t-value="','.join([inv.name for inv in doc.project_task_id.customer_invoice_ids.filtered(lambda x: x.state == 'posted')])"/>
+                                   t-value="','.join([inv.name for inv in doc.customer_invoice_ids.filtered(lambda x: x.state == 'posted')])"/>
                                 <t t-esc="invoice_names"/>
                             </td>
                         </tr>
-                        <tr t-if="container_type_counts and doc.project_task_id.show_containers">
+                        <tr t-if="container_type_counts and doc.show_containers">
                             <td style="white-space: nowrap;">
                                 <strong>Cargo Containers:</strong>
 
@@ -265,7 +243,7 @@
                                 </t>
                             </td>
                         </tr>
-                        <tr t-if="package_type_counts and doc.project_task_id.show_packages">
+                        <tr t-if="package_type_counts and doc.show_packages">
                             <td style="white-space: nowrap;">
                                 <strong>Cargo Packages:</strong>
 
@@ -285,18 +263,18 @@
                                 <strong>Departure Date:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.atd"/>
+                                <t t-out="doc.atd"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>Arrival Date:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.ata"/>
+                                <t t-out="doc.ata"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.project_task_id.show_containers">
+                        <tr t-if="doc.show_containers">
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                <t t-if="doc.shipping_container_ids">
                                     <strong>Containers:</strong>
                                 </t>
                             </td>
@@ -304,9 +282,9 @@
                                 <t t-out="container"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.project_task_id.show_containers">
+                        <tr t-if="doc.show_containers">
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                <t t-if="doc.shipping_container_ids">
                                     <strong>Container Type:</strong>
                                 </t>
                             </td>
@@ -314,7 +292,7 @@
                                 <t t-out="container_type"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_container_ids">
+                                <t t-if="doc.shipping_container_ids">
                                     <strong>Containers Quantity:</strong>
                                 </t>
                             </td>
@@ -322,9 +300,9 @@
                                 <t t-if="container_qty > 0" t-out="container_qty"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.project_task_id.show_packages">
+                        <tr t-if="doc.show_packages">
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                <t t-if="doc.shipping_package_ids">
                                     <strong>Packages:</strong>
                                 </t>
                             </td>
@@ -332,7 +310,7 @@
                                 <t t-out="package"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.shipping_package_ids">
+                                <t t-if="doc.shipping_package_ids">
                                     <strong>Package Quantity:</strong>
                                 </t>
                             </td>
@@ -359,7 +337,7 @@
                                 <strong>Commodity:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.commodity_id.name"/>
+                                <t t-out="doc.commodity_id.name"/>
                             </td>
                             <td style="white-space: nowrap;">
 
@@ -374,14 +352,14 @@
 
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.port_id.name"/>
+                                <t t-out="doc.port_id.name"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>POD:</strong>
 
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.port_id_pod.name"/>
+                                <t t-out="doc.port_id_pod.name"/>
                             </td>
                         </tr>
                         <tr>
@@ -389,31 +367,31 @@
                                 <strong>MB/L No:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.master_bl"/>
+                                <t t-out="doc.master_bl"/>
                             </td>
                             <td style="white-space: nowrap;">
                                 <strong>HB/L No:</strong>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.house_bl_seq"/>
+                                <t t-out="doc.house_bl_seq"/>
                             </td>
                         </tr>
                         <tr>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.atd">
+                                <t t-if="doc.atd">
                                     <strong>Departure Date:</strong>
                                 </t>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.atd"/>
+                                <t t-out="doc.atd"/>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-if="doc.project_task_id.ata">
+                                <t t-if="doc.ata">
                                     <strong>Arrival Date:</strong>
                                 </t>
                             </td>
                             <td style="white-space: nowrap;">
-                                <t t-out="doc.project_task_id.ata"/>
+                                <t t-out="doc.ata"/>
                             </td>
                         </tr>
                     </table>
@@ -429,7 +407,7 @@
                         <th>
                             <strong>Price</strong>
                         </th>
-                        <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
+                        <t t-foreach="doc.project_task_charge_ids" t-as="product_line">
                             <tr>
                                 <td style="white-space: nowrap;">
                                     <strong>
@@ -458,7 +436,7 @@
                         <th>
                             <strong>Profit</strong>
                         </th>
-                        <t t-foreach="doc.project_task_id.project_task_charge_ids" t-as="product_line">
+                        <t t-foreach="doc.project_task_charge_ids" t-as="product_line">
                             <tr>
                                 <td style="white-space: nowrap;">
                                     <strong>
@@ -501,7 +479,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <t t-foreach="doc.project_task_id.total_cost_line_ids" t-as="cost_line">
+                                        <t t-foreach="doc.total_cost_line_ids" t-as="cost_line">
                                             <tr>
                                                 <td>
                                                     <span t-field="cost_line.currency_id"/>
@@ -529,7 +507,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <t t-foreach="doc.project_task_id.total_sale_line_ids" t-as="sale_line">
+                                        <t t-foreach="doc.total_sale_line_ids" t-as="sale_line">
                                             <tr>
                                                 <td>
                                                     <span t-field="sale_line.currency_id"/>
@@ -551,17 +529,17 @@
                         <tr>
                             <td style="width: 50%;"></td>
                             <td style="width: 50%; text-align:right;">
-                                <span t-field="doc.project_task_id.currency_id" t-options="{'invisible': True}"/>
+                                <span t-field="doc.currency_id" t-options="{'invisible': True}"/>
                                 <div>Total Sale in USD:
-                                    <span t-field="doc.project_task_id.total_sale_in_usd"/>
+                                    <span t-field="doc.total_sale_in_usd"/>
                                 </div>
                                 <br/>
                                 <div>Total Cost in USD:
-                                    <span t-field="doc.project_task_id.total_cost_in_usd"/>
+                                    <span t-field="doc.total_cost_in_usd"/>
                                 </div>
                                 <br/>
                                 <div>Expected Revenue:
-                                    <span t-field="doc.project_task_id.expected_revenue"/>
+                                    <span t-field="doc.expected_revenue"/>
                                 </div>
                             </td>
                         </tr>
@@ -572,14 +550,6 @@
         </template>
 
 
-        <template id="report_project_task_charges">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="doc">
-                    <t t-call="eit_freight_operation.report_project_task_charges_main"/>
-                </t>
-            </t>
-        </template>
-
         <template id="report_project_task_op_charges">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
@@ -588,30 +558,14 @@
             </t>
         </template>
 
-        <template id="report_project_charges_invoice">
-            <t t-call="eit_freight_operation.report_project_task_charges">
-                <t t-set="print_invoice" t-value="True"/>
-            </t>
-        </template>
-
-        <record id="report_project_task_charges_statement" model="ir.actions.report">
+        <record id="report_project_task_charges_op_statement" model="ir.actions.report">
             <field name="name">Statement</field>
-            <field name="model">account.move</field>
+            <field name="model">project.task</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">eit_freight_operation.report_project_task_charges</field>
-            <field name="report_file">eit_freight_operation.report_project_task_charges</field>
+            <field name="report_name">eit_freight_operation.report_project_task_op_charges</field>
+            <field name="report_file">eit_freight_operation.report_project_task_op_charges</field>
             <field name="print_report_name">'Statement ' + object.name</field>
-            <field name="binding_model_id" ref="model_account_move"/>
-            <field name="binding_type">report</field>
-        </record>
-        <record id="report_project_task_charges_invoice" model="ir.actions.report">
-            <field name="name">Invoice</field>
-            <field name="model">account.move</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="report_name">eit_freight_operation.report_project_charges_invoice</field>
-            <field name="report_file">eit_freight_operation.report_project_charges_invoice</field>
-            <field name="print_report_name">'Invoice ' + object.name</field>
-            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_model_id" ref="model_project_task"/>
             <field name="binding_type">report</field>
         </record>
 

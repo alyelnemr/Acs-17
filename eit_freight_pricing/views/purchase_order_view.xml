@@ -194,26 +194,26 @@
             </xpath>
             <xpath expr="//form/sheet/notebook/page[@name='products']" position="before">
                 <page string="Charges" name="charges" invisible="purchase_type in ['purchase'] or purchase_type == 'product'">
-                    <field name="fixed_charges_ids">
+                    <field name="fixed_charges_ids" context="{'default_qty': 1}">
                         <tree editable="bottom">
                             <field name="product_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="package_type" string="Container/Package" column_invisible="(not parent.transport_type_id) or (parent.transport_type_id in [2,3] and parent.shipment_scope_id in [3,1]) or (parent.transport_type_id not in [1] and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="container_type" string="Container/Package" column_invisible="(not parent.transport_type_id) or (parent.transport_type_id in [2,3] and parent.shipment_scope_id in [4,2]) or (parent.transport_type_id in [1]) or (parent.transport_type_id and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="qty"/>
+                            <field name="package_type" string="Container/Package" column_invisible="(not parent.transport_type_id) or (parent.transport_type_id in [2,3] and parent.shipment_scope_id in [3,1]) or (parent.transport_type_id not in [1] and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" optional="hide"/>
+                            <field name="container_type" string="Container/Package" column_invisible="(not parent.transport_type_id) or (parent.transport_type_id in [2,3] and parent.shipment_scope_id in [4,2]) or (parent.transport_type_id in [1]) or (parent.transport_type_id and not parent.shipment_scope_id)" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" optional="hide"/>
+                            <field name="qty" optional="show"/>
                             <field name="cost_price"/>
                             <field name="currency_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="ex_rate"/>
+                            <field name="ex_rate" optional="hide"/>
                             <field name="tot_cost_fr" column_invisible="1"/>
-                            <field name="tot_cost"/>
-                            <field name="tax_id" widget="many2many_tags"/>   
-                            <field name="tot_cost_inc"/>
-                            <field name="tax_inc_usd"/>
+                            <field name="tot_cost" optional="hide"/>
+                            <field name="tax_id" widget="many2many_tags" optional="show"/>   
+                            <field name="tot_cost_inc" optional="hide"/>
+                            <field name="tax_inc_usd" optional="show"/>
                             <field name="order_line" column_invisible="1"/>
                             <field name="purchase_id" column_invisible="1"/>
                         </tree>
                     </field>
                     <div class="row">
-                        <div name="rate_per_currency" class="col-9">
+                        <div name="rate_per_currency" class="col-4">
                             <label for="rate_per_currency_ids" string="Rate Per Currency"/>
                             <field name="rate_per_currency_ids">
                                 <tree edit="0" delete="0" create="0" no_open="True">
@@ -222,16 +222,19 @@
                                 </tree>
                             </field>
                         </div>
-                        <div class="col-3">
-                            <group class="oe_subtotal_footer" style="margin-top:30px;">
-                                 <field name="charge_amount_untaxed"/>
-                                 <field name="fixed_charge_tax_details" string="Tax Details"/>
-                                 <field name="subtotal_w_o_whtax"/>
+                        <div class="col-3 offset-5">
+                            <group class="oe_subtotal_footer" style="margin-top:30px;" invisible="vat_total == 0 and withholding_tax_total == 0">
+                                 <field name="charge_amount_untaxed" style="font-weight: bold;" invisible="(vat_total == 0 and withholding_tax_total != 0) or (withholding_tax_total == 0)"/>
+                                 <field name="vat_total" string="VAT" style="font-weight: bold;" invisible="vat_total == 0"/>
+                                 <!-- <field name="custom_tax_summary" string="Tax"/>
+                                 <field name="fixed_charge_tax_details" string="Tax"/> -->
+                                 <field name="subtotal_w_o_whtax" style="font-weight: bold;" invisible="subtotal_w_o_whtax == 0 or withholding_tax_total != 0"/>
+                                 <field name="withholding_tax_total" style="font-weight: bold;" invisible="withholding_tax_total == 0"/>
     
                             </group>
                             <group class="oe_subtotal_footer">
-                                <field name="total_amount"/>
-                                <field name="tot_amount_usd_display" string="Total Amount (USD)"/>
+                                <field name="total_amount" style="font-weight: bold;"/>
+                                <field name="tot_amount_usd_display" string="Total Amount (USD)" style="font-weight: bold;"/>
                             </group>
                         </div>
                     </div>
@@ -262,6 +265,9 @@
             </xpath>
             <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='products']/field[@name='order_line']/tree[1]/field[@name='product_id']" position="attributes">
                 <attribute name="options">{"no_create_edit":true,"no_open":true,"no_quick_create":true}</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']" position="attributes">
+                <attribute name="invisible">purchase_type == "freight"</attribute>
             </xpath>
         </field>
     </record>

@@ -53,8 +53,12 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="sequence" invisible="1"/>
                             <field name="name"/>
-                            <field name="code"/>
+                            <field name="code" readonly="1"/>
+                            <field name="service_scope_type" invisible="0"/>
+                        </group>
+                        <group>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
                     </group>
@@ -67,8 +71,9 @@
         <field name="model">service.scope</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="sequence" string="ID" optional="False"/>
                 <field name="name"/>
-                <field name="code"/>
+                <field name="code" readonly="1"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
@@ -89,8 +94,8 @@
                 <field name="name" filter_domain="['|',('name', 'ilike', self),
                 ('code', 'ilike', self)]"/>
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
-                <filter name="clearance" string="Clearance" domain="[('stage_clearence', '=', True)]"/>
-                <filter name="freight" string="Freight" domain="[('stage_frieght', '=', True)]"/>
+                <filter name="clearance" string="Clearance" domain="[('stage_clearance', '=', True)]"/>
+                <filter name="freight" string="Freight" domain="[('stage_freight', '=', True)]"/>
             </search>
         </field>
     </record>
@@ -106,8 +111,8 @@
                             <field name="code"/>
                             <field name="active" widget="boolean_toggle"/>
                             <field name="docs_type" widget="radio" invisible="1"/>
-                            <field name="stage_frieght" widget="boolean_toggle"/>
-                            <field name="stage_clearence" widget="boolean_toggle"/>
+                            <field name="stage_freight" />
+                            <field name="stage_clearance" />
                         </group>
                     </group>
                 </sheet>
@@ -122,8 +127,8 @@
             <tree>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="stage_frieght" widget="boolean_toggle"/>
-                <field name="stage_clearence" widget="boolean_toggle"/>
+                <field name="stage_freight" />
+                <field name="stage_clearance" />
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>

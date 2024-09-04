@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_operation_tracking_stages_form" model="ir.ui.view">
+            <field name="name">operation.tracking.stages.form</field>
+            <field name="model">operation.tracking.stages</field>
+            <field name="arch" type="xml">
+                <form string="Tracking Stages">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="tracking_type"/>
+                                <field name="description"/>
+                            </group>
+                            <group>
+                                <field name="tracking_stage" domain="tracking_stage_domain"/>
+                                <field name="is_done" widget="boolean_toggle"/>
+                                <field name="tracking_date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+<record id="view_operation_tracking_stages_tree" model="ir.ui.view">
+        <field name="name">operation.tracking.stages.tree</field>
+        <field name="model">operation.tracking.stages</field>
+        <field name="arch" type="xml">
+            <tree string="Tracking Stages">
+                <field name="tracking_type" />
+                <field name="tracking_stage" />
+                <field name="is_done" />
+                <field name="tracking_date" />
+            </tree>
+        </field>
+    </record>
+
+        <record id="action_operation_tracking_stages" model="ir.actions.act_window">
+        <field name="name">Tracking Stages</field>
+        <field name="res_model">operation.tracking.stages</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new Tracking Stage.
+            </p>
+        </field>
+    </record>
+    </data>
+</odoo>

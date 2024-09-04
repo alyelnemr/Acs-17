@@ -7,7 +7,7 @@
                 <group>
                     <field name="project_task_id" invisible="1"/>
                     <field name="invoice_or_vendor_bill" invisible="1"/>
-                    <field name="opt_partner_wizard_ids" required="1"
+                    <field name="opt_partner_wizard_ids" required="1" style="width:30%"
                            options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                 </group>
                 <footer>

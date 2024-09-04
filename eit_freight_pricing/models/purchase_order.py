@@ -55,7 +55,6 @@ class PurchaseOrder(models.Model):
         comodel_name='charge.type.currency.rate',
         inverse_name='purchase_id',
         string="Rate Per Currency",
-        compute='_compute_rate_per_currency',
         store=True
     )
     charge_amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True, readonly=True, compute='_compute_untaxed_amount', tracking=True)
@@ -70,6 +69,12 @@ class PurchaseOrder(models.Model):
     # fixed_charge_tax_amounts = fields.Text(string='Tax Amounts', compute='_compute_fixed_charge_tax_details',)
 
     total_cost_in_usd = fields.Float(string="Total Amount (USD", compute="_onchange_pricing_charge_ids")
+    vat_total = fields.Monetary(
+        string='Total VAT',
+        compute='_compute_vat_total',
+        currency_field='currency_id',
+        store=True
+    )
     total_amount = fields.Monetary(
         string='Total Amount',
         store=True,
@@ -92,6 +97,31 @@ class PurchaseOrder(models.Model):
         currency_field='currency_id'
     )
 
+    withholding_tax_total = fields.Monetary(
+        string='Withholding Tax',
+        compute='_compute_vat_total',
+        currency_field='currency_id',
+        store=True
+    )
+
+    @api.depends('fixed_charges_ids.tax_id', 'fixed_charges_ids.tot_cost')
+    def _compute_vat_total(self):
+        for order in self:
+            vat_total = 0.0
+            withholding_tax_total = 0.0
+            for charge in order.fixed_charges_ids:
+                # Calculate the VAT based on the total cost and positive tax rate
+                for tax in charge.tax_id:
+                    if tax.amount > 0:  # Only consider positive tax rates
+                        vat_amount = charge.tot_cost * tax.amount / 100
+                        vat_total += vat_amount
+                    elif tax.amount < 0:  # Negative tax rates (Withholding Tax)
+                        withholding_tax_total = charge.tot_cost * tax.amount / 100
+                        withholding_tax_total += withholding_tax_total  # Keep as negative
+
+            order.vat_total = vat_total
+            order.withholding_tax_total = withholding_tax_total
+
     @api.depends('fixed_charges_ids')
     def _compute_subtotal_w_o_whtax(self):
         for order in self:
@@ -113,70 +143,101 @@ class PurchaseOrder(models.Model):
             else:
                 order.subtotal_w_o_whtax = 0
 
+    # custom_tax_summary = fields.Char(string="Custom Tax Summary", compute='_compute_custom_tax_summary', store=True)
+
+    # @api.depends('fixed_charges_ids')
+    # def _compute_custom_tax_summary(self):
+    #     for order in self:
+    #         taxes = order.fixed_charges_ids.mapped('tax_id')
+    #         tax_summary = ''
+    #         for tax in taxes:
+    #             currency_symbol = order.currency_id.symbol
+    #             tax_amount = sum(line.tot_cost * tax.amount / 100 for line in order.fixed_charges_ids if tax in line.tax_id)
+    #             tax_summary += f"{tax.name}: {tax_amount:.2f} {currency_symbol}\n"
+    #         order.custom_tax_summary = tax_summary
+
     @api.onchange('fixed_charges_ids')
     def _onchange_fixed_charges_ids(self):
         # Force recompute if fixed charges are changed
         self._compute_subtotal_w_o_whtax()
+
+    # @api.depends('fixed_charges_ids')
+    # def _compute_fixed_charge_tax_details(self):
+    #     for order in self:
+    #         tax_details = []
+    #         for line in order.fixed_charges_ids:
+    #             if line.tax_id:
+    #                 for tax in line.tax_id:
+    #                     tax_amount = line.tot_cost * (tax.amount / 100)
+    #                     currency_symbol = order.currency_id.symbol or ''
+    #                     formatted_tax = f"{tax.name}: {tax_amount:.2f} {currency_symbol}"
+    #                     tax_details.append(formatted_tax)
+    #         order.fixed_charge_tax_details = "\n".join(tax_details) if tax_details else ""
     
-    @api.depends('fixed_charges_ids')
-    def _compute_fixed_charge_tax_details(self):
-        for order in self:
-            positive_tax_totals = {}
-            negative_tax_totals = {}
-            max_tax_name_length = 0
+    # @api.depends('fixed_charges_ids')
+    # def _compute_fixed_charge_tax_details(self):
+    #     for order in self:
+    #         positive_tax_totals = {}
+    #         negative_tax_totals = {}
+    #         max_tax_name_length = 0
 
-            # Sum up tax amounts for each tax name and determine the maximum length of tax names
-            for line in order.fixed_charges_ids:
-                if line.tax_id:
-                    for tax in line.tax_id:
-                        tax_amount = line.tot_cost * (tax.amount / 100)
+    #         # Sum up tax amounts for each tax name and determine the maximum length of tax names
+    #         for line in order.fixed_charges_ids:
+    #             if line.tax_id:
+    #                 for tax in line.tax_id:
+    #                     tax_amount = line.tot_cost * (tax.amount / 100)
                         
-                        if tax.name not in positive_tax_totals:
-                            positive_tax_totals[tax.name] = 0.0
-                            negative_tax_totals[tax.name] = 0.0
-                            max_tax_name_length = max(max_tax_name_length, len(tax.name))
+    #                     if tax.name not in positive_tax_totals:
+    #                         positive_tax_totals[tax.name] = 0.0
+    #                         negative_tax_totals[tax.name] = 0.0
+    #                         max_tax_name_length = max(max_tax_name_length, len(tax.name))
                         
-                        if tax_amount >= 0:
-                            positive_tax_totals[tax.name] += tax_amount
-                        else:
-                            negative_tax_totals[tax.name] += tax_amount
+    #                     if tax_amount >= 0:
+    #                         positive_tax_totals[tax.name] += tax_amount
+    #                     else:
+    #                         negative_tax_totals[tax.name] += tax_amount
 
-            tax_details = []
+    #         tax_details = []
 
-            # Format positive tax totals
-            for tax_name, tax_amount in positive_tax_totals.items():
-                if tax_amount > 0:
-                    currency_symbol = order.currency_id.symbol or ''
-                    formatted_tax = f"{tax_name:<{max_tax_name_length}}: {tax_amount:>10.2f} {currency_symbol}"
-                    tax_details.append(f"{formatted_tax}")
+    #         # Format positive tax totals
+    #         for tax_name, tax_amount in positive_tax_totals.items():
+    #             if tax_amount > 0:
+    #                 currency_symbol = order.currency_id.symbol or ''
+    #                 formatted_tax = f"{tax_name:<{max_tax_name_length}}: {tax_amount:>10.2f} {currency_symbol}"
+    #                 tax_details.append(f"{formatted_tax}")
 
-            # Format negative tax totals
-            for tax_name, tax_amount in negative_tax_totals.items():
-                if tax_amount < 0:
-                    currency_symbol = order.currency_id.symbol or ''
-                    formatted_tax = f"{tax_name:<{max_tax_name_length}}: {tax_amount:>10.2f} {currency_symbol}"
-                    tax_details.append(f"{formatted_tax}")
+    #         # Format negative tax totals
+    #         for tax_name, tax_amount in negative_tax_totals.items():
+    #             if tax_amount < 0:
+    #                 currency_symbol = order.currency_id.symbol or ''
+    #                 formatted_tax = f"{tax_name:<{max_tax_name_length}}: {tax_amount:>10.2f} {currency_symbol}"
+    #                 tax_details.append(f"{formatted_tax}")
 
-            # Combine all the tax details into a single string
-            order.fixed_charge_tax_details = "\n".join(tax_details) if tax_details else ""
+    #         # Combine all the tax details into a single string
+    #         order.fixed_charge_tax_details = "\n".join(tax_details) if tax_details else ""
 
     @api.model
     def create(self, vals):
         # Create the purchase order first
         order = super(PurchaseOrder, self).create(vals)
 
-        for charge in order.fixed_charges_ids:
-            if charge.product_id:
-                self.order_line += self.env['purchase.order.line'].new({
-                    'order_id': self.id,
-                    'product_id': charge.product_id.product_variant_id.id,
-                    'name': charge.product_id.product_variant_id.display_name,
-                    'taxes_id': [(6, 0, charge.tax_id.ids)],
-                    'price_unit': charge.cost_price * charge.ex_rate,
-                    'product_qty': charge.qty,  # Set quantity as needed
-                })
-        
-        # Now that we have an order ID, create the order lines based on fixed charges
+        if 'fixed_charges_ids' in vals:
+            for charge in order.fixed_charges_ids:
+                if charge.product_id:
+                    self.order_line += self.env['purchase.order.line'].create({
+                        'order_id': order.id,
+                        'product_id': charge.product_id.product_variant_id.id,
+                        'name': charge.product_id.product_variant_id.display_name,
+                        'taxes_id': [(6, 0, charge.tax_id.ids)],
+                        'price_unit': charge.cost_price * charge.ex_rate,
+                        'product_qty': charge.qty,  # Set quantity as needed
+                    })
+            order.compute_tot_cost()
+            
+            # Now that we have an order ID, create the order lines based on fixed charges
+            # if 'fixed_charges_ids' in vals:
+            #     # raise UserError('Test')
+            #     self.compute_tot_cost()
         
         return order
 
@@ -208,64 +269,40 @@ class PurchaseOrder(models.Model):
                         'price_unit': charge.cost_price * charge.ex_rate,
                         'product_qty': charge.qty,
                     })
+
+        if 'fixed_charges_ids' in vals:
+            self.compute_tot_cost()
         
         return result
     
-    @api.depends('charge_amount_untaxed', 'fixed_charges_ids')
+    @api.depends('charge_amount_untaxed', 'vat_total', 'withholding_tax_total')
     def _compute_total_amount(self):
         for order in self:
-            total_amount = order.charge_amount_untaxed
-            positive_taxes = 0.0
-            withholding_taxes = 0.0
+            # Calculate Total Amount: Untaxed Amount + Positive Taxes - Withholding Tax
+            order.total_amount = order.charge_amount_untaxed + order.vat_total - abs(order.withholding_tax_total)
+    
+    # @api.depends('charge_amount_untaxed', 'fixed_charges_ids')
+    # def _compute_total_amount(self):
+    #     for order in self:
+    #         total_amount = order.charge_amount_untaxed
+    #         positive_taxes = 0.0
+    #         withholding_taxes = 0.0
 
-            for line in order.fixed_charges_ids:
-                if line.tax_id:
-                    for tax in line.tax_id:
-                        tax_amount = line.tot_cost * (tax.amount / 100)
-                        if tax.amount > 0:
-                            positive_taxes += tax_amount
-                        else:
-                            withholding_taxes += tax_amount
+    #         for line in order.fixed_charges_ids:
+    #             if line.tax_id:
+    #                 for tax in line.tax_id:
+    #                     tax_amount = line.tot_cost * (tax.amount / 100)
+    #                     if tax.amount > 0:
+    #                         positive_taxes += tax_amount
+    #                     else:
+    #                         withholding_taxes += tax_amount
 
-            # Calculate the total amount
-            total_amount += positive_taxes - withholding_taxes
+    #         # Calculate the total amount
+    #         total_amount += positive_taxes + withholding_taxes
 
-            # Ensure the total matches the "Total Tax Incl. (main curr.)" column
-            # Assuming that you have a field for the total including tax
-            order.total_amount = total_amount
-
-    # def _create_order_lines_from_fixed_charges(self):
-    #     self.ensure_one()
-    #     order_line_obj = self.env['purchase.order.line']
-    #     # Clear existing lines linked to fixed charges
-    #     self.order_line = self.order_line.filtered(lambda l: l.product_id not in self.fixed_charges_ids.mapped('product_id.product_variant_id'))
-
-    #     for charge in self.fixed_charges_ids:
-    #         order_line_obj.create({
-    #             'order_id': self.id,  # Now the order_id exists
-    #             'product_id': charge.product_id.product_variant_id.id,
-    #             'name': charge.product_id.product_variant_id.display_name,
-    #             'taxes_id': [(6, 0, charge.tax_id.ids)],
-    #             'price_unit': charge.cost_price * charge.ex_rate,
-    #             'product_qty': charge.qty,  # Set quantity as needed
-    #         })
-
-    # @api.onchange('fixed_charges_ids')
-    # def _onchange_fixed_charges(self):
-    #     # Remove existing fixed charge lines from order lines
-    #     self.order_line = self.order_line.filtered(lambda l: l.product_id not in self.fixed_charges_ids.mapped('product_id.product_variant_id'))
-
-    #     # Create corresponding order lines for each fixed charge
-    #     for charge in self.fixed_charges_ids:
-    #         if charge.product_id:
-    #             self.order_line += self.env['purchase.order.line'].new({
-    #                 'order_id': self.id,
-    #                 'product_id': charge.product_id.product_variant_id.id,
-    #                 'name': charge.product_id.product_variant_id.display_name,
-    #                 'taxes_id': [(6, 0, charge.tax_id.ids)],
-    #                 'price_unit': charge.cost_price * charge.ex_rate,
-    #                 'product_qty': charge.qty,  # Set quantity as needed
-    #             })
+    #         # Ensure the total matches the "Total Tax Incl. (main curr.)" column
+    #         # Assuming that you have a field for the total including tax
+    #         order.total_amount = total_amount
     
     @api.depends('fixed_charges_ids')
     def _compute_untaxed_amount(self):
@@ -284,17 +321,18 @@ class PurchaseOrder(models.Model):
                 currency = rec.fixed_charges_ids.mapped('currency_id')
                 for cur in currency:
                     amount = 0
-                    for charg in rec.fixed_charges_ids:
-                        if cur.id == charg.currency_id.id:
-                            amount += charg.cost_price * charg.qty
+                    for charge in rec.fixed_charges_ids:
+                        if cur.id == charge.currency_id.id:
+                            amount += charge.cost_price * charge.qty
                     val = {
-                        'currency_id': cur,
+                        'currency_id': cur.id,
                         'amount': amount
                     }
                     sale_list.append((0, 0, val))
-                rec.update({'rate_per_currency_ids': sale_list})
+                rec.rate_per_currency_ids = sale_list
             else:
                 rec.rate_per_currency_ids = False
+
 
     # @api.model
     # def create(self, values):
@@ -351,7 +389,7 @@ class PurchaseOrder(models.Model):
             'name': _('Create New Commodity'),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
-            'res_model': 'product.price',
+            'res_model': 'request.price',
             'view_id': self.env.ref(
                 'eit_freight_pricing.view_arequest_price').id,
             'res_id': self.price_req_id.id,
@@ -453,9 +491,13 @@ class ProductCharges(models.Model):
     def _compute_tax_inc_usd(self):
         for record in self:
             if record.ex_rate:
-                currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
-                inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate
-                record.tax_inc_usd = record.tot_cost_inc * inverse_company_rate
+                currency_id = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+                if currency_id and currency_id.rate_ids:
+                    inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate
+                    record.tax_inc_usd = record.tot_cost_inc * inverse_company_rate
+                else:
+                    # Handle the case where there's no rate available
+                    record.tax_inc_usd = 0
             else:
                 record.tax_inc_usd = 0
 

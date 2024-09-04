@@ -12,6 +12,8 @@ class CommodityGroup(models.Model):
     code = fields.Char(string="Code")
     status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')], 'Status')
     active = fields.Boolean(string='Active', default=True)
+    commodities_ids = fields.Many2many(comodel_name='commodity.data', relation='commodity_group_commodity_rel',
+                                       column1='commodity_group_id', column2='commodity_id', string="Commodities")
 
     @api.onchange('active')
     def _onchange_active(self):

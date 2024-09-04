@@ -59,7 +59,6 @@
                         <filter string="Container Owner" name='container_owner' context="{'group_by':'partner_id'}"/>
                     </group>
                     <separator/>
-                    <!--                <filter name="Container" string="Container Type" domain="[('container_id','!=',False)]"/>-->
                     <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                     <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
 

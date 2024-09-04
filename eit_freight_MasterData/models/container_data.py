@@ -17,9 +17,6 @@ class ContainerData(models.Model):
     status = fields.Selection(selection=[('active', 'Active'), ('inactive', 'Inactive')], string='Status')
     active = fields.Boolean(string='Active', default=True)
     description = fields.Text(string="Description")
-    # TO BE DELETED
-    container_id = fields.Many2one('container.type', string="Container Type")
-    container_type = fields.Selection([('dry', 'Dry'), ('reefer', 'Reefer'), ('sequ', 'Special Equ')], 'Container Is')
 
     _sql_constraints = [('name_uniq', "unique(name)", "This Container Has Been Added Before")]
 

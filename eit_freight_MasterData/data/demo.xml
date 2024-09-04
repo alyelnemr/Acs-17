@@ -10,7 +10,7 @@
             <field name="code">SEA</field>
         </record>
         <record id="demo_transport_inland" model="transport.type">
-            <field name="name">In-land</field>
+            <field name="name">Land</field>
             <field name="code">LND</field>
         </record>
 
