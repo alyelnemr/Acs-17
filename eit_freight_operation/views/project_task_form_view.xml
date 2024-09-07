@@ -12,7 +12,7 @@
                             class="btn-primary"
                             context="{'default_task_id': active_id}"/>
                     <button name="preview_operation" string="Preview" type="object"
-                            class="btn-primary" invisible="1" />
+                            class="btn-primary" invisible="0" />
                 </xpath>
 
                 <xpath expr="//div[@name='button_box']" position="inside">
