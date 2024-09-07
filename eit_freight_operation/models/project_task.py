@@ -150,6 +150,14 @@ class Task(models.Model):
     operation_tracking_stages = fields.One2many(comodel_name='operation.tracking.stages',
                                                 inverse_name='project_task_id', string="Tracking Stages")
 
+    def preview_operation(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'self',
+            'url': self.get_portal_url(),
+        }
+
     @api.onchange('acid_importer_tax_id')
     def _onchange_acid_importer_tax_id(self):
         if self.acid_importer_tax_id:

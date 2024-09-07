@@ -27,14 +27,6 @@ class ProjectTaskCharges(models.Model):
     invoice_id = fields.Many2one('account.move.line', string="Invoice Line")
     vendor_bill_id = fields.Many2one('account.move.line', string="Bill Line")
 
-    def preview_operation(self):
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_url',
-            'target': 'self',
-            'url': self.get_portal_url(),
-        }
-
     def unlink(self):
         def check_linked_document(record, document, document_name):
             if document and document.move_id.state != 'cancel':
