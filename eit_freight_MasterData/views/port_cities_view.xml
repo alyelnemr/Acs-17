@@ -283,8 +283,6 @@
                 <field name="name"/>
                 <field name="port_city_id"/>
                 <field name="country_id"/>
-                <field name="terminal"/>
-                <field name="warehouse"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>

@@ -56,7 +56,7 @@
                             <field name="sequence" invisible="1"/>
                             <field name="name"/>
                             <field name="code" readonly="1"/>
-                            <field name="service_scope_type" invisible="0"/>
+                            <field name="service_scope_type" groups="base.group_no_one"/>
                         </group>
                         <group>
                             <field name="active" widget="boolean_toggle"/>

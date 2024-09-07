@@ -33,7 +33,7 @@ class ServiceScope(models.Model):
                     vals['sequence'] = sequence_max
 
                 # Set code based on name, considering spaces
-                if 'name' in vals and ('code' not in vals or not vals['code']):
+                if 'name' in vals:
                     vals['code'] = self._generate_code(vals['name'])
 
                 # Ensure service_scope_type is set
@@ -60,7 +60,7 @@ class ServiceScope(models.Model):
                             val['sequence'] = sequence_max
 
                         # Set code based on name
-                        if 'name' in val and ('code' not in val or not val['code']):
+                        if 'name' in val:
                             val['code'] = self._generate_code(val['name'])
 
                         if 'service_scope_type' not in val:
@@ -83,7 +83,7 @@ class ServiceScope(models.Model):
                     vals['sequence'] = sequence_max + 1
 
             # Update code if name is changed
-            if 'name' in vals and not vals['code']:
+            if 'name' in vals:
                 vals['code'] = self._generate_code(vals['name'])
 
             super(ServiceScope, rec).write(vals)

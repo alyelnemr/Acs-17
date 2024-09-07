@@ -6,7 +6,7 @@ from odoo import fields, _, models, api
 class ContainerType(models.Model):
     _name = "container.type"
     _description = 'Container Type Data'
-    _order = 'id desc'
+    _order = 'id'
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")

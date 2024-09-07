@@ -154,7 +154,7 @@
 
     <!--    container type-->
     <record model="ir.ui.view" id="container_type_search">
-        <field name="name">Container Type</field>
+        <field name="name">Container Types</field>
         <field name="model">container.type</field>
         <field name="arch" type="xml">
             <search>
@@ -194,7 +194,7 @@
 
 
     <record model="ir.ui.view" id="container_type_list">
-        <field name="name">Container Type</field>
+        <field name="name">Container Types</field>
         <field name="model">container.type</field>
         <field name="arch" type="xml">
             <tree>
@@ -208,7 +208,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="action_container_type">
-        <field name="name">Container Type</field>
+        <field name="name">Container Types</field>
         <field name="res_model">container.type</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -279,7 +279,7 @@
               sequence="2"/>
     <!--    <menuitem name="Container Type" id="menu_container_type_main" parent="menu_freight_settings"-->
     <!--              sequence="3"/>-->
-    <menuitem name="Container Type" id="menu_container_type" parent="menu_freight_settings"
+    <menuitem name="Container Types" id="menu_container_type" parent="menu_freight_settings"
               action="action_container_type" sequence="4"/>
     <menuitem name="Bill Of Lading Type" id="menu_bill_of_leading" parent="menu_freight_settings"
               action="action_bill_of_leading" sequence="6"/>
