@@ -16,7 +16,7 @@ class ProjectTaskCharges(models.Model):
     package_type_id = fields.Many2one('package.type', string="Package")
     container_type_id = fields.Many2one('container.type', string="Container")
     currency_id = fields.Many2one('res.currency', string="Currency")
-    ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
+    ex_rate = fields.Float(related='currency_id.inverse_rate', string="EX.Rate", store=True)
     sale_main_curr = fields.Float(string="Sale Main Curr", compute='_compute_tot_price')
     sale_usd = fields.Float(string="Sales(USD)",
                             compute='_compute_tot_price')
@@ -26,6 +26,14 @@ class ProjectTaskCharges(models.Model):
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     invoice_id = fields.Many2one('account.move.line', string="Invoice Line")
     vendor_bill_id = fields.Many2one('account.move.line', string="Bill Line")
+
+    def preview_operation(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'self',
+            'url': self.get_portal_url(),
+        }
 
     def unlink(self):
         def check_linked_document(record, document, document_name):
@@ -41,7 +49,7 @@ class ProjectTaskCharges(models.Model):
     @api.depends('sale_price', 'ex_rate', 'qty', 'cost_price')
     def _compute_tot_price(self):
         for record in self:
-            inverse_company_rate = 1.0
+            company_rate = 1.0
             if record.sale_price and record.ex_rate:
                 record.sale_main_curr = record.sale_price * record.ex_rate
             else:
@@ -50,11 +58,11 @@ class ProjectTaskCharges(models.Model):
             if record.ex_rate:
                 currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
                 if currency_id:
-                    inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate if currency_id.rate_ids else 1.0
+                    company_rate = currency_id.rate_ids[0].company_rate if currency_id.rate_ids else 1.0
 
                 record.cost_main_curr = record.cost_price * record.ex_rate
-                record.cost_usd = inverse_company_rate * record.cost_main_curr
-                record.sale_usd = inverse_company_rate * record.sale_main_curr
+                record.cost_usd = company_rate * record.cost_main_curr
+                record.sale_usd = company_rate * record.sale_main_curr
             else:
                 record.cost_main_curr = 0
                 record.cost_usd = 0

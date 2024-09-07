@@ -11,6 +11,8 @@
                     <button name="%(action_project_task_statement_wizard)d" string="Print" type="action"
                             class="btn-primary"
                             context="{'default_task_id': active_id}"/>
+                    <button name="preview_operation" string="Preview" type="object"
+                            class="btn-primary" />
                 </xpath>
 
                 <xpath expr="//div[@name='button_box']" position="inside">
@@ -351,19 +353,17 @@
                                 <templates>
                                     <t t-name="kanban-box">
                                         <div t-attf-class="oe_kanban_global_click">
-                                            <table>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Container No:</strong>
+                                            <table style="width: 100%;">
+                                                <tr style="width: 100%;">
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            <field name="name"/>
+                                                        </strong>
                                                     </td>
-                                                    <td>
-                                                        <field name="name"/>
-                                                    </td>
-                                                    <td>
-                                                        <strong>Container:</strong>
-                                                    </td>
-                                                    <td width="25%">
-                                                        <field name="container_type_id"/>
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            <field name="container_type_id"/>
+                                                        </strong>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -602,6 +602,7 @@
                                 <field name="delivery_address"/>
                                 <field name="routing_types"/>
                                 <field name="show_inland_for_export"/>
+                                <field name="routing_types_is_hidden"/>
                                 <templates>
                                     <t t-name="kanban-box"
                                        style="width: 400px; overflow: hidden; padding: 10px; position: relative;">
@@ -627,7 +628,14 @@
                                                         </strong>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr invisible="not routing_types_is_hidden">
+                                                    <td colspan="2" style="width: 100%; padding-bottom: 5px;">
+                                                        <strong>
+                                                            <field name="clearance_type_id"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="routing_types_is_hidden">
                                                     <td style="width: 50%; padding-bottom: 5px;">
                                                         <strong>
                                                             <field name="routing_types"/>
@@ -875,7 +883,10 @@
                                     </group>
                                     <group invisible="service_scope_id_code not in ('INS')">
                                         <group>
-                                            <field name="cargo_value" force_save="1"/>
+                                                <field name="cargo_value" widget="monetary"
+                                                       options="{'currency_field': 'cargo_currency_id'}"
+                                                       force_save="1"/>
+                                                <field name="cargo_currency_id" force_save="1" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <field name="cargo_document_date" force_save="1"/>
                                             <field name="cargo_supplier_partner_id"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
@@ -1012,21 +1023,19 @@
                                             <table t-att-style="'background-color: ' + (record.is_done.raw_value and '#e6ffe6' or '#f5f5dc') + '; width: 100%; table-layout: fixed;'">
                                                 <tr>
                                                     <td colspan="2" style="padding-bottom: 10px;">
-                                                        <strong>Tracking Type:</strong>
-                                                        <div>
+                                                        <strong>
                                                             <field name="tracking_type"/>
-                                                        </div>
+                                                        </strong>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 50%; padding-bottom: 5px;">
-                                                        <strong>Tracking Stage:</strong>
-                                                        <div>
+                                                        <strong>
                                                             <field name="tracking_stage"/>
-                                                        </div>
+                                                        </strong>
                                                     </td>
                                                     <td style="width: 50%; padding-bottom: 5px;">
-                                                        <strong>Tracking Date:</strong>
+                                                        <strong>At:</strong>
                                                         <div>
                                                             <field name="tracking_date"/>
                                                         </div>

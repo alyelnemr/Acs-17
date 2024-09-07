@@ -17,14 +17,11 @@ class OperationRoute(models.Model):
         result = super(OperationRoute, self).default_get(fields_list)
         if result.get('project_task_id'):
             project_task = self.env['project.task'].browse(result['project_task_id'])
-            result['port_id_from'] = project_task.port_id.id
-            result['port_id_to'] = project_task.port_id_pod.id
             result['clearance_type_id'] = project_task.clearence_type_id.id
             result['planned_date_start'] = project_task.planned_date_begin
             result['planned_date_end'] = project_task.date_deadline
             result['atd'] = project_task.atd
             result['ata'] = project_task.ata
-            result['transit_time'] = project_task.transit_time
         return result
 
     @api.depends('project_task_id')
@@ -96,8 +93,8 @@ class OperationRoute(models.Model):
         selection=[('origin', 'Origin Route'), ('transit', 'Transit Route'),
                    ('destination', 'Destination Route')],
         string="Route Type", default='origin', required=True)
-    port_id_from = fields.Many2one(comodel_name='port.cites', string="POL")
-    port_id_to = fields.Many2one(comodel_name='port.cites', string="POD")
+    port_id_from = fields.Many2one(comodel_name='port.cites', string="POL", related='project_task_id.port_id')
+    port_id_to = fields.Many2one(comodel_name='port.cites', string="POD", related='project_task_id.port_id_pod')
     flight_no = fields.Char(string='Flight Number', readonly=True, related='project_task_id.flight_no')
     plane_name = fields.Char(string="Plane Name", readonly=True, related='project_task_id.plane_name')
     vessel_id = fields.Many2one(comodel_name='freight.vessels', string="Vessel", related='project_task_id.vessel_id')
@@ -107,9 +104,9 @@ class OperationRoute(models.Model):
     loaded = fields.Boolean(string="Loaded")
     planned_date_start = fields.Datetime(string="Planned Date")
     planned_date_end = fields.Datetime(string="Expected Arrival")
-    transit_time = fields.Integer(string="Transit Time")
-    atd = fields.Date(string="Departure (ATD)")
-    ata = fields.Date(string="Arrival (ATA)")
+    transit_time = fields.Integer(string="Transit Time", related='project_task_id.transit_time')
+    atd = fields.Date(string="Departure (ATD)", related='project_task_id.atd')
+    ata = fields.Date(string="Arrival (ATA)", related='project_task_id.ata')
     free_time = fields.Integer(string="Free Time", related="project_task_id.free_time")
     operation_route_services_ids = fields.One2many(comodel_name='operation.route.services',
                                                    inverse_name='operation_route_id', string="Services")
@@ -120,7 +117,8 @@ class OperationRoute(models.Model):
     terminal_warehouse_id = fields.Many2one(comodel_name='terminal.port', string="Terminal/Warehouse")
     is_main_carriage = fields.Boolean(string="Is Main Carriage")
     is_main_carriage_readonly = fields.Boolean(string="Is Main Carriage Readonly")
-    routing_types_is_hidden = fields.Boolean(string="Routing Types Is Hidden")
+    routing_types_is_hidden = fields.Boolean(string="Routing Types Is Hidden",
+                                             compute='_compute_routing_types_is_hidden', store=False)
     commodity_id = fields.Many2one(comodel_name='commodity.data', string="Commodity")
     commodity_id_code = fields.Char(string="HS Code")
     document_type_ids = fields.Many2many(comodel_name='document.type', string="Waiting for Documents")
@@ -145,7 +143,7 @@ class OperationRoute(models.Model):
     destination_address = fields.Text(string="Destination Address")
     loading_address = fields.Text(string="Loading Address")
     cargo_value = fields.Float(string="Cargo Value")
-    cargo_currency_id = fields.Many2one(comodel_name='res.currency', string="Cargo Currency")
+    cargo_currency_id = fields.Many2one(comodel_name='res.currency', string="Cargo Currency", default=lambda self: self.env.user.company_id.currency_id)
     cargo_document_date = fields.Date(string="Cargo Document Date")
     cargo_supplier_partner_id = fields.Many2one(comodel_name='res.partner', string="Supplier",
                                                 compute='get_cargo_supplier_partner_id', store=False)
@@ -189,8 +187,8 @@ class OperationRoute(models.Model):
             self.ata = self.project_task_id.ata
             self.transit_time = self.project_task_id.transit_time
 
-    @api.onchange('service_scope_id')
-    def onchange_service_scope_id(self):
+    @api.depends('service_scope_id')
+    def _compute_routing_types_is_hidden(self):
         self.is_main_carriage = True if self.service_scope_id.service_scope_type == 'freight' else False
         self.is_main_carriage_readonly = self.service_scope_id.service_scope_type == 'freight'
         self.routing_types_is_hidden = self.service_scope_id.service_scope_type == 'freight'
@@ -213,22 +211,27 @@ class OperationRoute(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        contain_main_carriage = False
         for vals in vals_list:
             if vals.get('commodity_id') and vals.get('commodity_id_code'):
                 commodity_id = self.env['commodity.data'].browse(vals.get('commodity_id'))
                 if commodity_id:
                     commodity_id.write({'code': vals.get('commodity_id_code')})
             if vals.get('is_main_carriage') and vals.get('project_task_id'):
+                if contain_main_carriage:
+                    raise UserError(_("This Operation already have main carriage."))
                 old_main_carriage = self.env['operation.route'].search([
                     ('project_task_id', '=', vals.get('project_task_id')),
                     ('is_main_carriage', '=', True)
                 ])
+                contain_main_carriage = True
                 if old_main_carriage:
                     raise UserError(_("This Operation already have main carriage."))
         return super(OperationRoute, self).create(vals_list)
 
     def write(self, vals):
         if vals.get('is_main_carriage'):
+            contain_main_carriage = False
             for record in self:
                 if vals.get('commodity_id_code'):
                     commodity_id = self.env['commodity.data'].browse(record.commodity_id)
@@ -236,11 +239,14 @@ class OperationRoute(models.Model):
                         commodity_id.write({'code': vals.get('commodity_id_code')})
                 if vals.get('is_main_carriage'):
                     # Check if another main carriage exists within the same project task
+                    if contain_main_carriage:
+                        raise UserError(_("This Operation already have main carriage."))
                     existing_main_carriage = self.env['operation.route'].search([
                         ('project_task_id', '=', record.project_task_id.id),
                         ('is_main_carriage', '=', True),
                         ('id', '!=', record.id)
                     ])
+                    contain_main_carriage = True
                     if existing_main_carriage:
                         raise UserError(_("This Operation already have main carriage."))
 

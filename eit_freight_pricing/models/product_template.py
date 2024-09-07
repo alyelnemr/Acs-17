@@ -235,6 +235,7 @@ class ProductCharges(models.Model):
     @api.depends('sale_price', 'ex_rate', 'qty', 'cost_price')
     def _compute_tot_price(self):
         for record in self:
+            company_rate = 1.0
             if record.sale_price and record.ex_rate:
                 record.sale_main_curr = record.sale_price * record.ex_rate
             else:
@@ -242,12 +243,12 @@ class ProductCharges(models.Model):
 
             if record.ex_rate:
                 currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
-                inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate
-                # inverse_company_rate = 1.0 / record.ex_rate
+                if currency_id:
+                    company_rate = currency_id.rate_ids[0].company_rate if currency_id.rate_ids else 1.0
 
                 record.cost_main_curr = record.cost_price * record.ex_rate
-                record.cost_usd = inverse_company_rate * record.cost_main_curr
-                record.sale_usd = inverse_company_rate * record.sale_main_curr
+                record.cost_usd = company_rate * record.cost_main_curr
+                record.sale_usd = company_rate * record.sale_main_curr
             else:
                 record.cost_main_curr = 0
                 record.cost_usd = 0
