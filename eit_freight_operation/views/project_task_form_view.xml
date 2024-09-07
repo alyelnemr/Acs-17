@@ -489,19 +489,17 @@
                                         <div t-attf-class="oe_kanban_global_click">
                                             <table width="100%">
                                                 <tr width="100%">
-                                                    <td width="25%">
-                                                        <strong>Package:</strong>
-                                                    </td>
-                                                    <td width="75%">
-                                                        <field name="package_type_id"/>
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            <field name="package_type_id"/>
+                                                        </strong>
                                                     </td>
                                                 </tr>
-                                                <tr width="100%">
+                                                <tr colspan="2">
                                                     <td>
-                                                        <strong>Commodity:</strong>
-                                                    </td>
-                                                    <td>
-                                                        <field name="commodity_id"/>
+                                                        <strong>
+                                                            <field name="commodity_id"/>
+                                                        </strong>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -603,6 +601,7 @@
                                 <field name="pickup_address"/>
                                 <field name="delivery_address"/>
                                 <field name="routing_types"/>
+                                <field name="show_inland_for_export"/>
                                 <templates>
                                     <t t-name="kanban-box"
                                        style="width: 400px; overflow: hidden; padding: 10px; position: relative;">
@@ -630,15 +629,104 @@
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 50%; padding-bottom: 5px;">
-                                                        <strong>Route:</strong>
-                                                        <field name="routing_types"/>
+                                                        <strong>
+                                                            <field name="routing_types"/>
+                                                        </strong>
                                                     </td>
                                                     <td style="width: 50%; padding-bottom: 5px;">
-                                                        <strong>Direction:</strong>
-                                                        <field name="clearance_type_id"/>
+                                                        <strong>
+                                                            <field name="clearance_type_id"/>
+                                                        </strong>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr invisible="service_scope_id_code not in ('AIR', 'LND', 'SEA')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <field name="port_id_from"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <field name="port_id_to"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('CCL')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Clearance Port:</strong>
+                                                        <field name="clearance_port_id"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Customs Cert. No.:</strong>
+                                                        <field name="custom_certificate_number"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('CCL')">
+                                                    <td colspan="2" style="width: 100%; padding-bottom: 5px;">
+                                                        <strong>Waiting for Docs.:</strong>
+                                                        <field name="document_type_ids"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('ILT')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Loading/Discharge Port:</strong>
+                                                        <field name="loading_port_id"
+                                                               invisible="show_inland_for_export"/>
+                                                        <field name="discharge_port_id"
+                                                               invisible="not show_inland_for_export"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Terminal/Warehouse:</strong>
+                                                        <field name="terminal_warehouse_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('ILT')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Driver Name:</strong>
+                                                        <field name="driver_name"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Driver Phone:</strong>
+                                                        <field name="driver_phone"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('INS')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Cargo Value:</strong>
+                                                        <field name="cargo_value"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Document Date:</strong>
+                                                        <field name="cargo_document_date"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('INS')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Incoterm:</strong>
+                                                        <field name="incoterm_id"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Commodity:</strong>
+                                                        <field name="commodity_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('WH')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Warehouse:</strong>
+                                                        <field name="terminal_warehouse_id"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Commodity:</strong>
+                                                        <field name="warehousing_commodity_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code not in ('WH')">
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Storage Date:</strong>
+                                                        <field name="storage_date"/>
+                                                    </td>
+                                                    <td style="width: 50%; padding-bottom: 5px;">
+                                                        <strong>Release Date:</strong>
+                                                        <field name="release_date"/>
+                                                    </td>
+                                                </tr>
+                                                <tr invisible="service_scope_id_code in ('AIR', 'SEA', 'LND', 'WH', 'INS', 'CCL', 'ILT')">
                                                     <td style="width: 50%; padding-bottom: 5px;">
                                                         <strong>Location:</strong>
                                                         <field name="service_location_id"/>
@@ -648,7 +736,7 @@
                                                         <field name="service_commodity_id"/>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr invisible="service_scope_id_code in ('AIR', 'SEA', 'LND', 'WH', 'INS', 'CCL', 'ILT')">
                                                     <td style="width: 50%; padding-bottom: 5px;">
                                                         <strong>Service Date:</strong>
                                                         <field name="service_date"/>
