@@ -21,11 +21,44 @@
             <xpath expr="//div[@id='portal_alert_category']" position="replace">
                 <div id="portal_alert_category" position="inside">
                     <t t-call="portal.portal_docs_entry">
+                        <t t-set="icon" t-value="'/project/static/src/img/tasks.svg'"/>
+                        <t t-set="title">My Shipments</t>
+                        <t t-set="url" t-value="'/my/tasks'"/>
+                        <t t-set="text">Follow up your shipments</t>
+                        <t t-set="placeholder_count" t-value="'task_count'"/>
+                    </t>
+                    <br/>
+                    <t t-call="portal.portal_docs_entry">
                         <t t-set="bg_color" t-value="'alert alert-primary'"/>
                         <t t-set="placeholder_count" t-value="'quotation_count'"/>
                         <t t-set="title">Bookings to review</t>
                         <t t-set="url" t-value="'/my/quotes'"/>
                         <t t-set="show_count" t-value="True"/>
+                    </t>
+                </div>
+                <div id="portal_client_category" position="inside">
+                    <t t-call="portal.portal_docs_entry">
+                        <t t-set="icon" t-value="'/account/static/src/img/Bill.svg'"/>
+                        <t t-set="title">Your Invoices</t>
+                        <t t-set="url" t-value="'/my/invoices?filterby=invoices'"/>
+                        <t t-set="text">Follow, download or pay your invoices</t>
+                        <t t-set="placeholder_count" t-value="'invoice_count'"/>
+                    </t>
+                </div>
+                <div id="portal_vendor_category" position="inside">
+                    <t t-call="portal.portal_docs_entry">
+                        <t t-set="icon" t-value="'/account/static/src/img/Bill.svg'"/>
+                        <t t-set="title">Our Invoices</t>
+                        <t t-set="url" t-value="'/my/invoices?filterby=bills'"/>
+                        <t t-set="text">Follow, download or pay our invoices</t>
+                        <t t-set="placeholder_count" t-value="'bill_count'"/>
+                    </t>
+                    <t t-call="portal.portal_docs_entry">
+                        <t t-set="icon" t-value="'/project/static/src/img/tasks.svg'"/>
+                        <t t-set="title">My Shipments</t>
+                        <t t-set="url" t-value="'/my/tasks'"/>
+                        <t t-set="text">Follow up your shipments</t>
+                        <t t-set="placeholder_count" t-value="'task_count'"/>
                     </t>
                 </div>
             </xpath>
@@ -35,13 +68,6 @@
         <template id="portal_my_home_inherit" name="Disable Projects/Tasks in Portal"
                   inherit_id="project.portal_my_home">
             <xpath expr="//div[@id='portal_service_category']" position="replace">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="icon" t-value="'/project/static/src/img/tasks.svg'"/>
-                    <t t-set="title">My Shipments</t>
-                    <t t-set="url" t-value="'/my/tasks'"/>
-                    <t t-set="text">Follow up your shipments</t>
-                    <t t-set="placeholder_count" t-value="'task_count'"/>
-                </t>
             </xpath>
         </template>
 
@@ -235,6 +261,18 @@
                                                     Packages
                                                 </a>
                                             </li>
+                                            <li class="nav-item active">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab4" role="tab"
+                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Routes and Services
+                                                </a>
+                                            </li>
+                                            <li class="nav-item active">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab5" role="tab"
+                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Tracking Stages
+                                                </a>
+                                            </li>
                                         </ul>
                                         <div class="tab-content"
                                              style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; margin-top: 10px; background-color: #f5f5f5;">
@@ -350,6 +388,142 @@
                                                                 </tr>
                                                             </table>
                                                         </t>
+                                                    </div>
+                                                </p>
+                                            </div>
+                                            <div id="tab4" class="tab-pane" role="tabpanel">
+                                                <p>
+                                                    <div t-attf-class="oe_kanban_global_click">
+                                                        <t t-foreach="task.operation_route_ids.filtered(lambda r: r.is_main_carriage)"
+                                                           t-as="record">
+                                                            <!-- First, display records with is_main_carriage set to True -->
+                                                            <table style="width: 100%;">
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <!-- Badge inside table row -->
+                                                                        <div style="position: relative; display: inline-block; width: auto; height: 30px;">
+                                                                            <div style="background-color: red; color: white; text-align: center; line-height: 30px; padding: 0 10px; font-weight: bold; box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);">
+                                                                                Main Carriage
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td/>
+                                                                    <td/>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Service:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.service_scope_id.name"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Direction:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.clearance_type_id.name"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </t>
+
+                                                        <t t-foreach="task.operation_route_ids.filtered(lambda r: not r.is_main_carriage)"
+                                                           t-as="record">
+                                                            <!-- Then, display records with is_main_carriage set to False -->
+                                                            <table style="width: 100%;">
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <hr/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Service:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.service_scope_id.name"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Direction:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.clearance_type_id.name"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </t>
+
+                                                    </div>
+                                                </p>
+                                            </div>
+                                            <div id="tab5" class="tab-pane" role="tabpanel">
+                                                <p>
+                                                    <div t-attf-class="oe_kanban_global_click">
+
+                                                        <t t-set="total_stages"
+                                                           t-value="len(task.operation_tracking_stages)"/>
+
+                                                        <t t-set="index" t-value="0"/>
+                                                        <t t-foreach="task.operation_tracking_stages" t-as="record">
+                                                            <table style="width: 100%;">
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Tracking Type:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.tracking_type"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Tracking Stage:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.tracking_stage.name"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>At:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.tracking_date"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Description:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.description"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <hr/>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <!-- Increment index after processing each record -->
+                                                                <t t-set="index" t-value="index + 1"/>
+
+                                                                <!-- Add separator (e.g., <hr />) if it's not the last record -->
+                                                                <t t-if="index == total_stages">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <strong>Next Stage:</strong>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span t-field="record.next_tracking_stage.name"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <strong>Expected Date:</strong>
+                                                                        </td>
+                                                                        <td width="25%">
+                                                                            <span t-field="record.expected_date"/>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </table>
+                                                        </t>
+
+
                                                     </div>
                                                 </p>
                                             </div>
@@ -473,14 +647,16 @@
         <template id="remove_odoo_powered_footer" inherit_id="portal.portal_record_sidebar">
             <xpath expr="//div[@id='sidebar_content']" position="replace">
                 <div class="o_portal_sidebar_content d-lg-inline-block mb-4 mb-lg-0 p-3 p-lg-0" id="sidebar_content">
-                <div t-if="title" class="position-relative d-flex align-items-center justify-content-md-center justify-content-lg-between flex-wrap gap-2">
-                    <t t-out="title"/>
+                    <div t-if="title"
+                         class="position-relative d-flex align-items-center justify-content-md-center justify-content-lg-between flex-wrap gap-2">
+                        <t t-out="title"/>
+                    </div>
+                    <t t-if="entries" t-out="entries"/>
+                    <div class="d-none d-lg-block mt-5 small text-center text-muted">
+                        Deisgned and Implemented by
+                        <a href="https://www.eit-hub.com/">EIT Hub</a>
+                    </div>
                 </div>
-                <t t-if="entries" t-out="entries"/>
-                <div class="d-none d-lg-block mt-5 small text-center text-muted">
-                    Deisgned and Implemented by <a href="https://www.eit-hub.com/">EIT Hub</a>
-                </div>
-            </div>
             </xpath>
         </template>
     </data>

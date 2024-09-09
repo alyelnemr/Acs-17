@@ -22,6 +22,7 @@
         'reports/statement_op_report.xml',
         'reports/statement_report.xml',
         'views/project_portal.xml',
+        'views/tracking_page_templates.xml',
         'views/operation_route.xml',
         'views/account_move.xml',
         'views/project_project_views.xml',

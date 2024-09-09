@@ -189,10 +189,11 @@ class OperationRoute(models.Model):
 
     @api.depends('service_scope_id')
     def _compute_routing_types_is_hidden(self):
-        self.is_main_carriage = True if self.service_scope_id.service_scope_type == 'freight' else False
-        self.is_main_carriage_readonly = self.service_scope_id.service_scope_type == 'freight'
-        self.routing_types_is_hidden = self.service_scope_id.service_scope_type == 'freight'
-        self.show_free_time = self.service_scope_id_code == 'CCL' and self.show_containers
+        for record in self:
+            record.is_main_carriage = True if record.service_scope_id.service_scope_type == 'freight' else False
+            record.is_main_carriage_readonly = record.service_scope_id.service_scope_type == 'freight'
+            record.routing_types_is_hidden = record.service_scope_id.service_scope_type == 'freight'
+            record.show_free_time = record.service_scope_id_code == 'CCL' and record.show_containers
 
     @api.onchange('is_main_carriage', 'service_scope_id')
     def onchange_is_main_carriage(self):
