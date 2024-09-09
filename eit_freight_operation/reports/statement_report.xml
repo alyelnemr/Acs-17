@@ -472,7 +472,7 @@
                                     <t t-out="product_line.sale_price"/>
                                 </td>
                                 <td style="white-space: nowrap; text-align: center">
-                                    <t t-out="product_line.currency_id"/>
+                                    <t t-out="product_line.currency_id.name"/>
                                 </td>
                                 <td style="white-space: nowrap; text-align: center">
                                     <t t-out="product_line.sale_price - product_line.cost_price"/>

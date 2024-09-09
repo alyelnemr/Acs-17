@@ -96,6 +96,10 @@ class ServiceScope(models.Model):
                 rec.toggle_active()
 
     def _generate_code(self, name):
+        if self.code in ('AIR', 'SEA', 'LND', 'WH', 'INS', 'CCL', 'ILT') or self.service_scope_type in (
+                'freight', 'clearance', 'transportation', 'insurance', 'warehousing'):
+            # Static codes
+            return self.code
         # Split the name by spaces and take the first character of each word
         words = name.split()
         # Combine the first letters, and take up to the first 3 characters
