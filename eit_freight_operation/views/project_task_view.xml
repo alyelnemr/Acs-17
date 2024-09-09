@@ -336,8 +336,14 @@
         </record>
 
         <record id="project.menu_project_management_all_tasks" model="ir.ui.menu">
-            <field name="name">Operations</field>
+            <field name="name">Customers</field>
             <field name="parent_id" ref="project.menu_main_pm"/> <!-- Update parent menu -->
+            <field name="sequence">1</field> <!-- Update sequence -->
+        </record>
+
+        <record id="menu_operations" model="ir.ui.menu">
+            <field name="name">Operations</field>
+            <field name="parent_id" ref="project.menu_project_management_all_tasks"/> <!-- Update parent menu -->
             <field name="action" ref="project.action_view_all_task"/> <!-- Update action -->
             <field name="sequence">1</field> <!-- Update sequence -->
         </record>
@@ -358,32 +364,39 @@
         </record>
 
         <record id="project.menu_projects" model="ir.ui.menu">
-            <field name="name">Customers</field>
+            <field name="name">Accounting</field>
             <field name="sequence">2</field>
         </record>
 
         <record id="menu_customer_profiles" model="ir.ui.menu">
             <field name="name">Customer Profiles</field>
             <field name="action" ref="project.open_view_project_all"/>
-            <field name="parent_id" ref="project.menu_projects"/>
-            <field name="sequence">1</field>
+            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="menu_bookings" model="ir.ui.menu">
+            <field name="name">Bookings</field>
+            <field name="action" ref="sale.action_quotations_with_onboarding"/>
+            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
+            <field name="sequence">2</field>
         </record>
         <record id="menu_customer_contacts" model="ir.ui.menu">
-            <field name="name">Contacts</field>
+            <field name="name">Partners</field>
             <field name="action" ref="contacts.action_contacts"/>
             <field name="parent_id" ref="project.menu_projects"/>
             <field name="sequence">4</field>
         </record>
 
         <record id="menu_freight_customer_invoices" model="ir.ui.menu">
-            <field name="name">Freight Invoices</field>
+            <field name="name">Invoices</field>
             <field name="action" ref="action_freight_move_out_invoice_type"/>
             <field name="parent_id" ref="project.menu_projects"/>
             <field name="sequence">2</field>
         </record>
 
         <record id="menu_freight_customer_bills" model="ir.ui.menu">
-            <field name="name">Freight Bills</field>
+            <field name="name">Bills</field>
             <field name="action" ref="action_freight_move_in_invoice_type"/>
             <field name="parent_id" ref="project.menu_projects"/>
             <field name="sequence">3</field>
