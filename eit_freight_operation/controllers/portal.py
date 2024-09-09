@@ -18,7 +18,7 @@ from odoo.addons.project.controllers.portal import ProjectCustomerPortal
 
 
 class MyProjectCustomerPortal(ProjectCustomerPortal):
-    @http.route('/tracking', type='http', auth='public', website=True)
+    @http.route('/track-shipment', type='http', auth='public', website=True)
     def search_tracking(self, tracking_number=None, **kwargs):
         # Initialize an empty context for the template
         context = {
