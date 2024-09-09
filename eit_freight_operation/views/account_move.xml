@@ -42,6 +42,7 @@
                 <xpath expr="//group[@id='header_right_group']" position="after">
                         <field name="show_packages" invisible="1"/>
                         <field name="show_containers" invisible="1"/>
+                        <field name="invoice_nature"/>
                 </xpath>
                 <xpath expr="//group[@name='accounting_info_group']" position="inside">
                     <field name="is_freight" readonly="1"/>
