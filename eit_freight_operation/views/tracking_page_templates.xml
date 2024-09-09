@@ -1,133 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="tracking_template" name="Tracking Page">
-        <t t-call="website.layout">
-            <div class="container my-5">
-                <!-- Main Title Section -->
-                <div class="text-center mb-5">
-                    <h1 class="display-4">
-                        <t t-esc="page_title"/>
-                    </h1>
-                    <p class="lead">
-                        <t t-esc="content"/>
-                    </p>
-                </div>
-
-                <!-- Search Form for Tracking Number -->
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <form action="/tracking" method="get">
-                            <div class="search-container">
-                                <i class="fa fa-search search-icon"></i>
-                                <input type="text" class="search-input" placeholder="Search..." name="tracking_number" required="1" />
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Display tracking details if the search was successful -->
-                <t t-if="tracking_record">
-                    <div class="card mt-5">
-                        <div class="card-header bg-primary text-white">
-                            <h4>Tracking Details</h4>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <strong>Tracking Number:</strong>
-                                    <span class="text-muted">
-                                        <t t-esc="tracking_record.tracking_number"/>
-                                    </span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Status:</strong>
-                                    <span class="text-muted">
-                                        <t t-esc="tracking_record.status"/>
-                                    </span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Delivery Date:</strong>
-                                    <span class="text-muted">
-                                        <t t-esc="tracking_record.delivery_date"/>
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </t>
-
-                <!-- Error Message -->
-                <t t-if="error_message">
-                    <div class="alert alert-danger mt-5 text-center">
-                        <t t-esc="error_message"/>
-                    </div>
-                </t>
+    <t t-call="website.layout">
+        <div class="container my-5">
+            <!-- Main Title Section -->
+            <div class="text-center mb-5">
+                <h1 class="display-4">
+                    <t t-esc="page_title"/>
+                </h1>
+                <p class="lead">
+                    <t t-esc="content"/>
+                </p>
             </div>
 
-            <!-- Optional Styling for the search box -->
-            <style>
-                .search-container {
-                    position: relative;
-                    width: 100%;
-                }
+            <!-- Search Form for Tracking Number -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form action="/tracking" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control search-input" placeholder="Enter tracking number..." name="tracking_number" required="1" />
+                            <div class="input-group-append">
+                                <button class="btn btn-primary search-btn" type="submit">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                .search-icon {
-                    position: absolute;
-                    top: 50%;
-                    left: 10px;
-                    transform: translateY(-50%);
-                    color: #ccc;
-                    font-size: 1.2rem;
-                }
+            <!-- Display tracking details if the search was successful -->
+            <t t-if="tracking_record">
+                <div class="card mt-5">
+                    <div class="card-header bg-primary text-white">
+                        <h4>Tracking Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>Tracking Number:</strong>
+                                <span class="text-muted">
+                                    <t t-esc="tracking_record.tracking_number"/>
+                                </span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Status:</strong>
+                                <span class="text-muted">
+                                    <t t-esc="tracking_record.status"/>
+                                </span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Delivery Date:</strong>
+                                <span class="text-muted">
+                                    <t t-esc="tracking_record.delivery_date"/>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </t>
 
-                .search-input {
-                    width: 100%;
-                    padding: 10px 10px 10px 40px;
-                    border: 1px solid #ccc;
-                    border-radius: 25px;
-                    background-color: #f8f8f8;
-                    font-size: 1rem;
-                    box-shadow: none;
-                    outline: none;
-                    transition: background-color 0.3s ease;
-                }
+            <!-- Error Message -->
+            <t t-if="error_message">
+                <div class="alert alert-danger mt-5 text-center">
+                    <t t-esc="error_message"/>
+                </div>
+            </t>
+        </div>
 
-                .search-input:focus {
-                    background-color: #fff;
-                    border-color: #aaa;
-                }
+        <!-- Styling for search input and button -->
+        <style>
+            /* Styling for the search input group */
+            .input-group {
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 30px;
+                overflow: hidden;
+            }
 
-                .search-input::placeholder {
-                    color: #bbb;
-                    font-style: italic;
-                }
+            /* Search input styling */
+            .search-input {
+                border: none;
+                padding: 15px 20px;
+                font-size: 1rem;
+                border-radius: 30px 0 0 30px;
+                outline: none;
+                background-color: #f8f8f8;
+                transition: background-color 0.3s ease, border-color 0.3s ease;
+            }
 
-                .card {
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                    border: none;
-                    border-radius: 8px;
-                }
+            /* Search button styling */
+            .search-btn {
+                padding: 15px 30px;
+                background-color: #6f42c1;
+                color: white;
+                border: none;
+                font-size: 1rem;
+                font-weight: bold;
+                border-radius: 0 30px 30px 0;
+                transition: background-color 0.3s ease;
+            }
 
-                .card-header {
-                    border-bottom: none;
-                    border-radius: 8px 8px 0 0;
-                }
+            /* Hover effect for search button */
+            .search-btn:hover {
+                background-color: #59319b;
+            }
 
-                .card-body ul {
-                    margin: 0;
-                    padding: 0;
-                    list-style: none;
-                }
+            /* Input focus effect */
+            .search-input:focus {
+                background-color: #fff;
+                border-color: #aaa;
+            }
 
-                .card-body ul li {
-                    border-bottom: 1px solid #ddd;
-                    padding: 15px 0;
-                }
+            /* Card styling */
+            .card {
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                border: none;
+                border-radius: 8px;
+            }
 
-                .alert {
-                    font-size: 1.2rem;
-                }
-            </style>
-        </t>
-    </template>
+            .card-header {
+                border-bottom: none;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .card-body ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            .card-body ul li {
+                border-bottom: 1px solid #ddd;
+                padding: 15px 0;
+            }
+
+            .alert {
+                font-size: 1.2rem;
+            }
+        </style>
+    </t>
+</template>
+
 </odoo>
