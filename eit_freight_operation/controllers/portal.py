@@ -23,7 +23,7 @@ class MyProjectCustomerPortal(ProjectCustomerPortal):
         # Initialize an empty context for the template
         context = {
             'page_title': 'Tracking',
-            'content': 'Enter your tracking number, and press enter to get the status of your shipment.'
+            'content': 'Enter your Policy number, Customer Reference or Shipping Container, and press enter to get the status of your shipment.'
         }
 
         if tracking_number:
@@ -33,6 +33,18 @@ class MyProjectCustomerPortal(ProjectCustomerPortal):
 
         # Render the page with or without the tracking record or error
         return request.render('eit_freight_operation.tracking_template', context)
+
+    def _task_get_search_domain(self, search_in, search):
+        search_domain = [super()._task_get_search_domain(search_in, search)]
+        if search_in in ('master_bl', 'all'):
+            search_domain.append([('master_bl', 'ilike', search)])
+        if search_in in ('house_bl_seq', 'all'):
+            search_domain.append([('house_bl_seq', 'ilike', search)])
+        if search_in in ('shipping_container', 'all'):
+            search_domain.append([('shipping_container_ids.container_id.name', 'ilike', search)])
+        if search_in in ('customer_ref', 'all'):
+            search_domain.append([('customer_ref', 'ilike', search)])
+        return OR(search_domain)
 
     def _task_get_searchbar_inputs(self, milestones_allowed, project=False):
         values = {

@@ -18,7 +18,7 @@
                 <div class="col-md-8">
                     <form action="/tracking" method="get">
                         <div class="input-group">
-                            <input type="text" class="form-control search-input" placeholder="Enter tracking number..." name="tracking_number" required="1" />
+                            <input type="text" class="form-control search-input" placeholder="Enter Policy number, Customer Reference or Shipping Container..." name="tracking_number" required="1" />
                             <div class="input-group-append">
                                 <button class="btn btn-primary search-btn" type="submit">
                                     <i class="fa fa-search"></i> Search

@@ -375,12 +375,6 @@
             <field name="sequence">2</field>
         </record>
 
-        <record id="menu_bookings" model="ir.ui.menu">
-            <field name="name">Bookings</field>
-            <field name="action" ref="sale.action_quotations_with_onboarding"/>
-            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
-            <field name="sequence">3</field>
-        </record>
         <record id="menu_customer_contacts" model="ir.ui.menu">
             <field name="name">Partners</field>
             <field name="action" ref="contacts.action_contacts"/>

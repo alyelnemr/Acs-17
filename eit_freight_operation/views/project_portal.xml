@@ -187,78 +187,105 @@
                                 </div>
                                 <div class="row mb-4 container"
                                      style="background-color: #d9def3; border-radius: 15px; padding: 20px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
-                                    <div class="col-12 col-md-6 flex-grow-1">
-                                        <t t-if="task.transport_type_id">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">Transport Type:</strong>
-                                                <span t-field="task.transport_type_id.name"/>
+
+                                    <div class="container my-4">
+                                        <!-- Bootstrap Row -->
+                                        <div class="row">
+                                            <!-- First Column (Div 1) -->
+                                            <div class="col-12 col-md-6">
+                                                <t t-if="task.transport_type_id">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Transport Type:</strong>
+                                                        <span t-field="task.transport_type_id.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.clearence_type_id">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Direction:</strong>
+                                                        <span t-field="task.clearence_type_id.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.house_bl_seq">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">House B/L:</strong>
+                                                        <span t-field="task.house_bl_seq"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.master_bl_show">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Master B/L:</strong>
+                                                        <span t-field="task.master_bl"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.port_id">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">POL:</strong>
+                                                        <span t-field="task.port_id.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.port_id_pod">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">POD:</strong>
+                                                        <span t-field="task.port_id_pod.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
                                             </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.clearence_type_id">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">Direction:</strong>
-                                                <span t-field="task.clearence_type_id.name"/>
+
+                                            <!-- Second Column (Div 2) -->
+                                            <div class="col-12 col-md-6">
+                                                <t t-if="task.commodity_id">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Commodity:</strong>
+                                                        <span t-field="task.commodity_id.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.atd">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Departure Date:</strong>
+                                                        <span t-field="task.atd"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.ata">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Arrival Date:</strong>
+                                                        <span t-field="task.ata"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
+                                                <t t-if="task.transit_time">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Transit Time:</strong>
+                                                        <span t-field="task.transit_time"/>
+                                                        Days
+                                                        <br/>
+                                                    </div>
+                                                </t>
+                                                <t t-if="task.vessel_id">
+                                                    <div style="color: #333; font-family: Arial, sans-serif;">
+                                                        <strong style="color: #0056b3;">Vessel:</strong>
+                                                        <span t-field="task.vessel_id.name"/>
+                                                    </div>
+                                                    <br/>
+                                                </t>
                                             </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.house_bl_seq">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">House B/L:</strong>
-                                                <span t-field="task.house_bl_seq"/>
-                                            </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.master_bl_show">
-                                            <div
-                                                    style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">Master B/L:</strong>
-                                                <span t-field="task.master_bl"/>
-                                            </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.port_id">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">POL:</strong>
-                                                <span t-field="task.port_id.name"/>
-                                            </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.port_id_pod">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">POD:</strong>
-                                                <span t-field="task.port_id_pod.name"/>
-                                            </div>
-                                            <br/>
-                                        </t>
-                                        <t t-if="task.port_id_pod">
-                                            <div style="color: #333; font-family: Arial, sans-serif;">
-                                                <strong style="color: #0056b3;">Commodity:</strong>
-                                                <span t-field="task.port_id_pod.name"/>
-                                            </div>
-                                        </t>
-                                        <br/>
-                                        <br/>
+                                        </div>
                                     </div>
+
                                     <div class="o_portal_tabs" style="margin-top: 20px;">
                                         <ul class="nav nav-pills" role="tablist">
                                             <li class="nav-item">
-                                                <a class="nav-link active" data-bs-toggle="tab" href="#tab1" role="tab"
+                                                <a class="nav-link active" data-bs-toggle="tab" href="#tab5" role="tab"
                                                    aria-selected="false"
                                                    style="background-color: #0056b3; color: white; border-radius: 10px; margin-right: 5px;">
-                                                    Bill Of Leading
-                                                </a>
-                                            </li>
-                                            <li class="nav-item active" t-if="task.show_containers">
-                                                <a class="nav-link" data-bs-toggle="tab" href="#tab2" role="tab"
-                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
-                                                    Containers
-                                                </a>
-                                            </li>
-                                            <li class="nav-item active" t-if="task.show_packages">
-                                                <a class="nav-link" data-bs-toggle="tab" href="#tab3" role="tab"
-                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
-                                                    Packages
+                                                    Tracking Stages
                                                 </a>
                                             </li>
                                             <li class="nav-item active">
@@ -267,49 +294,94 @@
                                                     Routes and Services
                                                 </a>
                                             </li>
-                                            <li class="nav-item active">
-                                                <a class="nav-link" data-bs-toggle="tab" href="#tab5" role="tab"
+                                            <li class="nav-item active" t-if="task.show_containers" id="containers">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab2" role="tab"
                                                    style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
-                                                    Tracking Stages
+                                                    Cargo Details
+                                                </a>
+                                            </li>
+                                            <li class="nav-item active" t-if="task.show_packages" id="packages">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#tab3" role="tab"
+                                                   style="background-color: #004080; color: white; border-radius: 10px; margin-right: 5px;">
+                                                    Cargo Details
                                                 </a>
                                             </li>
                                         </ul>
                                         <div class="tab-content"
                                              style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; margin-top: 10px; background-color: #f5f5f5;">
-                                            <div id="tab1" class="tab-pane active with-3d-shadow with-transitions"
+                                            <div id="tab5" class="tab-pane active with-3d-shadow with-transitions"
                                                  role="tabpanel">
-                                                <div t-if="task.atd"
-                                                     style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">Departure Date:</strong>
-                                                    <span t-field="task.atd"/>
-                                                    <br/>
-                                                </div>
-                                                <div t-if="task.ata"
-                                                     style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">Arrival Date:</strong>
-                                                    <span t-field="task.ata"/>
-                                                    <br/>
-                                                </div>
-                                                <div t-if="task.transit_time"
-                                                     style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">Transit Time:</strong>
-                                                    <span t-field="task.transit_time"/>
-                                                    Days
-                                                    <br/>
-                                                </div>
-                                                <div t-if="task.vessel_id"
-                                                     style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">Vessel:</strong>
-                                                    <span t-field="task.vessel_id.name"/>
-                                                    <br/>
-                                                </div>
-                                                <div t-if="task.house_bl_seq_hide"
-                                                     style="color: #333; font-family: Arial, sans-serif;">
-                                                    <strong style="color: #0056b3;">House BL:</strong>
-                                                    <span t-field="task.house_bl_seq"/>
-                                                    <br/>
-                                                </div>
+                                                <p>
+                                                    <div t-attf-class="oe_kanban_global_click">
+
+                                                        <t t-set="total_stages"
+                                                           t-value="len(task.operation_tracking_stages)"/>
+
+                                                        <t t-set="index" t-value="0"/>
+                                                        <t t-foreach="task.operation_tracking_stages" t-as="record">
+                                                            <table style="width: 100%;">
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Tracking Type:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.tracking_type"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Tracking Stage:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.tracking_stage.name"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>At:</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-field="record.tracking_date"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>Description:</strong>
+                                                                    </td>
+                                                                    <td width="25%">
+                                                                        <span t-field="record.description"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <hr/>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <!-- Increment index after processing each record -->
+                                                                <t t-set="index" t-value="index + 1"/>
+
+                                                                <!-- Add separator (e.g., <hr />) if it's not the last record -->
+                                                                <t t-if="index == total_stages">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <strong>Next Stage:</strong>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span t-field="record.next_tracking_stage.name"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <strong>Expected Date:</strong>
+                                                                        </td>
+                                                                        <td width="25%">
+                                                                            <span t-field="record.expected_date"/>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </table>
+                                                        </t>
+
+
+                                                    </div>
+                                                </p>
                                             </div>
+
                                             <div id="tab2" class="tab-pane" role="tabpanel">
                                                 <p>
                                                     <div t-attf-class="oe_kanban_global_click">
@@ -452,77 +524,6 @@
                                                                 </tr>
                                                             </table>
                                                         </t>
-
-                                                    </div>
-                                                </p>
-                                            </div>
-                                            <div id="tab5" class="tab-pane" role="tabpanel">
-                                                <p>
-                                                    <div t-attf-class="oe_kanban_global_click">
-
-                                                        <t t-set="total_stages"
-                                                           t-value="len(task.operation_tracking_stages)"/>
-
-                                                        <t t-set="index" t-value="0"/>
-                                                        <t t-foreach="task.operation_tracking_stages" t-as="record">
-                                                            <table style="width: 100%;">
-                                                                <tr>
-                                                                    <td>
-                                                                        <strong>Tracking Type:</strong>
-                                                                    </td>
-                                                                    <td>
-                                                                        <span t-field="record.tracking_type"/>
-                                                                    </td>
-                                                                    <td>
-                                                                        <strong>Tracking Stage:</strong>
-                                                                    </td>
-                                                                    <td width="25%">
-                                                                        <span t-field="record.tracking_stage.name"/>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <strong>At:</strong>
-                                                                    </td>
-                                                                    <td>
-                                                                        <span t-field="record.tracking_date"/>
-                                                                    </td>
-                                                                    <td>
-                                                                        <strong>Description:</strong>
-                                                                    </td>
-                                                                    <td width="25%">
-                                                                        <span t-field="record.description"/>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="4">
-                                                                        <hr/>
-                                                                    </td>
-                                                                </tr>
-
-                                                                <!-- Increment index after processing each record -->
-                                                                <t t-set="index" t-value="index + 1"/>
-
-                                                                <!-- Add separator (e.g., <hr />) if it's not the last record -->
-                                                                <t t-if="index == total_stages">
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Next Stage:</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <span t-field="record.next_tracking_stage.name"/>
-                                                                        </td>
-                                                                        <td>
-                                                                            <strong>Expected Date:</strong>
-                                                                        </td>
-                                                                        <td width="25%">
-                                                                            <span t-field="record.expected_date"/>
-                                                                        </td>
-                                                                    </tr>
-                                                                </t>
-                                                            </table>
-                                                        </t>
-
 
                                                     </div>
                                                 </p>
