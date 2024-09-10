@@ -14,6 +14,7 @@
     "data": [
         'security/frieght_secuirity.xml',
         'security/ir.model.access.csv',
+        'views/res_company.xml',
         'views/freight_settings_view.xml',
         'views/service_setting_view.xml',
         'views/port_cities_view.xml',

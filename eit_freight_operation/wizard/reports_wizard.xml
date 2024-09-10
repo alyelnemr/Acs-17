@@ -8,7 +8,9 @@
             <form string="Print Statement">
                 <group style="width:50%">
                     <field name="task_id" invisible="1" forcesave="1"/>
-                    <field name="report_name" widget="selection" />
+                    <field name="show_invoice" invisible="1" />
+                    <field name="task_report_name" widget="selection" invisible="show_invoice" />
+                    <field name="invoice_report_name" widget="selection" invisible="not show_invoice" />
                 </group>
                 <footer>
                     <button string="Print" type="object" name="print_report" class="btn-primary"/>
@@ -19,7 +21,7 @@
     </record>
 
     <record id="action_project_task_statement_wizard" model="ir.actions.act_window">
-        <field name="name">Print Operation Reports</field>
+        <field name="name">Print Reports</field>
         <field name="res_model">operation.reports.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

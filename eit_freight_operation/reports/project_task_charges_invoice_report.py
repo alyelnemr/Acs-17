@@ -10,6 +10,12 @@ class ProjectTaskChargesInvoiceReport(models.AbstractModel):
         docs = self.env['account.move'].browse(docids)
         doc_name = ''
         shipping_line = ''
+        show_bank_details = docs.company_id.show_bank_details or False
+        account_name = docs.company_id.account_name or ''
+        bank_name = docs.company_id.bank_name or ''
+        bank_address = docs.company_id.bank_address or ''
+        swift_code = docs.company_id.swift_code or ''
+        account_number = docs.company_id.account_number or ''
         for line in docs.project_task_id.opt_partners_lines.filtered(lambda x: x.partner_type_id.code == 'SHL'):
             shipping_line = line.partner_id.name
             break
@@ -35,6 +41,12 @@ class ProjectTaskChargesInvoiceReport(models.AbstractModel):
             'doc_name': doc_name,
             'package': package,
             'package_qty': package_qty,
+            'show_bank_details': show_bank_details,
+            'account_name': account_name,
+            'bank_name': bank_name,
+            'bank_address': bank_address,
+            'swift_code': swift_code,
+            'account_number': account_number,
             'container': container,
             'container_type': container_type,
             'container_qty': container_qty,

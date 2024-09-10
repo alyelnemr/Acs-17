@@ -1,3 +1,4 @@
+from . import res_company
 from . import friegt_settings
 from . import service_scope
 from . import clearance_type
