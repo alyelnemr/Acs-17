@@ -29,4 +29,6 @@ purchase.access_purchase_order_pricing_user,purchase.order.pricing.user,model_pu
 purchase.access_purchase_order_line_pricing_user,purchase.order.line,purchase.model_purchase_order_line,group_prcing_user,1,1,1,0
 access_transport_type_website,transport.type.website,eit_freight_MasterData.model_transport_type,,1,0,0,0
 access_fright_vessels_website,freight.vessels.website,eit_freight_MasterData.model_freight_vessels,,1,0,0,0
-access_product_template_website,product.template.website,product.model_product_template,,1,0,0,0
+access_product_template_website,product.template.website,product.model_product_template,base.group_public,1,0,0,0
+access_port_cites_public,port.cites.public,model_port_cites,base.group_public,1,0,0,0
+access_port_cites_website,port.cites.website,model_port_cites,,1,0,0,0
