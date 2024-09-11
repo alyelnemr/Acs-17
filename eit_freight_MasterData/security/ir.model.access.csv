@@ -25,7 +25,6 @@ access_commodity_data_custom_export,commodity.data.custom.export,model_commodity
 access_partner_type,partner.type,model_partner_type,group_freight_admin,1,1,0,0
 access_freight_conditions,freight.conditions,model_freight_conditions,group_freight_admin,1,1,1,1
 access_terminal_port,terminal.port,model_terminal_port,group_freight_admin,1,1,1,1
-
 access_commodity_group_ma,commodity.group_mn,model_commodity_group,group_freight_manager,1,1,1,0
 access_port_cites_manager,port.cites.manager,model_port_cites,group_freight_manager,1,1,1,0
 access_transport_type_manager,transport.type.manager,model_transport_type,group_freight_manager,1,0,0,0
