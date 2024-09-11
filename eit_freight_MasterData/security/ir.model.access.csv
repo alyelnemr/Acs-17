@@ -92,4 +92,3 @@ purchase.access_product_product_purchase_manager,product.product purchase_manage
 sale.access_product_product_sale_manager,product.product salemanager,model_product_product,sales_team.group_sale_manager,1,0,0,0
 hr_expense.access_product_product_hr_expense_user,product.product.hr.expense.user,product.model_product_product,hr_expense.group_hr_expense_manager,1,0,0,0
 product.access_product_product_manager,product.product manager,model_product_product,base.group_system,1,1,1,0
-
