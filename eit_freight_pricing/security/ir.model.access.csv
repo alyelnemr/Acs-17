@@ -32,3 +32,4 @@ access_fright_vessels_website,freight.vessels.website,eit_freight_MasterData.mod
 access_product_template_website,product.template.website,product.model_product_template,base.group_public,1,0,0,0
 access_port_cites_public,port.cites.public,eit_freight_MasterData.model_port_cites,base.group_public,1,0,0,0
 access_port_cites_website,port.cites.website,eit_freight_MasterData.model_port_cites,,1,0,0,0
+access_container_data_website,container.data.website,eit_freight_MasterData.model_container_data,base.group_public,1,0,0,0
