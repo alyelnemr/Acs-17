@@ -9,12 +9,15 @@ access_ftl_container_type,ftl.container.type,model_ftl_container_type,base.group
 access_product_charges,product.charges,model_product_charges,base.group_user,1,1,1,1
 access_charge_type_currency_rate,charge.type.currency.rate,model_charge_type_currency_rate,base.group_user,1,1,1,1
 access_pricing_charges,pricing.charges,model_pricing_charges,base.group_user,1,1,1,1
+access_pricing_charges_website,pricing.charges,model_pricing_charges,,1,0,0,0
 access_total_sale_currency,total.sale.currency,model_total_sale_currency,base.group_user,1,1,1,1
 access_total_cost_currency,total.cost.currency,model_total_cost_currency,base.group_user,1,1,1,1
 access_request_price_vendor,request.price.vendor,model_request_price_vendor,base.group_user,1,1,1,1
 access_parnet_list,parnet.list,model_parnet_list,base.group_user,1,1,1,1
 access_frieght_vessel_line,frieght.vessel.line,model_frieght_vessel_line,base.group_user,1,1,1,1
+access_frieght_vessel_line_website,frieght.vessel.line.website,model_frieght_vessel_line,,1,0,0,0
 access_frieght_plane_line,frieght.plane.line,model_frieght_plane_line,base.group_user,1,1,1,1
+access_frieght_plane_line_website,frieght.plane.line.website,model_frieght_plane_line,,1,0,0,0
 access_pricing_purchase_order_user,pricing.purchase.order.user,model_purchase_order,group_prcing_user,1,1,1,0
 access_request_price_user,request.price.user,model_request_price,group_prcing_user,1,1,1,0
 access_request_price_usero,request.price.usero,model_request_price,group_pricing_manager,1,1,1,0
@@ -24,4 +27,5 @@ hr_expense.access_product_template_hr_expense_user,product.template.hr.expense.u
 product.access_product_template_manager,product.template.manager,model_product_template,base.group_system,1,1,1,0
 purchase.access_purchase_order_pricing_user,purchase.order.pricing.user,model_purchase_order,group_prcing_user,1,1,1,0
 purchase.access_purchase_order_line_pricing_user,purchase.order.line,purchase.model_purchase_order_line,group_prcing_user,1,1,1,0
-
+access_transport_type_website,transport.type.website,eit_freight_MasterData.model_transport_type,,1,0,0,0
+access_fright_vessels_website,freight.vessels.website,eit_freight_MasterData.model_freight_vessels,,1,0,0,0

@@ -27,8 +27,18 @@ class WebsiteSale(payment_portal.PaymentPortal):
     ], type='http', auth="public", website=True, sitemap='shop')
     def shop(self, page=0, category=None, search='', min_price=0.0, max_price=0.0, ppg=False, **post):
         # change the route to /live-shipping-rates
-        return super(WebsiteSale, self).shop(page=page, category=category, search=search,
+        response = super(WebsiteSale, self).shop(page=page, category=category, search=search,
                                              min_price=min_price, max_price=max_price, ppg=ppg, **post)
+
+        # Fetch the USD currency (assuming the USD currency has a code 'USD')
+        currency_usd_id = request.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+
+        # Update the response values to include 'currency_usd_id'
+        response.qcontext.update({
+            'currency_usd_id': currency_usd_id,
+        })
+
+        return response
 
     def _prepare_product_values(self, product, category, search, **kwargs):
         returned_dict = super(WebsiteSale, self)._prepare_product_values(product, category, search, **kwargs)

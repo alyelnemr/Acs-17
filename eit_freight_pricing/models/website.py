@@ -19,11 +19,11 @@ class Website(models.Model):
         """
         self.ensure_one()
 
-        self.product_page_image_width = '50_pc'
+        product_page_image_width = '50_pc' if self.product_page_image_width == 'none' else self.product_page_image_width
 
         return {
             'none': (0, 12),
             '50_pc': (6, 6),
             '66_pc': (8, 4),
             '100_pc': (12, 12),
-        }.get(self.product_page_image_width)
+        }.get(product_page_image_width)
