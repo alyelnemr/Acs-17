@@ -12,3 +12,18 @@ class Website(models.Model):
             ('mandatory', 'Mandatory (no guest checkout)'),
         ],
         default='mandatory')
+
+    def _get_product_page_proportions(self):
+        """
+        Returns the number of columns (css) that both the images and the product details should take.
+        """
+        self.ensure_one()
+
+        self.product_page_image_width = '50_pc'
+
+        return {
+            'none': (0, 12),
+            '50_pc': (6, 6),
+            '66_pc': (8, 4),
+            '100_pc': (12, 12),
+        }.get(self.product_page_image_width)

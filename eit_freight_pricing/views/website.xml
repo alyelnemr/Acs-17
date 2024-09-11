@@ -453,7 +453,7 @@
         <!-- Use XPath to find the appropriate element and replace its content -->
         <xpath expr="//p[@class='text-muted mb-0']" position="replace">
             <!-- New content that will replace the original paragraph -->
-            <p class="text-muted mb-0">
+            <p t-if="product.condition_test" class="text-muted mb-0">
                 <strong>Terms and Conditions</strong>
                 <br/>
                 <t t-esc="product.condition_test"/>
