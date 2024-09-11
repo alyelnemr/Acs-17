@@ -1,7 +1,9 @@
 from odoo import models
-from odoo import http
 from odoo.addons.payment.controllers import portal as payment_portal
 from odoo.osv import expression
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_sale.controllers.variant import WebsiteSaleVariantController
 
 
 class Website(models.Model):
@@ -27,3 +29,33 @@ class WebsiteSale(payment_portal.PaymentPortal):
         # change the route to /live-shipping-rates
         return super(WebsiteSale, self).shop(page=page, category=category, search=search,
                                              min_price=min_price, max_price=max_price, ppg=ppg, **post)
+
+    def _prepare_product_values(self, product, category, search, **kwargs):
+        returned_dict = super(WebsiteSale, self)._prepare_product_values(product, category, search, **kwargs)
+
+        currency_usd_id = request.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+
+        returned_dict.update({
+            'currency_usd_id': currency_usd_id
+        })
+
+        return returned_dict
+
+
+class WebsiteSaleVariantControllerInherit(WebsiteSaleVariantController):
+
+    @http.route('/website_sale/get_combination_info', type='json', auth='public', methods=['POST'], website=True)
+    def get_combination_info_website(
+            self, product_template_id, product_id, combination, add_qty, parent_combination=None, **kwargs
+    ):
+        # Call the original method from the parent class
+        combination_info = super(WebsiteSaleVariantControllerInherit, self).get_combination_info_website(
+            product_template_id, product_id, combination, add_qty, parent_combination, **kwargs
+        )
+
+        # Custom logic: You can modify or add to combination_info here
+        # Example: Add a custom field or perform additional processing
+        combination_info['custom_field'] = 'Custom Value'
+
+        # Return the modified combination info
+        return combination_info

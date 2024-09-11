@@ -66,6 +66,19 @@ class ProductTemplate(models.Model):
     plane_line_ids = fields.One2many('frieght.plane.line', 'product_plane_id')
     is_accounting = fields.Boolean(string="Accounting", default=False)
 
+    def _get_combination_info(
+            self, combination=False, product_id=False, add_qty=1.0,
+            parent_combination=False, only_template=False,
+    ):
+        combination_info = super()._get_combination_info(
+            combination=combination, product_id=product_id, add_qty=add_qty,
+            parent_combination=parent_combination, only_template=only_template
+        )
+
+        combination_info['add_qty'] = 3
+
+        return combination_info
+
     # dyn_filter_pro = fields.Char(string='Container/Package', compute='_compute_con_pack_domain', store=False)
 
     # @api.depends('container_type', 'package_type')

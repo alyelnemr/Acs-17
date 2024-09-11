@@ -19,6 +19,7 @@
         'security/ir.model.access.csv',
         'security/stage_pricing_data.xml',
         'data/pricing_category.xml',
+        'views/website.xml',
         'views/product_template_view.xml',
         'views/pricing_view.xml',
         'views/request_price_view.xml',
@@ -29,6 +30,11 @@
 
     ],
 
+    'assets': {
+        'web.assets_frontend': [
+            'eit_freight_pricing/static/src/js/website_sale.js',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': True,

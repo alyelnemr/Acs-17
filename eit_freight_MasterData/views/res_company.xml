@@ -23,7 +23,6 @@
                                 <field name="swift_code"/>
                                 <field name="account_number"/>
                             </group>
-                            <group name="social_media"/>
                         </group>
                     </page>
                 </xpath>
