@@ -468,7 +468,6 @@
         </xpath>
     </template>
 
-
     <template id="products_item" inherit_id="website_sale.products_item" name="Products item">
         <xpath expr="//form" position="replace">
             <t t-set="currency_usd_id" t-value="currency_usd_id"/>
