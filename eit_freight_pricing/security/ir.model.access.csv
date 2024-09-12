@@ -27,6 +27,9 @@ hr_expense.access_product_template_hr_expense_user,product.template.hr.expense.u
 product.access_product_template_pricing_user,product.template.pricing.user,model_product_template,group_prcing_user,1,1,1,0
 product.access_product_template_pricing_manager,product.template.pricing.manager,model_product_template,group_pricing_manager,1,1,1,0
 product.access_product_template_manager,product.template.manager,model_product_template,base.group_system,1,1,1,1
+product.access_product_product_pricing_user,product.template.pricing.user,model_product_product,group_prcing_user,1,1,1,0
+product.access_product_product_pricing_manager,product.template.pricing.manager,model_product_product,group_pricing_manager,1,1,1,0
+product.access_product_product_manager,product.template.manager,model_product_product,base.group_system,1,1,1,1
 purchase.access_purchase_order_pricing_user,purchase.order.pricing.user,model_purchase_order,group_prcing_user,1,1,1,0
 purchase.access_purchase_order_line_pricing_user,purchase.order.line,purchase.model_purchase_order_line,group_prcing_user,1,1,1,0
 access_transport_type_website,transport.type.website,eit_freight_MasterData.model_transport_type,,1,0,0,0
