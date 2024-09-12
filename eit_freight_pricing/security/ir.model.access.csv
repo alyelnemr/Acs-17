@@ -42,6 +42,7 @@ access_port_cites_website,port.cites.website,eit_freight_MasterData.model_port_c
 access_container_data_website,container.data.website,eit_freight_MasterData.model_container_data,base.group_public,1,0,0,0
 access_container_data_pricing_user,container.data.website,eit_freight_MasterData.model_container_data,group_prcing_user,1,0,0,0
 access_package_type_website,package.type.website,eit_freight_MasterData.model_package_type,base.group_public,1,0,0,0
+access_package_type_pricing_user,package.type.pricing.user,eit_freight_MasterData.model_package_type,group_prcing_user,1,0,0,0
 access_container_type_website,container.type.website,eit_freight_MasterData.model_container_type,base.group_public,1,0,0,0
 access_container_type_pricing_user,container.type.website,eit_freight_MasterData.model_container_type,group_prcing_user,1,0,0,0
 access_res_partner_website,res.partner.website,base.model_res_partner,base.group_public,1,0,0,0
