@@ -24,7 +24,9 @@ access_request_price_usero,request.price.usero,model_request_price,group_pricing
 purchase.access_product_template_purchase_manager,product.template purchase_manager,product.model_product_template,purchase.group_purchase_manager,1,1,1,0
 sale.access_product_template_sale_manager,product.template salemanager,model_product_template,sales_team.group_sale_manager,1,1,1,0
 hr_expense.access_product_template_hr_expense_user,product.template.hr.expense.user,product.model_product_template,hr_expense.group_hr_expense_manager,1,1,1,0
-product.access_product_template_manager,product.template.manager,model_product_template,base.group_system,1,1,1,0
+product.access_product_template_pricing_user,product.template.pricing.user,model_product_template,group_prcing_user,1,1,1,0
+product.access_product_template_pricing_manager,product.template.pricing.manager,model_product_template,group_pricing_manager,1,1,1,0
+product.access_product_template_manager,product.template.manager,model_product_template,base.group_system,1,1,1,1
 purchase.access_purchase_order_pricing_user,purchase.order.pricing.user,model_purchase_order,group_prcing_user,1,1,1,0
 purchase.access_purchase_order_line_pricing_user,purchase.order.line,purchase.model_purchase_order_line,group_prcing_user,1,1,1,0
 access_transport_type_website,transport.type.website,eit_freight_MasterData.model_transport_type,,1,0,0,0
@@ -37,4 +39,4 @@ access_container_data_website,container.data.website,eit_freight_MasterData.mode
 access_package_type_website,package.type.website,eit_freight_MasterData.model_package_type,base.group_public,1,0,0,0
 access_container_type_website,container.type.website,eit_freight_MasterData.model_container_type,base.group_public,1,0,0,0
 access_res_partner_website,res.partner.website,base.model_res_partner,base.group_public,1,0,0,0
-access_service_scope_website,service.scope.website,eit_freight_MasterData.model_service_scope,base.group_public,1,0,0,0
+access_service_scope_website,service.scope.website,eit_freight_MasterData.model_service_scope,,1,0,0,0
