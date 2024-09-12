@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, AccessError
 from datetime import date
 from datetime import timedelta
 
@@ -65,6 +65,17 @@ class ProductTemplate(models.Model):
     vessel_line_ids = fields.One2many('frieght.vessel.line', 'product_vessel_id')
     plane_line_ids = fields.One2many('frieght.plane.line', 'product_plane_id')
     is_accounting = fields.Boolean(string="Accounting", default=False)
+
+    @api.model
+    def unlink(self):
+        # Check if the current user is part of the 'group_pricing_admin' group
+        if not self.env.user.has_group('your_module.group_pricing_admin'):
+            # Raise an AccessError to prevent the user from deleting the product
+            raise AccessError(
+                _("You do not have the required permissions to delete a product. Only users with the Pricing Admin group can delete products."))
+
+        # If the user has the required group, allow the delete operation
+        return super(ProductTemplate, self).unlink()
 
     def _get_combination_info(
             self, combination=False, product_id=False, add_qty=1.0,
