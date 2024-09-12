@@ -44,3 +44,4 @@ access_package_type_website,package.type.website,eit_freight_MasterData.model_pa
 access_container_type_website,container.type.website,eit_freight_MasterData.model_container_type,base.group_public,1,0,0,0
 access_res_partner_website,res.partner.website,base.model_res_partner,base.group_public,1,0,0,0
 access_service_scope_website,service.scope.website,eit_freight_MasterData.model_service_scope,,1,0,0,0
+access_shipment_scop_pricing_user,shipment.scop.pricing.user,eit_freight_MasterData.model_shipment_scop,group_prcing_user,1,0,0,0
