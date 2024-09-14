@@ -340,5 +340,9 @@
             </field>
         </record>
 
+        <record model="ir.ui.menu" id="crm.res_partner_menu_customer">
+            <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
+        </record>
+
     </data>
 </odoo>

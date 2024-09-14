@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from datetime import timedelta
 
 SALE_ORDER_STATE = [
     ('draft', "Quotation"),
@@ -36,6 +37,39 @@ class SaleOrder(models.Model):
     is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl')
     container_type = fields.Many2one('container.type', string='Container Type')
     is_air = fields.Boolean(string="Is Air", compute='_compute_is_air')
+    company_count = fields.Integer(default=lambda self: self.env['res.company'].search_count([]))
+    rate_currency = fields.One2many('total.rate.currency', 'sale_cost',
+                                    string="Rate Per Currency")
+    conndition_id = fields.Many2one('freight.conditions', string="Terms & Conditions")
+    vessel_line_ids = fields.One2many('sale.vessel.line', 'sale_vessel_id', string="Vessels")
+    plane_line_ids = fields.One2many('sale.plane.line', 'sale_plane_id', string="Planes")
+    parties_line_ids = fields.One2many('sale.parties.line', 'sale_parties_id', string="Parties")
+
+    @api.onchange('conndition_id')
+    def _onchange_conndition_ids(self):
+        if self.conndition_id:
+            self.note = self.conndition_id.Terms
+
+    @api.onchange('order_line')
+    def compute_rate_currecy(self):
+        for rec in self:
+            if rec.order_line:
+                sale_list = [(5, 0, 0)]
+                currency = rec.order_line.mapped('currency_id')
+                for cur in currency:
+                    amount = 0
+                    for charg in rec.order_line:
+                        if cur.id == charg.currency_id.id:
+                            amount += charg.price_total
+                            print('am', amount)
+                    val = {
+                        'currency_id': cur,
+                        'amount': amount
+                    }
+                    sale_list.append((0, 0, val))
+                rec.update({'rate_currency': sale_list})
+            else:
+                rec.rate_currency = False
 
     @api.depends('transport_type_id')
     def _compute_is_air(self):
@@ -124,7 +158,7 @@ class SaleOrder(models.Model):
     show_temperature = fields.Boolean(compute='_compute_show_temperature')
     show_un_number = fields.Boolean(compute='_compute_show_un_number')
     pickup_address = fields.Char(string="Pickup Address")
-    pickup_address2 = fields.Text(string="Delivery Address")
+    pickup_address2 = fields.Char(string="Delivery Address")
 
     @api.depends('commodity_equip')
     def _compute_show_temperature(self):
@@ -138,6 +172,8 @@ class SaleOrder(models.Model):
 
     incoterms = fields.Many2one('account.incoterms', string='Incoterm',
                                 help='International Commercial Terms are a series of predefined commercial terms used in international transactions.')
+    pickup = fields.Boolean(related="incoterms.pickup")
+    delivery = fields.Boolean(related="incoterms.delivery")
 
     charge_type = fields.Many2one('product.product', string='Charge Type')
     cost_price = fields.Float(string='Cost Price')
@@ -179,6 +215,52 @@ class SaleOrder(models.Model):
     charges_ids = fields.One2many('sale.charges', 'order_id')
 
 
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    package_type = fields.Many2one('package.type', string="Package Type")
+    container_type = fields.Many2one('container.type', string="Container Type")
+    unit_rate = fields.Monetary(string="Unit Rate")
+    ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
+    main_curr = fields.Monetary(string="Main Currency", compute='_compute_tot_price')
+    technical_rate = fields.Float(string="Technical Rate", compute="compute_technical_rate")
+    price_unit = fields.Float(readonly=True)
+
+    @api.depends('product_id', 'product_uom', 'product_uom_qty', 'unit_rate')
+    def _compute_price_unit(self):
+        for line in self:
+            line.price_unit = line.technical_rate * float(line.main_curr)
+            # # check if there is already invoiced amount. if so, the price shouldn't change as it might have been
+            # # manually edited
+            # if line.qty_invoiced > 0 or (line.product_id.expense_policy == 'cost' and line.is_expense):
+            #     continue
+            # if not line.product_uom or not line.product_id:
+            #     line.price_unit = 0.0
+            # else:
+            #     line = line.with_company(line.company_id)
+            #     price = line._get_display_price()
+            #     line.price_unit = line.product_id._get_tax_included_unit_price_from_price(
+            #         price,
+            #         line.currency_id or line.order_id.currency_id,
+            #         product_taxes=line.product_id.taxes_id.filtered(
+            #             lambda tax: tax.company_id == line.env.company
+            #         ),
+            #         fiscal_position=line.order_id.fiscal_position_id,
+            #     )
+
+    @api.depends('currency_id')
+    def compute_technical_rate(self):
+        for rec in self:
+            currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
+            if currency_id:
+                rec.technical_rate = currency_id.rate_ids[0].company_rate if currency_id.rate_ids else 1.0
+
+    @api.depends('ex_rate', 'unit_rate', )
+    def _compute_tot_price(self):
+        for rec in self:
+            rec.main_curr = rec.ex_rate * rec.unit_rate * rec.product_uom_qty
+
+
 class SaleCharges(models.Model):
     _name = 'sale.charges'
     _description = "Sale Charges"
@@ -205,3 +287,81 @@ class SaleCharges(models.Model):
                 record.tot_cost_fr = 0
 
             record.tot_cost = record.product_id.currency_id.rate * record.tot_cost_fr
+
+
+class TotalRateCurrency(models.Model):
+    _name = 'total.rate.currency'
+    _description = "Total Rate currency"
+
+    currency_id = fields.Many2one('res.currency', string="Currency")
+    amount = fields.Float(string="Amount")
+    sale_cost = fields.Many2one('sale.order')
+
+
+class SaleVesselLine(models.Model):
+    _name = 'sale.vessel.line'
+
+    vessel_id = fields.Many2one('freight.vessels', string="Vessel")
+    voyage_number = fields.Char(string="Voyage Number")
+    etd = fields.Date(string="ETD")
+    eta = fields.Date(string="ETA")
+    tt_day = fields.Integer(string="T.T Day")
+    sale_vessel_id = fields.Many2one('sale.order')
+
+    @api.onchange('tt_day')
+    def _compute_eta(self):
+        for record in self:
+            if record.etd and record.tt_day:
+                etd_date = fields.Date.from_string(record.etd)
+                eta_date = etd_date + timedelta(days=record.tt_day)
+                record.eta = fields.Date.to_string(eta_date)
+
+    @api.onchange('eta')
+    def _compute_tt_day(self):
+        for record in self:
+            if record.etd and record.eta:
+                etd_date = fields.Date.from_string(record.etd)
+                eta_date = fields.Date.from_string(record.eta)
+                delta = eta_date - etd_date
+                record.tt_day = delta.days
+
+
+class SalePlanesLine(models.Model):
+    _name = 'sale.plane.line'
+
+    plane_id = fields.Many2one('freight.airplane', string="Plane")
+    sale_plane_id = fields.Many2one('sale.order')
+    voyage_number = fields.Char(string="Voyage Number")
+    etd = fields.Date(string="ETD")
+    eta = fields.Date(string="ETA")
+    tt_day = fields.Integer(string="T.T Day")
+
+    @api.onchange('etd', 'tt_day')
+    def _compute_eta(self):
+        for record in self:
+            if record.etd and record.tt_day:
+                record.eta = record.etd + timedelta(days=record.tt_day)
+            else:
+                record.eta = False
+
+    @api.onchange('etd', 'eta')
+    def _compute_tt_day(self):
+        for record in self:
+            if record.etd and record.eta:
+                delta = record.eta - record.etd
+                record.tt_day = delta.days
+            else:
+                record.tt_day = 0
+
+
+class SalePartiesLine(models.Model):
+    _name = 'sale.parties.line'
+
+    partner_type_id = fields.Many2one('partner.type', string="Partner Type")
+    partner_id = fields.Many2one('res.partner', string="Partner Name",
+                                 domain="[('partner_type_id', '=', partner_type_id)]")
+    phone = fields.Char(related='partner_id.phone', string="Phone")
+    email = fields.Char(related='partner_id.email', string="Email")
+    city = fields.Char(related="partner_id.city", string="City")
+    country_id = fields.Many2one(related='partner_id.country_id', string="Country")
+    sale_parties_id = fields.Many2one('sale.order')

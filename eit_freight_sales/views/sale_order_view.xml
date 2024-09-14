@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
-
-
         <record model="ir.ui.view" id="view_sale_order_form_inherit">
             <field name="name">sale.order.form.inherit</field>
             <field name="model">sale.order</field>
@@ -15,30 +13,64 @@
                 <field name="partner_invoice_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-
+                <field name="pricelist_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//button[@id='create_invoice_percentage']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <field name="partner_shipping_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='team_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='campaign_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='medium_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='source_id']" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
 
                 <field name="partner_id" position="after">
-                    <field name="company_id" options="{'no_open': True, 'no_create': True}"/>
-                    <field name="currency_id" options="{'no_open': True, 'no_create': True}" readonly="0"/>
+                    <field name="transport_type_id"/>
+                    <field name="is_ocean_or_inland" invisible='1'/>
+                    <field name="shipment_domain" invisible="1"/>
+                    <field name="shipment_scope_id" domain="shipment_domain"
+                           invisible="not is_ocean_or_inland"
+                           options="{'no_open': True, 'no_create': True}"/>
+                    <field name="company_count" invisible="1"/>
+                    <field name="company_id" options="{'no_open': True, 'no_create': True}"
+                           invisible="company_count ==1"/>
+                    <field name="currency_id" options="{'no_open': True, 'no_create': True}" readonly="0"
+                           invisible="1"/>
+                </field>
+                <field name="payment_term_id" position="after">
+                    <field name="shipping_line" invisible="not is_ocean"
+                           options="{'no_create': True, 'no_edit': True}"
+                    />
                 </field>
 
                 <xpath expr="//sheet/notebook" position="before">
 
-                    <group name="sales_info" string="Sales Info">
+                    <group name="sales_info" string="QUOTATION DETAILS">
 
                         <group>
-                            <field name="transport_type_id"/>
-                            <field name="is_ocean_or_inland" invisible='1'/>
-                            <field name="shipment_domain" invisible="1"/>
-                            <field name="shipment_scope_id" domain="shipment_domain"
-                                   invisible="not is_ocean_or_inland"
-                                   options="{'no_open': True, 'no_create': True}"/>
                             <field name="container_type" invisible="not is_fcl_or_ftl"
                                    options="{'no_create': True, 'no_edit': True}"/>
                             <field name="package_type" invisible="not is_lcl_or_ltl "
@@ -46,12 +78,24 @@
                             <field name="package_types" invisible="not is_air"
                                    options="{'no_create': True, 'no_edit': True}"/>
                             <field name="commodity" options="{'no_create': True, 'no_edit': True,'no_open': True}"/>
-                            <field name="commodity_equip"/>
+                            <field name="commodity_equip" invisible="1"/>
                             <field name="show_temperature" invisible='1'/>
-                            <field name="temperature" invisible="not show_temperature"/>
-                            <field name="show_un_number" invisible='1'/>
-                            <field name="un_number" invisible="not  show_un_number"/>
-                            <field name="msds_attachment" invisible=" not show_un_number"/>
+                            <label for="transit_time_duration" string="Transit Time"/>
+                            <div style="display: flex; align-items: center;">
+                                <field name="transit_time_duration"/>
+                                <div class="o_form_label">Days</div>
+                            </div>
+                            <label for="free_time_duration" string="Free Time"
+                                   invisible="not is_ocean or not is_fcl_or_ftl"/>
+                            <div style="display: flex; align-items: center;"
+                                 invisible="not is_ocean or not is_fcl_or_ftl">
+                                <field name="free_time_duration"/>
+                                <div class="o_form_label">Days</div>
+                            </div>
+                            <!--                            <field name="temperature" invisible="not show_temperature"/>-->
+                            <!--                            <field name="show_un_number" invisible='1'/>-->
+                            <!--                            <field name="un_number" invisible="not  show_un_number"/>-->
+                            <!--                            <field name="msds_attachment" invisible=" not show_un_number"/>-->
                         </group>
                         <group>
                             <field name="is_fcl_or_ftl" invisible='1'/>
@@ -62,24 +106,14 @@
 
                             <field name="pod" options="{'no_open': True, 'no_create': True}"/>
                             <field name="incoterms" options="{'no_create': True, 'no_edit': True,'no_open': True}"/>
-                            <field name="pickup_address" invisible="not incoterms"/>
-                            <field name="pickup_address2" invisible="not incoterms"/>
-                            <label for="transit_time_duration" string="Transit Time"/>
-                            <div style="display: flex; align-items: center;">
-                                <field name="transit_time_duration"/>
-                                <div class="o_form_label">Days</div>
-                            </div>
-                            <label for="free_time_duration" string="Free Time"/>
-                            <div style="display: flex; align-items: center;">
-                                <field name="free_time_duration"/>
-                                <div class="o_form_label">Days</div>
-                            </div>
+                            <field name="pickup" invisible="1"/>
+                            <field name="delivery" invisible="1"/>
+                            <field name="pickup_address" invisible="not pickup"/>
+                            <field name="pickup_address2" invisible="not delivery"/>
+
                             <field name="is_ocean" invisible='1'/>
                             <field name="is_inland" invisible='1'/>
 
-                            <field name="shipping_line" invisible="not is_ocean"
-                                   options="{'no_create': True, 'no_edit': True}"
-                            />
 
                             <field name="air_line" invisible="1" options="{'no_create': True, 'no_edit': True}"
                             />
@@ -93,8 +127,117 @@
                     </group>
 
                 </xpath>
+                <xpath expr="//notebook/page[@name='order_lines']" position="attributes">
+                    <attribute name="string">Charges</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='optional_products']" position="attributes">
+                    <attribute name="string">Optional Services</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='optional_products']" position="after">
+                    <page string="Vessels" invisible="transport_type_id != 2">
+                        <field name="vessel_line_ids">
+                            <tree editable="bottom">
+                                <field name="vessel_id"
+                                       options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                <field name="voyage_number"/>
+                                <field name="etd"/>
+                                <field name="eta"/>
+                                <field name="tt_day"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Planes" invisible="transport_type_id != 1">
+                        <field name="plane_line_ids">
+                            <tree editable="bottom">
+                                <field name="plane_id"
+                                       options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="voyage_number" string="Flight Number"/>
+                                <field name="etd"/>
+                                <field name="eta"/>
+                                <field name="tt_day"/>
+
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Parties">
+                        <field name="parties_line_ids">
+                            <tree editable="bottom">
+                                <field name="partner_type_id"
+                                       options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="partner_id"
+                                       options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                <field name="phone"/>
+                                <field name="email"/>
+                                <field name="city"/>
+                                <field name="country_id"/>
+                            </tree>
+                        </field>
+                    </page>
+
+                </xpath>
+                <xpath expr="//notebook/page[@name='order_lines']/field/tree/field[@name='product_template_id']"
+                       position="attributes">
+                    <attribute name="string">Service</attribute>
+                    <attribute name="domain">[('detailed_type', '=', 'charge_type')]</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='optional_products']/field/tree/field[@name='product_id']"
+                       position="attributes">
+                    <attribute name="string">Service</attribute>
+                    <attribute name="domain">[('detailed_type', '=', 'charge_type')]</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='order_lines']/field/tree/field[@name='name']"
+                       position="after">
+                    <field name="package_type"
+                           column_invisible="parent.transport_type_id not in [1,2,3] or parent.shipment_scope_id in [1,3] or parent.transport_type_id in [2, 3] and not parent.shipment_scope_id"
+                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                           optional="false"/>
+                    <field name="container_type"
+                           column_invisible="parent.transport_type_id in [1] or parent.shipment_scope_id not in [1,3]"
+                           options="{'no_quick_create': True, 'no_create_edit': True, 'no_edit': True, 'no_create': True,'no_open': True}"
+                           optional="false"/>
+                    <field name="currency_id" readonly="0"
+                           options="{'no_quick_create': True, 'no_create_edit': True, 'no_edit': True, 'no_create': True,'no_open': True}"/>
+                    <field name="unit_rate"/>
+                    <field name="ex_rate" optional="false"/>
+                    <field name="main_curr" optional="false"/>
+                    <field name="technical_rate" column_invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook/page[@name='order_lines']/field/tree/field[@name='price_unit']"
+                       position="attributes">
+                    <attribute name="string">Rate USD</attribute>
+                    <attribute name="optional">false</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']"
+                       position="after">
+
+                    <label for="rate_currency">Rate Per Currency</label>
+                    <field name="rate_currency" nolabel="1">
+                        <tree edit="0" delete="0" create="0" no_open="True">
+                            <field name="currency_id"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field>
+
+                    <group>
+                        <group>
+                            <field name="conndition_id"/>
+                        </group>
+                    </group>
+
+
+                </xpath>
+                <!--                 <xpath expr="//group[@name='note_group']"  position="inside">-->
+
+                <!--                      <field name="conndition_id"/>-->
+                <!--                 </xpath>-->
+
+
                 <xpath expr="//notebook/page[@name='order_lines']" position="before">
-                    <page string="Charges" name="charges">
+                    <page string="Charges" name="charges" invisible="1">
                         <field name="charges_ids">
                             <tree editable="bottom">
                                 <field name="product_id" options="{'no_edit': True, 'no_create': True}"/>
@@ -109,6 +252,74 @@
                         </field>
                     </page>
                 </xpath>
+            </field>
+        </record>
+
+        <record id="sale_inherit_view_tree" model="ir.ui.view">
+            <field name="name">sale.inherit.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="transport_type_id" optional="false"/>
+                </field>
+                <field name="expected_date" position="after">
+                    <field name="pod" optional="false"/>
+                    <field name="pol" optional="false"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="transport_order_view_kanban" model="ir.ui.view">
+            <field name="name">tranport.order.kanban</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sale_order_kanban"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="transport_type_id"/>
+
+                </field>
+                <xpath expr="//div[hasclass('oe_kanban_bottom_right')]/field[@name='state']" position="before">
+                    <field name="transport_type_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="transport_serach_order_view_kanban" model="ir.ui.view">
+            <field name="name">tranport.search.order.kanban</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="arch" type="xml">
+                <filter name="draft" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </filter>
+                <filter name="sales" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </filter>
+                <filter name="sales" position="after">
+                    <filter name="air" string="Air" domain="[('transport_type_id.code', '=', 'AIR')]"/>
+                    <filter name="sea" string="Sea" domain="[('transport_type_id.code', '=', 'SEA')]"/>
+                    <filter name="island" string="Inland" domain="[('transport_type_id.code', '=', 'LND')]"/>
+                      <filter string="Transport Type" name="transport_type"
+                        context="{'group_by':'transport_type_id'}"/>
+                      <filter string="Status" name="sate"
+                        context="{'group_by':'state'}"/>
+                </filter>
+                <field name="name" position="attributes">
+                     <attribute name="string">Quotation</attribute>
+                </field>
+                <field name="order_line" position="attributes">
+                     <attribute name="string">Service</attribute>
+                </field>
+                <field name="name" position="after">
+                    <field name="transport_type_id" string="Transport Type" filter_domain="[('transport_type_id', 'ilike', self)]"/>
+                    <field name="pol" string="POL" filter_domain="[('pol', 'ilike', self)]"/>
+                    <field name="pod" string="POD" filter_domain="[('pod', 'ilike', self)]"/>
+                    <field name="pol" string="POL Country" filter_domain="[('pol.country_id', 'ilike', self)]"/>
+                    <field name="pod" string="POD Country" filter_domain="[('pod.country_id', 'ilike', self)]"/>
+                    <field name="container_type" string="Container Type" filter_domain="[('container_type', 'ilike', self)]"/>
+                </field>
+
             </field>
         </record>
 
@@ -127,6 +338,10 @@
         <record id="sale.action_orders" model="ir.actions.act_window">
             <field name="name">Bookings</field>
         </record>
+
+        <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="domain">[('state', 'in', ['draft','send'])]</field>
+    </record>
 
     </data>
 </odoo>

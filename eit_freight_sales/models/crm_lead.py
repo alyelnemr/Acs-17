@@ -190,6 +190,7 @@ class CrmLead(models.Model):
             if vals.get('type') == 'opportunity':
                 vals['name'] = self._generate_opp_id()
             else:
+                vals['name'] = self._generate_opp_id()
                 contact_name = ', ' + vals['contact_name'] if vals['contact_name'] else ''
                 vals['name'] = vals['partner_name'] if vals['partner_name'] else '' + contact_name if vals[
                     'contact_name'] else ''
@@ -209,7 +210,7 @@ class CrmLead(models.Model):
             partner_name = vals.get('partner_name') if vals.get('partner_name') else self.partner_name
             contact_name = contact_name if vals.get('contact_name') else (
                 ', ' + self.contact_name if self.contact_name else '')
-            vals['name'] = partner_name + contact_name
+            vals['name'] = self._generate_opp_id()
         return super(CrmLead, self).write(vals)
 
     @api.model
