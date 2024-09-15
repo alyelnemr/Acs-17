@@ -205,7 +205,7 @@ class ProductTemplate(models.Model):
 
         if vals.get('detailed_type') == 'pricing' and is_sale_purchase:
             raise UserError(
-                _('Please add the Record from the Pricing App'))
+                _('Please add the Record from the Pricing App'))
 
         result = super(ProductTemplate, self).write(vals)
         for rec in self:
