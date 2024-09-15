@@ -54,10 +54,18 @@ patch(ListController.prototype, {
             filteredAction = filteredAction.filter((item) =>
                 item.key !== "archive" &&
                 item.key !== "unarchive" &&
-                item.key !== "export" &&
-                item.key !== "duplicate"
+                item.key !== "export"
             );
         }
+        // this is the main code before modifying it restore the action of duplicate
+//        if (this.is_hide_archive_user && !this.is_hide_archive_manager) {
+//            filteredAction = filteredAction.filter((item) =>
+//                item.key !== "archive" &&
+//                item.key !== "unarchive" &&
+//                item.key !== "export" &&
+//                item.key !== "duplicate"
+//            );
+//        }
 
         if (this.is_hide_archive_manager && !this.is_hide_archive_admin) {
         if (this.modelInList) {

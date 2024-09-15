@@ -2,6 +2,8 @@
 
 from . import stage_pricing
 from . import request_price
+from . import charge_type_currency_rate
+from . import product_charges
 from . import purchase_order
 from . import freight_plane_line
 from . import freight_vessel_line

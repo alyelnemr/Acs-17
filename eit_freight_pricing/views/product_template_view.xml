@@ -4,12 +4,20 @@
         <field name="model">product.template</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Pricing ID"
+                <field name="name" string="Pricing Name"
                        filter_domain="[('name', 'ilike', self)]"/>
+                <field name="partner_id" string="Vendor"
+                       filter_domain="[('partner_id', 'ilike', self)]"/>
                 <field name="pol_id" string="POL"
                        filter_domain="[('pol_id', 'ilike', self)]"/>
                 <field name="pod_id" string="POD"
                        filter_domain="[('pod_id', 'ilike', self)]"/>
+                <field name="pol_id_country_id" string="POL Country"
+                       filter_domain="[('pol_id_country_id', 'ilike', self)]"/>
+                <field name="pod_id_country_id" string="POD Country"
+                       filter_domain="[('pod_id_country_id', 'ilike', self)]"/>
+                <field name="shipping_line" string="Shipping Line"
+                       filter_domain="[('shipping_line', 'ilike', self)]"/>
                 <separator/>
                 <filter string="My Pricing" name="my_pricing" domain="[('p_user_ids', 'in', uid)]"/>
                 <filter string="Air" name="transport_type_id_air" domain="[('transport_type_id','=', 1)]"/>
@@ -24,6 +32,7 @@
                       context="{'group_by':'container_type'}"/>
                 <filter string="Package Type" name="package_type_filter"
                         context="{'group_by':'package_type'}"/>
+                <filter string="Services" name="services_group_by" context="{'group_by':'scope_ids'}"/>
 
 
             </search>
@@ -490,7 +499,7 @@
                         <field name="purchase_id" widget="statinfo"/>
                     </button>
                     <button name="action_view_pricing" type="object" class="oe_stat_button" icon="fa-pencil-square-o"  invisible="count_pricing == 0">
-                        <field name="product_tmpl_id" widget="statinfo"/>
+                        <field name="product_tmpl_id" string="Pricing" widget="statinfo"/>
                     </button>
                 </div>
             </xpath>
@@ -528,7 +537,7 @@
                 <field name="tt_days" readonly="True"/>
                 <field name="transport_type_id" readonly="True"/>
                 <field name="shipment_scope_id" readonly="True" invisible="1"/>
-                <field name="package_type" readonly="True" invisible="transport_type_id not in [1, 2, 3] or shipment_scope_id in [1, 3] or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
+                <field name="package_type" readonly="True" invisible="transport_type_id not in [1] or (shipment_scope_id in [1, 3] and transport_type_id in [2, 3]) or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
                 <field name="container_type" readonly="True" invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"/>
             </xpath>
             <xpath expr="//form[1]/sheet[1]/group[1]/group[not(@name)][1]/div[3]" position="after">

@@ -14,7 +14,7 @@
             <xpath expr="//filter[@name='starred']" position="replace"/>
 
             <xpath expr="//filter[@name='vendor']" position="before">
-                <filter name="studio_group_by_3a2_1i4m9qlo6" string="Purchase Type" context="{'group_by': 'purchase_type'}"/>
+                <filter name="purchase_type_group" string="Purchase Type" context="{'group_by': 'purchase_type'}"/>
             </xpath>
         </field>
     </record>

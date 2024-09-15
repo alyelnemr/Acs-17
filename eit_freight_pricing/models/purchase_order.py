@@ -48,7 +48,7 @@ class PurchaseOrder(models.Model):
                                               string="Fcl Container Types")
     ftl_container_type_ids = fields.Many2many('ftl.container.type',
                                               string="Ftl Container Types")
-    price_req_id = fields.Many2one('request.price',string="Request Price")
+    price_req_id = fields.Many2one('request.price', string="Request Price")
     count_price_req = fields.Integer(string="Price Req Count", compute='get_request_price_count')
     scope_ids = fields.Many2many('service.scope', string="Services")
     rate_per_currency_ids = fields.One2many(
@@ -57,7 +57,8 @@ class PurchaseOrder(models.Model):
         string="Rate Per Currency",
         store=True
     )
-    charge_amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True, readonly=True, compute='_compute_untaxed_amount', tracking=True)
+    charge_amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True, readonly=True,
+                                            compute='_compute_untaxed_amount', tracking=True)
 
     fixed_charge_tax_details = fields.Text(
         string="Fixed Charge Tax Details",
@@ -102,6 +103,13 @@ class PurchaseOrder(models.Model):
         compute='_compute_vat_total',
         currency_field='currency_id',
         store=True
+    )
+
+    tot_amount_usd_display = fields.Char(
+        string='Total Amount (USD) Display',
+        compute='_compute_total_amount_usd_display',
+        store=True,
+        readonly=True,
     )
 
     @api.depends('fixed_charges_ids.tax_id', 'fixed_charges_ids.tot_cost')
@@ -173,7 +181,7 @@ class PurchaseOrder(models.Model):
     #                     formatted_tax = f"{tax.name}: {tax_amount:.2f} {currency_symbol}"
     #                     tax_details.append(formatted_tax)
     #         order.fixed_charge_tax_details = "\n".join(tax_details) if tax_details else ""
-    
+
     # @api.depends('fixed_charges_ids')
     # def _compute_fixed_charge_tax_details(self):
     #     for order in self:
@@ -186,12 +194,12 @@ class PurchaseOrder(models.Model):
     #             if line.tax_id:
     #                 for tax in line.tax_id:
     #                     tax_amount = line.tot_cost * (tax.amount / 100)
-                        
+
     #                     if tax.name not in positive_tax_totals:
     #                         positive_tax_totals[tax.name] = 0.0
     #                         negative_tax_totals[tax.name] = 0.0
     #                         max_tax_name_length = max(max_tax_name_length, len(tax.name))
-                        
+
     #                     if tax_amount >= 0:
     #                         positive_tax_totals[tax.name] += tax_amount
     #                     else:
@@ -233,22 +241,23 @@ class PurchaseOrder(models.Model):
                         'product_qty': charge.qty,  # Set quantity as needed
                     })
             order.compute_tot_cost()
-            
+
             # Now that we have an order ID, create the order lines based on fixed charges
             # if 'fixed_charges_ids' in vals:
             #     # raise UserError('Test')
             #     self.compute_tot_cost()
-        
+
         return order
 
     def write(self, vals):
         result = super(PurchaseOrder, self).write(vals)
-        
+
         for charge in self.fixed_charges_ids:
             if charge.product_id:
                 # Find the corresponding order line based on the product
-                existing_order_line = self.order_line.filtered(lambda l: l.product_id == charge.product_id.product_variant_id)
-                
+                existing_order_line = self.order_line.filtered(
+                    lambda l: l.product_id == charge.product_id.product_variant_id)
+
                 if existing_order_line:
                     # Update the existing order line
                     existing_order_line.write({
@@ -272,15 +281,15 @@ class PurchaseOrder(models.Model):
 
         if 'fixed_charges_ids' in vals:
             self.compute_tot_cost()
-        
+
         return result
-    
+
     @api.depends('charge_amount_untaxed', 'vat_total', 'withholding_tax_total')
     def _compute_total_amount(self):
         for order in self:
             # Calculate Total Amount: Untaxed Amount + Positive Taxes - Withholding Tax
             order.total_amount = order.charge_amount_untaxed + order.vat_total - abs(order.withholding_tax_total)
-    
+
     # @api.depends('charge_amount_untaxed', 'fixed_charges_ids')
     # def _compute_total_amount(self):
     #     for order in self:
@@ -303,7 +312,7 @@ class PurchaseOrder(models.Model):
     #         # Ensure the total matches the "Total Tax Incl. (main curr.)" column
     #         # Assuming that you have a field for the total including tax
     #         order.total_amount = total_amount
-    
+
     @api.depends('fixed_charges_ids')
     def _compute_untaxed_amount(self):
         for order in self:
@@ -311,8 +320,7 @@ class PurchaseOrder(models.Model):
             for line in order.fixed_charges_ids:
                 total += line.tot_cost  # Replace with the actual field name for "Tax Excl. (Main Curr.)"
             order.charge_amount_untaxed = total
-    
-    
+
     @api.onchange('fixed_charges_ids')
     def compute_tot_cost(self):
         for rec in self:
@@ -332,7 +340,6 @@ class PurchaseOrder(models.Model):
                 rec.rate_per_currency_ids = sale_list
             else:
                 rec.rate_per_currency_ids = False
-
 
     # @api.model
     # def create(self, values):
@@ -378,7 +385,7 @@ class PurchaseOrder(models.Model):
     #                 self.env['charge.type.currency.rate'].create(val)
 
     #     return res
-    
+
     def get_request_price_count(self):
         for rec in self:
             count = self.env['request.price'].search_count([('id', '=', self.price_req_id.id)])
@@ -403,13 +410,6 @@ class PurchaseOrder(models.Model):
                 raise UserError(_('Please select another port.'
                                   'You cant choose the same port at two different locations.'))
 
-    tot_amount_usd_display = fields.Char(
-        string='Total Amount (USD) Display',
-        compute='_compute_total_amount_usd_display',
-        store=True,
-        readonly=True,
-    )
-
     @api.depends('fixed_charges_ids')
     def _onchange_fixed_charges_ids(self):
         self.total_amount_usd = sum(self.fixed_charges_ids.mapped('tax_inc_usd'))
@@ -419,143 +419,3 @@ class PurchaseOrder(models.Model):
         for record in self:
             # Format the amount with the currency symbol after the number
             record.tot_amount_usd_display = "{:,.2f} $".format(record.total_amount_usd)
-
-
-class ProductCharges(models.Model):
-    _name = 'product.charges'
-    _description = "Product Charges"
-
-    product_id = fields.Many2one('product.template', string="Charge Type",
-                                 domain="[('detailed_type', '=', 'charge_type')]")
-    cost_price = fields.Float(string="Cost Price")
-    qty = fields.Float(string="QTY")
-    package_type = fields.Many2one('package.type', string="Package Type")
-    container_type = fields.Many2one('container.type', string="Container Type")
-    currency_id = fields.Many2one('res.currency', string="Currency")
-    ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
-    tot_cost_fr = fields.Float(string="Total cost In System Currency", compute='_compute_tot_price')
-    purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
-    tot_cost = fields.Float(string="Tax Excl.(Main Currency)",
-                            compute='_compute_tot_price')
-    tot_cost_inc = fields.Float(string="Tax Incl. (Main Currency)",
-                            compute='_compute_tot_cost_inc')
-    tax_inc_usd = fields.Float(string="Tax Incl (USD))",
-                            compute='_compute_tax_inc_usd')
-    
-    order_line = fields.Many2one('purchase.order.line')
-    tax_id = fields.Many2many(
-        comodel_name='account.tax',
-        string="Taxes",
-        store=True, readonly=False)
-    
-
-    @api.model
-    def create(self, values):
-        res = super(ProductCharges, self).create(values)
-
-        val = {
-            'product_id': res.product_id.product_variant_id.id,
-            'price_unit': res.cost_price,
-            'product_qty': res.qty,
-            'order_id': res.purchase_id.id,
-        }
-        order = self.env['purchase.order.line'].create(val)
-        res.order_line = order.id
-
-        return res
-
-    @api.onchange('product_id', 'cost_price', 'qty')
-    def onchange_qty(self):
-        if self.order_line:
-            self.order_line.product_id = self.product_id.product_variant_id.id
-            self.order_line.price_unit = self.cost_price
-            self.order_line.product_qty = self.qty
-
-    @api.depends('cost_price', 'ex_rate', 'qty')
-    def _compute_tot_price(self):
-        for record in self:
-            if record.cost_price and record.ex_rate and record.qty:
-                record.tot_cost_fr = record.cost_price * record.ex_rate * record.qty
-            else:
-                record.tot_cost_fr = 0
-
-            record.tot_cost = record.purchase_id.currency_id.rate * record.tot_cost_fr
-
-    @api.depends('tot_cost', 'tax_id')
-    def _compute_tot_cost_inc(self):
-        for record in self:
-            taxes = sum(tax.amount for tax in record.tax_id)
-            record.tot_cost_inc = record.tot_cost * (1 + taxes / 100)
-            
-    @api.depends('tot_cost_inc', 'ex_rate')
-    def _compute_tax_inc_usd(self):
-        for record in self:
-            if record.ex_rate:
-                currency_id = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
-                if currency_id and currency_id.rate_ids:
-                    inverse_company_rate = currency_id.rate_ids[0].inverse_company_rate
-                    record.tax_inc_usd = record.tot_cost_inc * inverse_company_rate
-                else:
-                    # Handle the case where there's no rate available
-                    record.tax_inc_usd = 0
-            else:
-                record.tax_inc_usd = 0
-
-    @api.model
-    def unlink(self):
-        PurchaseOrderLine = self.env['purchase.order.line']
-        for fixed_charge in self:
-            # Search for the corresponding purchase order line
-            purchase_order_line = PurchaseOrderLine.search([
-                ('order_id', '=', self.purchase_id.id),  # Assuming order_id is a common field
-                ('product_id', '=', fixed_charge.product_id.product_variant_id.id),
-                ('price_unit', '=', fixed_charge.cost_price * fixed_charge.ex_rate),
-                ('price_subtotal', '=', fixed_charge.tot_cost),
-                ('product_qty', '=', fixed_charge.qty),
-            ])
-
-            # Delete the corresponding purchase order line
-            if purchase_order_line:
-                purchase_order_line.unlink()
-
-        # Delete the fixed charge line itself
-        return super(ProductCharges, self).unlink()
-
-    # @api.depends('qty', 'cost_price', 'currency_id')
-    # def _compute_rate_per_currency(self):
-    #     for record in self:
-    #         rate_data = {}
-    #         for line in record:
-    #             currency = line.currency_id.id
-    #             if currency not in rate_data:
-    #                 rate_data[currency] = {'currency_id': currency.id, 'amount': 0}
-    #             rate_data[currency]['amount'] += line.qty * line.cost_price
-
-    #         record.rate_per_currency_ids = [(5, 0, 0)]  # Clear existing data
-    #         for data in rate_data.values():
-    #             record.rate_per_currency_ids = [(0, 0, data)]
-
-
-class ChargeTypeCurrencyRate(models.Model):
-    _name = 'charge.type.currency.rate'
-    _description = "Charge Type Currency Rate"
-
-    currency_id = fields.Many2one('res.currency', string="Currency")
-    amount = fields.Float(string="Amount")
-    charge_id = fields.Many2one('product.charges', string="Charge")
-    purchase_id = fields.Many2one('purchase.order', string="Purchase Order")
-
-    # @api.depends('transport_type')
-    # def _compute_pol_domain(self):
-    #     for record in self:
-    #         if record.purchase_id.transport_type_id.name == 'Air':
-    #             record.dyn_filter_par = [('partner_type_id', 'in', [record.env.ref('frieght.partner_type_11').id])]
-
-    #         elif record.purchase_id.transport_type_id.id in 'Air':
-    #             record.dyn_filter_par = [('partner_type_id', 'in', [record.env.ref('frieght.partner_type_12').id])]
-
-    #         elif record.transport_type.name == 'In-land':
-    #             record.dyn_filter_par = [('partner_type_id', 'in', [record.env.ref('frieght.partner_type_5').id])]
-
-    #         else:
-    #             record.dyn_filter_par = [('id', 'in', [])]
