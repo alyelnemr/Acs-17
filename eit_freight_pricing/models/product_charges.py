@@ -13,7 +13,7 @@ class ProductCharges(models.Model):
     package_type = fields.Many2one('package.type', string="Package Type")
     container_type = fields.Many2one('container.type', string="Container Type")
     currency_id = fields.Many2one('res.currency', string="Currency")
-    ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
+    ex_rate = fields.Float(related='currency_id.inverse_rate', string="EX.Rate", store=True)
     tot_cost_fr = fields.Float(string="Total cost In System Currency", compute='_compute_tot_price')
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
     tot_cost = fields.Float(string="Tax Excl.(Main Currency)",

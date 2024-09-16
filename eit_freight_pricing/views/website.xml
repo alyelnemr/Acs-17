@@ -214,7 +214,7 @@
                         </div>
                         <div t-attf-class="col-lg-#{image_cols[1]} mt-md-4" id="product_details">
                             <t t-set="base_url" t-value="product.get_base_url()"/>
-<table width="100%">
+                            <table width="100%">
                                 <tr>
                                     <td>
                                         <br/>
@@ -335,6 +335,11 @@
                                        href="#">
                                         <i class="fa fa-shopping-cart me-2"/>
                                         Add to cart
+                                    </a>
+
+                                    <a role="button" t-attf-class="btn btn-outline-primary o_we_buy_now ms-1 " href="#">
+                                        <i class="fa fa-bolt me-2"/>
+                                        Buy now
                                     </a>
                                 </div>
                             </div>
@@ -462,10 +467,6 @@
     </template>
     <template id="product_share_buttons_inherit_empty" inherit_id="website_sale.product_share_buttons"
               name="Set Empty Share Buttons">
-        <!-- Use XPath to find the appropriate location and replace with an empty div -->
-        <xpath expr="//div[@class='h4 mt-3 mb-0 d-flex justify-content-md-end flex-shrink-0']" position="replace">
-            <div/>
-        </xpath>
     </template>
 
     <template id="products_item" inherit_id="website_sale.products_item" name="Products item">
