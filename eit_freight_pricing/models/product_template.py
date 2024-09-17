@@ -67,6 +67,8 @@ class ProductTemplate(models.Model):
     vessel_line_ids = fields.One2many('frieght.vessel.line', 'product_vessel_id')
     plane_line_ids = fields.One2many('frieght.plane.line', 'product_plane_id')
     is_accounting = fields.Boolean(string="Accounting", default=False)
+    show_shipping_line = fields.Boolean(string="Show Shipping Line", default=False)
+    show_air_line = fields.Boolean(string="Show Air Line", default=False)
 
     @api.model
     def unlink(self):

@@ -402,6 +402,8 @@
                                     <field name="public_categ_ids" widget="many2many_tags" string="Categories"/>
                                     <field name="website_ribbon_id" groups="base.group_no_one"
                                         options="{'no_quick_create': True}"/>
+                                    <field name="show_shipping_line" invisible="transport_type_id != 2"/>
+                                    <field name="show_air_line" invisible="transport_type_id != 1"/>
 
                                     <!-- <field name="product_template_image_ids" class="o_website_sale_image_list"
                                            context="{'default_name': name}" mode="kanban" add-label="Add a Media"

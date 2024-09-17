@@ -106,14 +106,24 @@
                                     </tr>
                                     <tr style="border-bottom: 1px solid #ddd;">
                                         <td style="padding: 10px; text-align: left;" colspan="2">
-                                            <strong>Container/Package Type:</strong>
+                                            <strong t-if="product.transport_type_id.id not in [1, 2, 3] or product.shipment_scope_id.id in [1, 3] or (product.transport_type_id.id in [2, 3] and not product.shipment_scope_id)">
+                                                Container Type:
+                                            </strong>
+                                            <strong t-if="product.transport_type_id.id in [1] or product.shipment_scope_id.id not in [1,3]">
+                                                Package Type:
+                                            </strong>
                                             <t t-if="product.transport_type_id.id in [1] or product.shipment_scope_id.id not in [1,3]"
                                                t-esc="product.package_type.name"/>
                                             <t t-if="product.transport_type_id.id not in [1, 2, 3] or product.shipment_scope_id.id in [1, 3] or (product.transport_type_id.id in [2, 3] and not product.shipment_scope_id)"
                                                t-esc="product.container_type.name"/>
                                         </td>
                                         <td style="padding: 10px; text-align: left;" colspan="2">
-                                            <strong>Shipping/Airline:</strong>
+                                            <strong t-if="product.transport_type_id.id in [2] and product.show_shipping_line">
+                                                Shipping line:
+                                            </strong>
+                                            <strong t-if="product.transport_type_id.id in [1] and product.show_air_line">
+                                                Air line:
+                                            </strong>
                                             <t t-if="product.transport_type_id.id in [1]"
                                                t-esc="product.air_line.name"/>
                                             <t t-if="product.transport_type_id.id in [2]"
@@ -132,8 +142,11 @@
                                     </tr>
                                     <tr style="border-bottom: 1px solid #ddd;">
                                         <td style="padding: 10px; text-align: left;" colspan="2">
-                                            <strong>Free Time:</strong>
-                                            <t t-esc="product.free_time_duration"/>
+                                            <strong t-if="product.transport_type_id.id in [2] and product.free_time_duration > 0 and product.shipment_scope_id.id in [1, 3]">
+                                                Free Time:
+                                            </strong>
+                                            <t t-if="product.transport_type_id.id in [2] and product.free_time_duration > 0 and product.shipment_scope_id.id in [1, 3]"
+                                               t-esc="product.free_time_duration"/>
                                         </td>
                                         <td style="padding: 10px; text-align: left;" colspan="2">
                                             <strong>Valid To:</strong>
@@ -145,65 +158,70 @@
                                             <br/>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr t-if="product.plane_line_ids or product.vessel_line_ids">
                                         <td colspan="4">
-                                            <strong t-if="product.transport_type_id.id in [1]">Planes:</strong>
-                                            <strong t-if="product.transport_type_id.id not in [1]">Vessels:</strong>
+                                            <strong t-if="product.transport_type_id.id in [1]"
+                                                    style="color: #6495ED;">Planes:
+                                            </strong>
+
+                                            <strong t-if="product.transport_type_id.id not in [1]"
+                                                    style="color: #6495ED;">Vessels:
+                                            </strong>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td style="padding: 10px; text-align: left; color: #333;background-color: #efdfdf;">
+                                    <tr t-if="product.plane_line_ids or product.vessel_line_ids">
+                                        <td style="text-align: left;border-bottom: 1px solid #ddd;">
                                             <strong t-if="product.transport_type_id.id in [1]">Plane</strong>
                                             <strong t-if="product.transport_type_id.id not in [1]">Vessel Name</strong>
                                         </td>
-                                        <td style="padding: 10px; text-align: left; color: #333;background-color: #efdfdf;">
+                                        <td style="text-align: left;border-bottom: 1px solid #ddd;">
                                             <strong t-if="product.transport_type_id.id in [1]">Flight No.</strong>
                                             <strong t-if="product.transport_type_id.id not in [1]">Voyage No.</strong>
                                         </td>
-                                        <td style="padding: 10px; text-align: left; color: #333;background-color: #efdfdf;">
+                                        <td style="text-align: left;border-bottom: 1px solid #ddd;">
                                             <strong>ETD</strong>
                                         </td>
-                                        <td style="padding: 10px; text-align: left; color: #333;background-color: #efdfdf;">
+                                        <td style="text-align: left;border-bottom: 1px solid #ddd;">
                                             <strong>ETA</strong>
                                         </td>
-                                        <td style="padding: 10px; text-align: left; color: #333;background-color: #efdfdf;">
+                                        <td style="text-align: left;border-bottom: 1px solid #ddd;">
                                             <strong>T.T</strong>
                                         </td>
                                     </tr>
                                     <t t-foreach="product.plane_line_ids" t-as="plane">
                                         <tr>
-                                            <td style="padding: 10px;">
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="plane.plane_id.name"/>
                                             </td>
-                                            <td style="padding: 10px;">
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="plane.voyage_number"/>
                                             </td>
-                                            <td style="padding: 10px;">
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="plane.etd"/>
                                             </td>
-                                            <td style="padding: 10px;">
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="plane.eta"/>
                                             </td>
-                                            <td style="padding: 10px;">
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="plane.tt_day"/>
                                             </td>
                                         </tr>
                                     </t>
                                     <t t-foreach="product.vessel_line_ids" t-as="vessel">
                                         <tr>
-                                            <td>
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="vessel.vessel_id.name"/>
                                             </td>
-                                            <td>
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="vessel.voyage_number"/>
                                             </td>
-                                            <td>
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="vessel.etd"/>
                                             </td>
-                                            <td>
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="vessel.eta"/>
                                             </td>
-                                            <td>
+                                            <td style="padding: 10px;border-bottom: 1px solid #ddd;">
                                                 <t t-esc="vessel.tt_day"/>
                                             </td>
                                         </tr>
@@ -298,9 +316,6 @@
                                         <th style="padding: 10px; text-align: left; font-weight: bold; color: #333;">
                                             Currency
                                         </th>
-                                        <th style="padding: 10px; text-align: left; font-weight: bold; color: #333;">
-                                            Rate USD
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -314,9 +329,6 @@
                                             </td>
                                             <td style="padding: 10px; text-align: left;">
                                                 <t t-esc="charge.currency_id.name"/>
-                                            </td>
-                                            <td style="padding: 10px; text-align: left;">
-                                                <t t-esc="charge.sale_usd"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -535,4 +547,168 @@
         </xpath>
 
     </template>
+
+
+    <template id="cart_lines_inherit" inherit_id="website_sale.cart_lines" name="Shopping Cart Lines">
+        <xpath expr="//div[@id='cart_products']" position="replace">
+            <t t-set="currency_usd_id" t-value="currency_usd_id"/>
+            <div id="cart_products"
+                 t-if="website_sale_order and website_sale_order.website_order_line"
+                 class="js_cart_lines d-flex flex-column mb32">
+                <t t-set="show_qty" t-value="is_view_active('website_sale.product_quantity')"/>
+                <t t-set="currency_usd_id" t-value="currency_usd_id"/>
+                <div t-foreach="website_sale_order.website_order_line"
+                     t-as="line"
+                     t-attf-class="o_cart_product d-flex align-items-stretch gap-3 #{line.linked_line_id and 'optional_product info'} #{not line_last and 'border-bottom pb-4'} #{line_index &gt; 0 and 'pt-4'}"
+                     t-attf-data-product-id="#{line.product_id and line.product_id.id}">
+                    <t t-if="line.product_id">
+                        <img t-if="line._is_not_sellable_line() and line.product_id.image_128"
+                             t-att-src="image_data_uri(line.product_id.image_128)"
+                             class="o_image_64_max  img rounded"
+                             t-att-alt="line.name_short"/>
+                        <div t-else=""
+                             t-field="line.product_id.image_128"
+                             t-options="{'widget': 'image', 'qweb_img_responsive': False, 'class': 'o_image_64_max rounded'}"/>
+                        <div class="flex-grow-1">
+                            <t t-call="website_sale.cart_line_product_link">
+                                <h6 t-field="line.name_short" class="d-inline align-top h6 fw-bold"/>
+                            </t>
+                            <t t-call="website_sale.cart_line_description_following_lines">
+                                <t t-set="div_class" t-valuef="d-none d-md-block"/>
+                            </t>
+                            <div>
+                                <a href='#'
+                                   class="js_delete_product d-none d-md-inline-block small"
+                                   aria-label="Remove from cart"
+                                   title="Remove from cart">Remove
+                                </a>
+                                <button class="js_delete_product btn btn-light d-inline-block d-md-none"
+                                        title="remove">
+                                    <i class="fa fa-trash-o"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                            <div t-attf-class="css_quantity input-group mb-2"
+                                 name="website_sale_cart_line_quantity">
+                                <t t-if="not line._is_not_sellable_line()">
+                                    <t t-if="show_qty">
+                                        <a href="#"
+                                           class="js_add_cart_json btn btn-link d-inline-block border-end-0"
+                                           aria-label="Remove one"
+                                           title="Remove one">
+                                            <i class="position-relative z-index-1 fa fa-minus"/>
+                                        </a>
+                                        <input type="text"
+                                               class="js_quantity quantity form-control border-start-0 border-end-0"
+                                               t-att-data-line-id="line.id"
+                                               t-att-data-product-id="line.product_id.id"
+                                               t-att-value="int(line.product_uom_qty) == line.product_uom_qty and int(line.product_uom_qty) or line.product_uom_qty"/>
+                                        <t t-if="line._get_shop_warning(clear=False)">
+                                            <a href="#" class="btn btn-link">
+                                                <i class='fa fa-warning text-warning'
+                                                   t-att-title="line._get_shop_warning()"
+                                                   role="img"
+                                                   aria-label="Warning"/>
+                                            </a>
+                                        </t>
+                                        <a t-else=""
+                                           href="#"
+                                           class="js_add_cart_json d-inline-block float_left btn btn-link border-start-0"
+                                           aria-label="Add one"
+                                           title="Add one">
+                                            <i class="fa fa-plus position-relative z-index-1"/>
+                                        </a>
+                                    </t>
+                                    <t t-else="">
+                                        <input type="hidden"
+                                               class="js_quantity form-control quantity"
+                                               t-att-data-line-id="line.id"
+                                               t-att-data-product-id="line.product_id.id"
+                                               t-att-value="int(line.product_uom_qty) == line.product_uom_qty and int(line.product_uom_qty) or line.product_uom_qty"/>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <span class="w-100 text-muted" t-esc="int(line.product_uom_qty)"/>
+                                    <input type="hidden"
+                                           class="js_quantity quantity form-control"
+                                           t-att-data-line-id="line.id"
+                                           t-att-data-product-id="line.product_id.id"
+                                           t-att-value="line.product_uom_qty"/>
+                                </t>
+                            </div>
+                            <div class="mb-0 h6 fw-bold text-end" name="website_sale_cart_line_price">
+                                <t t-if="line.discount">
+                                    <del t-attf-class="#{'text-danger mr8'}"
+                                         style="white-space: nowrap;"
+                                         t-out="line._get_displayed_unit_price() * line.product_uom_qty"
+                                         t-options="{'widget': 'monetary', 'display_currency': currency_usd_id}"/>
+                                </t>
+                                <t t-if="website.show_line_subtotals_tax_selection == 'tax_excluded'"
+                                   t-set='product_price'
+                                   t-value='line.price_subtotal'/>
+                                <t t-else=""
+                                   t-set='product_price'
+                                   t-value='line.price_total'/>
+                                <span t-out="line.product_id.list_price" style="white-space: nowrap;"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency_usd_id}"/>
+                                <!--                                <small t-if="not line._is_not_sellable_line() and line.product_id.base_unit_price"-->
+                                <!--                                       class="cart_product_base_unit_price d-block text-muted"-->
+                                <!--                                       groups="website_sale.group_show_uom_price">-->
+                                <!--                                    <t t-call='website_sale.base_unit_price'>-->
+                                <!--                                        <t t-set='product' t-value='line.product_id'/>-->
+                                <!--                                        <t t-set='combination_info'-->
+                                <!--                                           t-value="{'base_unit_price': product._get_base_unit_price(product_price/line.product_uom_qty)}"/>-->
+                                <!--                                    </t>-->
+                                <!--                                </small>-->
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="total_inherit" inherit_id="website_sale.total">
+        <xpath expr="//div[@id='cart_total']" position="replace">
+            <div id="cart_total" t-if="website_sale_order and website_sale_order.website_order_line"
+                 t-att-class="_cart_total_classes">
+                <table class="table mb-0">
+                    <tr id="order_total_untaxed">
+                        <td id="cart_total_subtotal"
+                            class="border-0 pb-2 ps-0 pt-0 text-start text-muted"
+                            colspan="2">
+                            Subtotal
+                        </td>
+                        <td class="text-end border-0 pb-2 pe-0 pt-0">
+                            <span t-field="website_sale_order.amount_untaxed"
+                                  class="monetary_field"
+                                  style="white-space: nowrap;"
+                                  t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                        </td>
+                    </tr>
+                    <tr id="order_total_taxes">
+                        <td colspan="2" class="text-muted border-0 ps-0 pt-0 pb-3">Taxes</td>
+                        <td class="text-end border-0 pe-0 pt-0 pb-3">
+                            <span t-field="website_sale_order.amount_tax"
+                                  class="monetary_field"
+                                  style="white-space: nowrap;"
+                                  t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                        </td>
+                    </tr>
+                    <tr id="order_total" class="border-top">
+                        <td colspan="2" class="border-0 ps-0 pt-3">
+                            <strong>Total</strong>
+                        </td>
+                        <td class="text-end border-0 px-0 pt-3">
+                            <strong t-field="website_sale_order.amount_total"
+                                    class="monetary_field text-end p-0"
+                                    t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+    </template>
+
 </odoo>
