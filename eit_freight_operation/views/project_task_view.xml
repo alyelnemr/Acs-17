@@ -281,10 +281,6 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project.view_task_search_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="attributes">
-                    <field name="name" string="Operation"
-                           filter_domain="['|', ('name', 'ilike', self), ('id', 'ilike', self)]"/>
-                </xpath>
                 <xpath expr="//filter[@name='my_tasks']" position="attributes">
                     <attribute name="string">My Operations</attribute>
                 </xpath>
@@ -322,7 +318,9 @@
                             context="{'group_by': 'shipment_scope_id'}"/>
                 </xpath>
 
-                <xpath expr="//search[1]/field[@name='name']" position="after">
+                <xpath expr="//field[@name='name']" position="replace">
+                    <field name="name" string="Operation"
+                           filter_domain="['|', ('name', 'ilike', self), ('id', 'ilike', self)]"/>
                     <field name="port_id"/>
                     <field name="port_id_pod"/>
                     <field name="master_bl"/>
