@@ -55,6 +55,7 @@
                 <field name="list_price" string="Sale Rate (USD) "
                        options="{'currency_field': 'currency_id'}" optional="false" decoration-muted="not sale_ok"/>
                 <field name="transit_time_duration" string="T.T" optional="false"/>
+                <field name="partner_id" string="Vendor" optional="false"/>
                 <field name="product_variant_count" column_invisible="True"/>
                 <!--                <field name="list_price" string="Rate" widget='monetary'-->
                 <!--                       options="{'currency_field': 'currency_id'}" optional="show" decoration-muted="not sale_ok"/>-->

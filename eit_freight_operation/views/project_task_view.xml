@@ -66,6 +66,7 @@
                 <xpath expr="//field[@name='my_activity_date_deadline']" position="replace">
                 </xpath>
                 <xpath expr="//field[@name='personal_stage_type_id']" position="replace">
+                    <field name="closing_stage_id" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='user_ids']" position="attributes">
                     <attribute name="string">Executors</attribute>
@@ -79,7 +80,6 @@
                 </xpath>
 
                 <xpath expr="//field[@name='project_id']" position="after">
-                    <field name="closing_stage_id" invisible="1"/>
                     <field name="transport_type_id" optional="show" string="Type"/>
                     <field name="master_bl" optional="show"/>
                     <field name="port_id" optional="show"/>
@@ -271,6 +271,9 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project.view_task_search_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//filter[@name='project_id']" position="replace">
+<!--                    <field name="opt_partners_lines.partner_id" string="Partners"/>-->
+                </xpath>
                 <xpath expr="//filter[@name='my_tasks']" position="attributes">
                     <attribute name="string">My Operations</attribute>
                 </xpath>
