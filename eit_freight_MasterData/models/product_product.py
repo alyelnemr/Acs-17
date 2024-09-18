@@ -19,10 +19,10 @@ class ProductProduct(models.Model):
     calculation_type = fields.Selection(
         string='Calculation Type',
         selection=[('invoice', 'Chargeable Weight'),
-                   ('gross_weight ', 'Gross Weight'),
-                   ('fixed_charge ', 'Fixed Charge'),
-                   ('container ', 'Container'),
-                   ('teu ', 'TEU'),
-                   ('volume ', 'Volume'),
-                   ('days ', 'Days'),
+                   ('gross_weight', 'Gross Weight'),
+                   ('fixed_charge', 'Fixed Charge'),
+                   ('container', 'Container'),
+                   ('teu', 'TEU'),
+                   ('volume', 'Volume'),
+                   ('days', 'Days'),
                    ])

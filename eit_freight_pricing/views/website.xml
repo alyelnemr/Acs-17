@@ -90,8 +90,7 @@
                          t-att-data-image_width="website.product_page_image_width"
                          t-att-data-image_layout="website.product_page_image_layout">
                         <t t-set="image_cols" t-value="website._get_product_page_proportions()"/>
-                        <div t-attf-class="col-lg-#{image_cols[0]} mt-lg-4 o_wsale_product_images position-relative"
-                             t-if="website.product_page_image_width != 'none'">
+                        <div t-attf-class="col-lg-#{image_cols[0]} mt-lg-4 o_wsale_product_images position-relative">
                             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
                                 <tbody>
                                     <tr style="border-bottom: 1px solid #ddd;">
@@ -270,6 +269,20 @@
                                 </tr>
                                 <tr>
                                     <td>
+                                        <a href="#o_product_page_reviews"
+                                           class="o_product_page_reviews_link text-decoration-none">
+                                            <t t-call="portal_rating.rating_widget_stars_static">
+                                                <t t-set="rating_avg" t-value="product.rating_avg"/>
+                                                <t t-set="trans_text_plural">%s reviews</t>
+                                                <t t-set="trans_text_singular">%s review</t>
+                                                <t t-set="rating_count"
+                                                   t-value="(trans_text_plural if product.rating_count > 1 else trans_text_singular) % product.rating_count"/>
+                                            </t>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <br/>
                                     </td>
                                 </tr>
@@ -346,30 +359,18 @@
                                        t-attf-class="btn btn-primary js_check_product a-submit flex-grow-1"
                                        href="#">
                                         <i class="fa fa-shopping-cart me-2"/>
-                                        Add to cart
+                                        Add to Favorites
                                     </a>
 
                                     <a role="button" t-attf-class="btn btn-outline-primary o_we_buy_now ms-1 " href="#">
                                         <i class="fa fa-bolt me-2"/>
-                                        Buy now
+                                        Book now
                                     </a>
                                 </div>
                             </div>
                             <span itemprop="url" style="display:none;" t-esc="base_url + product.website_url"/>
                             <span itemprop="image" style="display:none;"
                                   t-esc="base_url + website.image_url(product, 'image_1920')"/>
-                            <t t-if="is_view_active('website_sale.product_comment')">
-                                <a href="#o_product_page_reviews"
-                                   class="o_product_page_reviews_link text-decoration-none">
-                                    <t t-call="portal_rating.rating_widget_stars_static">
-                                        <t t-set="rating_avg" t-value="product.rating_avg"/>
-                                        <t t-set="trans_text_plural">%s reviews</t>
-                                        <t t-set="trans_text_singular">%s review</t>
-                                        <t t-set="rating_count"
-                                           t-value="(trans_text_plural if product.rating_count > 1 else trans_text_singular) % product.rating_count"/>
-                                    </t>
-                                </a>
-                            </t>
                             <p t-field="product.description_sale" class="text-muted my-2"
                                placeholder="A short description that will also appear on documents."/>
                             <div t-field="product.description_ecommerce" class="oe_structure"
@@ -455,6 +456,28 @@
                             <div id="o_product_terms_and_share"
                                  class="d-flex justify-content-between flex-column flex-md-row align-items-md-end mb-3">
                             </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div class="o_shop_discussion_rating" data-anchor='true'>
+                                <section id="o_product_page_reviews" class="container pt32 pb32" data-anchor='true'>
+                                    <a class="o_product_page_reviews_title d-flex justify-content-between text-decoration-none collapsed"
+                                       type="button" data-bs-toggle="collapse"
+                                       data-bs-target="#o_product_page_reviews_content" aria-expanded="false"
+                                       aria-controls="o_product_page_reviews_content">
+                                        <h3 class="mb32">Customer Reviews</h3>
+                                        <i class="fa align-self-start"/>
+                                    </a>
+                                    <div id="o_product_page_reviews_content" class="collapse">
+                                        <t t-call="portal.message_thread">
+                                            <t t-set="object" t-value="product"/>
+                                            <t t-set="display_rating" t-value="True"/>
+                                            <t t-set="message_per_page" t-value="5"/>
+                                            <t t-set="two_columns" t-value="true"/>
+                                        </t>
+                                    </div>
+                                </section>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -480,7 +503,6 @@
     <template id="product_share_buttons_inherit_empty" inherit_id="website_sale.product_share_buttons"
               name="Set Empty Share Buttons">
     </template>
-
     <template id="products_item" inherit_id="website_sale.products_item" name="Products item">
         <xpath expr="//form" position="replace">
             <t t-set="currency_usd_id" t-value="currency_usd_id"/>
@@ -521,18 +543,57 @@
                                 Unpublished
                             </a>
                         </h6>
+
+                        <!-- Updated From/To Layout using Flexbox -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>From:</strong>
+                                <t t-esc="product.pol_id.display_name"/>
+                            </div>
+                            <div>
+                                <strong>To:</strong>
+                                <t t-esc="product.pod_id.display_name"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong t-if="product.transport_type_id.id not in [1, 2, 3] or product.shipment_scope_id.id in [1, 3] or (product.transport_type_id.id in [2, 3] and not product.shipment_scope_id)">
+                                    Container Type:
+                                </strong>
+                                <strong t-if="product.transport_type_id.id in [1] or product.shipment_scope_id.id not in [1,3]">
+                                    Package Type:
+                                </strong>
+                                <t t-if="product.transport_type_id.id in [1] or product.shipment_scope_id.id not in [1,3]"
+                                   t-esc="product.package_type.name"/>
+                                <t t-if="product.transport_type_id.id not in [1, 2, 3] or product.shipment_scope_id.id in [1, 3] or (product.transport_type_id.id in [2, 3] and not product.shipment_scope_id)"
+                                   t-esc="product.container_type.name"/>
+
+                            </div>
+                            <div>
+                                <strong>Transit Time:</strong>
+                                <t t-esc="product.transit_time_duration"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>Service:</strong>
+                                <t t-esc="', '.join([scope.name for scope in product.scope_ids])"/>
+                            </div>
+                            <div>
+                                <strong>Valid To:</strong>
+                                <t t-esc="product.expiration_date"/>
+                            </div>
+                        </div>
+
                     </div>
+                    <br/>
                     <div class="o_wsale_product_sub d-flex justify-content-between align-items-end gap-2 flex-wrap pb-1">
                         <t t-set="template_price_vals" t-value="get_product_prices(product)"/>
                         <div class="o_wsale_product_btn"/>
                         <div class="product_price" itemprop="offers" itemscope="itemscope"
                              itemtype="http://schema.org/Offer">
-                            <t t-if="'base_price' in template_price_vals and (template_price_vals['base_price'] &gt; template_price_vals['price_reduce']) and (template_price_vals['price_reduce'] or not website.prevent_zero_price_sale)">
-                                <del t-attf-class="text-muted me-1 h6 mb-0" style="white-space: nowrap;">
-                                    <em class="small" t-esc="template_price_vals['base_price']"
-                                        t-options="{'widget': 'monetary', 'display_currency': currency_usd_id}"/>
-                                </del>
-                            </t>
                             <span class="h6 mb-0"
                                   t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale"
                                   t-esc="template_price_vals['price_reduce']"
@@ -545,7 +606,149 @@
                 </div>
             </form>
         </xpath>
+    </template>
 
+
+    <template id="products_inherit" inherit_id="website_sale.products">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="js_sale o_wsale_products_page">
+                <div class="oe_structure oe_empty oe_structure_not_nearest" id="oe_structure_website_sale_products_1"/>
+                <div class="container oe_website_sale pt-2">
+                    <div class="row o_wsale_products_main_row align-items-start flex-nowrap">
+                        <aside t-if="hasLeftColumn" id="products_grid_before"
+                               class="d-none d-lg-block position-sticky col-3 px-3 clearfix">
+                            <div class="o_wsale_products_grid_before_rail vh-100 ms-n2 mt-n2 pt-2 pe-lg-2 pb-lg-5 ps-2 overflow-y-scroll">
+                                <div t-if="opt_wsale_categories" class="products_categories mb-3">
+                                    <t t-call="website_sale.products_categories_list"/>
+                                </div>
+                                <div class="products_attributes_filters"/>
+                                <t t-if="opt_wsale_filter_price and opt_wsale_attributes"
+                                   t-call="website_sale.filter_products_price"/>
+                            </div>
+                        </aside>
+                        <div id="products_grid"
+                             t-attf-class="#{'o_wsale_layout_list' if layout_mode == 'list' else ''} {{'col-lg-9' if hasLeftColumn else 'col-12'}}">
+                            <t t-call="website_sale.products_breadcrumb">
+                                <t t-set="_classes" t-valuef="d-none d-lg-flex w-100 p-0 small"/>
+                            </t>
+                            <div class="products_header btn-toolbar flex-nowrap align-items-center justify-content-between gap-3 mb-3">
+                                <t t-if="is_view_active('website_sale.search')" t-call="website_sale.search">
+                                    <t t-set="search" t-value="original_search or search"/>
+                                    <t t-set="_form_classes"
+                                       t-valuef="d-lg-inline {{'d-inline' if not category else 'd-none'}}"/>
+                                </t>
+
+                                <t t-call="website_sale.pricelist_list" t-cache="pricelist">
+                                    <t t-set="_classes" t-valuef="d-none d-lg-inline"/>
+                                </t>
+
+                                <t t-if="is_view_active('website_sale.sort')" t-call="website_sale.sort">
+                                    <t t-set="_classes" t-valuef="d-none d-lg-inline-block"/>
+                                </t>
+
+                                <div t-if="category" class="d-flex align-items-center d-lg-none me-auto">
+                                    <t t-if="not category.parent_id" t-set="backUrl" t-valuef="/shop"/>
+                                    <t t-else="" t-set="backUrl"
+                                       t-value="keep('/shop/category/' + slug(category.parent_id), category=0)"/>
+
+                                    <a t-attf-class="btn btn-{{navClass}} me-2"
+                                       t-att-href="category.parent_id and keep('/shop/category/' + slug(category.parent_id), category=0) or '/shop'">
+                                        <i class="fa fa-angle-left"/>
+                                    </a>
+                                    <h4 t-out="category.name" class="mb-0 me-auto"/>
+                                </div>
+
+                                <t t-if="is_view_active('website_sale.add_grid_or_list_option')"
+                                   t-call="website_sale.add_grid_or_list_option">
+                                    <t t-set="_classes" t-valuef="d-flex"/>
+                                </t>
+
+                                <button t-if="is_view_active('website_sale.sort') or opt_wsale_categories or opt_wsale_attributes or opt_wsale_attributes_top"
+                                        t-attf-class="btn btn-{{navClass}} position-relative {{not opt_wsale_attributes_top and 'd-lg-none'}}"
+                                        data-bs-toggle="offcanvas"
+                                        data-bs-target="#o_wsale_offcanvas">
+                                    <i class="fa fa-sliders"/>
+                                    <span t-if="isFilteringByPrice or attrib_set or tags"
+                                          t-attf-class="position-absolute top-0 start-100 translate-middle border border-{{navClass}} rounded-circle bg-danger p-1">
+                                        <span class="visually-hidden">filters active</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <t t-if="opt_wsale_categories_top" t-call="website_sale.filmstrip_categories"/>
+
+                            <div t-if="original_search and products" class="alert alert-warning mt8">
+                                No results found for '<span t-esc="original_search"/>'. Showing results for '<span
+                                    t-esc="search"/>'.
+                            </div>
+
+                            <t t-if="category">
+                                <t t-set='editor_msg'>Drag building blocks here to customize the header for "<t
+                                        t-esc='category.name'/>" category.
+                                </t>
+                                <div class="mb16" id="category_header" t-att-data-editor-message="editor_msg"
+                                     t-field="category.website_description"/>
+                            </t>
+
+                            <div t-if="products" class="o_wsale_products_grid_table_wrapper pt-3 pt-lg-0">
+                                <table class="table table-borderless h-100 m-0" t-att-data-ppg="ppg"
+                                       t-att-data-ppr="ppr" t-att-data-default-sort="website.shop_default_sort"
+                                       t-att-data-name="grid_block_name">
+                                    <colgroup t-ignore="true">
+                                        <!-- Force the number of columns (useful when only one row of (x < ppr) products) -->
+                                        <col t-foreach="ppr" t-as="p"/>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr t-foreach="bins" t-as="tr_product">
+                                            <t t-foreach="tr_product" t-as="td_product">
+                                                <t t-if="td_product">
+                                                    <!-- We use t-attf-class here to allow easier customization -->
+                                                    <td t-att-colspan="td_product['x'] != 1 and td_product['x']"
+                                                        t-att-rowspan="td_product['y'] != 1 and td_product['y']"
+                                                        t-attf-class="oe_product"
+                                                        t-att-data-ribbon-id="td_product['ribbon'].id"
+                                                        t-att-data-name="product_block_name">
+                                                        <div t-attf-class="o_wsale_product_grid_wrapper position-relative h-100 o_wsale_product_grid_wrapper_#{td_product['x']}_#{td_product['y']}">
+                                                            <t t-call="website_sale.products_item">
+                                                                <t t-set="product" t-value="td_product['product']"/>
+                                                            </t>
+                                                        </div>
+                                                    </td>
+                                                </t>
+                                                <td t-else=""/>
+                                            </t>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-nocache="get the actual search" t-else="" class="text-center text-muted mt128 mb256">
+                                <t t-if="not search">
+                                    <h3 class="mt8">No product defined</h3>
+                                    <p t-if="category">No product defined in this category.</p>
+                                </t>
+                                <t t-else="">
+                                    <h3 class="mt8">No results</h3>
+                                    <p>No results for "<strong t-esc='search'/>"
+                                        <t t-if="category">in category "<strong t-esc="category.display_name"/>"
+                                        </t>
+                                        .
+                                    </p>
+                                </t>
+                                <p t-ignore="true" groups="sales_team.group_sale_manager">Click <i>'New'</i> in the
+                                    top-right corner to create your first product.
+                                </p>
+                            </div>
+                            <div class="products_pager d-flex justify-content-center pt-5 pb-3">
+                                <t t-call="website.pager"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-call="website_sale.o_wsale_offcanvas"/>
+                </div>
+                <div class="oe_structure oe_empty oe_structure_not_nearest" id="oe_structure_website_sale_products_2"/>
+            </div>
+        </xpath>
     </template>
 
 
@@ -708,6 +911,177 @@
                     </tr>
                 </table>
             </div>
+        </xpath>
+    </template>
+
+
+    <!-- /shop/extra_info route -->
+    <template id="extra_info_inherit" inherit_id="website_sale.extra_info">
+        <xpath expr="//h3[contains(text(), 'Extra info')]" position="replace">
+            <h3 class="mb-4">Booking Info</h3>
+        </xpath>
+        <xpath expr="//section[@class='s_website_form']" position="replace">
+            <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                <div class="container">
+                    <form action="/website/form/" method="post" enctype="multipart/form-data"
+                          class="o_mark_required s_website_form_no_recaptcha"
+                          data-mark="*" data-force_action="shop.sale.order" data-model_name="sale.order"
+                          data-success-mode="redirect" data-success-page="/shop/payment" hide-change-model="true">
+                        <div class="s_website_form_rows s_col_no_bgcolor row">
+                            <div class="s_website_form_field col-12 py-2 mb-0" data-type="char" data-name="Field">
+                                <div class="s_col_no_resize s_col_no_bgcolor row">
+                                    <label class="s_website_form_label col-form-label col-sm-auto" style="width: 200px"
+                                           for="sale1">
+                                        <span class="s_website_form_label_content">Your Reference</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input id="sale1" type="text" class="s_website_form_input form-control"
+                                               name="client_order_ref"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s_website_form_field s_website_form_custom col-12 py-2 mb-0" data-type="text"
+                                 data-name="Field">
+                                <div class="s_col_no_resize s_col_no_bgcolor row">
+                                    <label class="s_website_form_label col-form-label col-sm-auto" style="width: 200px"
+                                           for="sale2">
+                                        <span class="s_website_form_label_content">Give us your feedback</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <textarea id="sale2" class="s_website_form_input form-control"
+                                                  name="Give us your feedback"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s_website_form_field s_website_form_custom col-12 py-2 mb-0" data-type="binary"
+                                 data-name="Field">
+                                <div class="s_col_no_resize s_col_no_bgcolor row">
+                                    <label class="s_website_form_label col-form-label col-sm-auto" style="width: 200px"
+                                           for="sale3">
+                                        <span class="s_website_form_label_content">Upload a document</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input id="sale3" type="file" class="s_website_form_input form-control"
+                                               name="a_document"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s_website_form_submit s_website_form_no_submit_option d-flex flex-column flex-lg-row align-items-lg-center pt-4">
+                                <a role="button"
+                                   name="website_sale_main_button"
+                                   class="s_website_form_send btn btn-primary order-lg-3 w-100 w-lg-auto ms-lg-auto"
+                                   href="/shop/confirm_order">
+                                    Continue checkout
+                                    <i class="fa fa-angle-right ms-2 fw-light"/>
+                                </a>
+
+                                <div class="position-relative d-flex d-lg-none w-100 justify-content-center align-items-center my-2 opacity-75">
+                                    <hr class="w-100"/>
+                                    <span class="px-3">or</span>
+                                    <hr class="w-100"/>
+                                </div>
+
+                                <a href="/shop/checkout" class="text-center">
+                                    <i class="fa fa-angle-left me-2 fw-light"/>
+                                    Return to shipping
+                                </a>
+                                <span id="s_website_form_result"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+
+    <!-- /shop/payment route -->
+    <template id="payment_inherit" inherit_id="website_sale.payment">
+        <xpath expr="//t[@name='website_sale_non_free_cart']" position="replace">
+
+        </xpath>
+    </template>
+
+    <template id="confirmation_inherit" inherit_id="website_sale.confirmation">
+        <xpath expr="//t[@t-call='website_sale.checkout_layout']" position="replace">
+            <t t-call="website_sale.checkout_layout">
+                <t t-set="show_wizard_checkout" t-value="False"/>
+                <t t-set="show_navigation_button" t-value="False"/>
+                <t t-set="show_footer" t-value="True"/>
+                <t t-set="additional_title">Shop - Confirmed</t>
+                <t t-set="hide_promotions" t-value="True"/>
+                <t t-set="oe_structure">
+                    <!-- This is the drag-and-drop area for website building blocs at the end of each
+                         checkout page. This is append at the of the page in `checkout_layout`. The
+                         templates created in the database to store blocs are hooked using XPath on the
+                         `oe_struture` element ID. Therefore, we can't use dynamic IDs (like with
+                         t-att-id) and each template needs to define a div element. -->
+                    <div class="oe_structure" id="oe_structure_website_sale_confirmation_3"/>
+                </t>
+
+                <t t-set="tx_sudo" t-value="order.get_portal_last_transaction()"/>
+                <div t-if="tx_sudo.state in ['pending', 'done']"
+                     class="d-flex justify-content-between align-items-center">
+                    <h3>Thank you for your order.</h3>
+                    <a role="button" class="d-none d-md-inline-block btn btn-primary ms-auto" href="/shop/print"
+                       target="_blank" aria-label="Print" title="Print"><i class="fa fa-print me-2"></i>Print
+                    </a>
+                </div>
+                <t t-if="tx_sudo.state == 'done'">
+                    <div class="mb-4">
+                        <h5>
+                            <em>
+                                <span>Order</span>
+                                <span t-field="order.name"/>
+                                <t t-if="order.state == 'sale'">
+                                    <i class="fa fa-check-circle ms-1"/>
+                                </t>
+                            </em>
+                        </h5>
+                    </div>
+                </t>
+                <t t-if="request.env['res.users']._get_signup_invitation_scope() == 'b2c' and request.website.is_public_user()">
+                    <p class="alert alert-info mt-3" role="status">
+                        <a role="button"
+                           t-att-href="order.partner_id.signup_prepare() and order.partner_id.with_context(relative_url=True).signup_url"
+                           class="btn btn-primary">Sign Up
+                        </a>
+                        to follow your order.
+                    </p>
+                </t>
+                <div class="oe_structure clearfix mt-3" id="oe_structure_website_sale_confirmation_1"/>
+
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <t t-set="same_shipping"
+                           t-value="bool(order.partner_shipping_id == order.partner_invoice_id or only_services)"/>
+                        <div>
+                            <b>Billing <t t-if="same_shipping and not only_services">&amp; Shipping</t>:
+                            </b>
+                            <span t-esc='order.partner_invoice_id'
+                                  t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                                  class="address-inline"/>
+                        </div>
+                        <div t-if="not same_shipping and not only_services"
+                             groups="account.group_delivery_invoice_address">
+                            <b>Shipping:</b>
+                            <span t-esc='order.partner_shipping_id'
+                                  t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                                  class="address-inline"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure mt-3" id="oe_structure_website_sale_confirmation_2"/>
+                <input t-if='website.plausible_shared_key' type='hidden' class='js_plausible_push'
+                       data-event-name='Shop'
+                       t-attf-data-event-params='{"CTA": "Order Confirmed", "amount": "#{"%3s-%3s" % (max(0, round(website_sale_order.amount_total/100)*100 - 50), round(website_sale_order.amount_total/100)*100 + 50)}"}'/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="payment_transaction_status" inherit_id="payment.transaction_status">
+        <xpath expr="//div[@name='o_payment_status_alert']" position="replace">
         </xpath>
     </template>
 

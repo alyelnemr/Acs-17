@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields, models, SUPERUSER_ID
 from odoo.addons.payment.controllers import portal as payment_portal
 from odoo.osv import expression
 from odoo.addons.payment import utils as payment_utils
@@ -6,6 +6,7 @@ from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.variant import WebsiteSaleVariantController
 from odoo.tools.json import scriptsafe as json_scriptsafe
+from odoo.exceptions import ValidationError
 
 
 class Website(models.Model):
@@ -29,6 +30,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
     ], type='http', auth="public", website=True, sitemap='shop')
     def shop(self, page=0, category=None, search='', min_price=0.0, max_price=0.0, ppg=False, **post):
         # change the route to /live-shipping-rates
+        request.session['website_sale_shop_layout_mode'] = 'list'
         response = super(WebsiteSale, self).shop(page=page, category=category, search=search,
                                                  min_price=min_price, max_price=max_price, ppg=ppg, **post)
 
@@ -141,21 +143,89 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
         return values
 
+    @http.route('/shop/payment', type='http', auth='public', website=True, sitemap=False)
+    def shop_payment(self, **post):
+        """ Payment step. This page proposes several payment means based on available
+        payment.provider. State at this point :
 
-class WebsiteSaleVariantControllerInherit(WebsiteSaleVariantController):
+         - a draft sales order with lines; otherwise, clean context / session and
+           back to the shop
+         - no transaction in context / session, or only a draft one, if the customer
+           did go to a payment.provider website but closed the tab without
+           paying / canceling
+        """
+        order = request.website.sale_get_order()
+        order.only_services = True
 
-    @http.route('/website_sale/get_combination_info', type='json', auth='public', methods=['POST'], website=True)
-    def get_combination_info_website(
-            self, product_template_id, product_id, combination, add_qty, parent_combination=None, **kwargs
-    ):
-        # Call the original method from the parent class
-        combination_info = super(WebsiteSaleVariantControllerInherit, self).get_combination_info_website(
-            product_template_id, product_id, combination, add_qty, parent_combination, **kwargs
-        )
+        if order and not order.only_services and (request.httprequest.method == 'POST' or not order.carrier_id):
+            # Update order's carrier_id (will be the one of the partner if not defined)
+            # If a carrier_id is (re)defined, redirect to "/shop/payment" (GET method to avoid infinite loop)
+            carrier_id = post.get('carrier_id')
+            keep_carrier = post.get('keep_carrier', False)
+            if keep_carrier:
+                keep_carrier = bool(int(keep_carrier))
+            if carrier_id:
+                carrier_id = int(carrier_id)
+            order._check_carrier_quotation(force_carrier_id=carrier_id, keep_carrier=keep_carrier)
+            if carrier_id:
+                return request.redirect("/shop/payment")
 
-        # Custom logic: You can modify or add to combination_info here
-        # Example: Add a custom field or perform additional processing
-        combination_info['custom_field'] = 'Custom Value'
+        redirection = self.checkout_redirection(order) or self.checkout_check_address(order)
+        if redirection:
+            return redirection
 
-        # Return the modified combination info
-        return combination_info
+        render_values = self._get_shop_payment_values(order, **post)
+        render_values['only_services'] = order and order.only_services or False
+
+        if render_values['errors']:
+            render_values.pop('payment_methods_sudo', '')
+            render_values.pop('tokens_sudo', '')
+
+        # return request.render("website_sale.payment", render_values)
+        return request.redirect("/shop/payment/validate")
+
+    @http.route('/shop/payment/validate', type='http', auth="public", website=True, sitemap=False)
+    def shop_payment_validate(self, sale_order_id=None, **post):
+        """ Inherit and modify the validation to use a fake transaction """
+        if sale_order_id is None:
+            order = request.website.sale_get_order()
+            if not order and 'sale_last_order_id' in request.session:
+                last_order_id = request.session['sale_last_order_id']
+                order = request.env['sale.order'].sudo().browse(last_order_id).exists()
+        else:
+            order = request.env['sale.order'].sudo().browse(sale_order_id)
+            assert order.id == request.session.get('sale_last_order_id')
+
+        errors = self._get_shop_payment_errors(order)
+        if errors:
+            first_error = errors[0]  # only display first error
+            error_msg = f"{first_error[0]}\n{first_error[1]}"
+            raise ValidationError(error_msg)
+        payment_method_id = request.env['payment.method'].with_context(active_test=False).search([], limit=1)
+        # Replace the transaction fetching logic with a fake transaction record
+        tx_sudo = request.env['payment.transaction'].sudo().create({
+            'provider_id': request.env['payment.provider'].search([], limit=1).id,
+            'amount': order.amount_total,
+            'currency_id': order.currency_id.id,
+            'partner_id': order.partner_id.id,
+            'sale_order_ids': [(6, 0, [order.id])],
+            'reference': order.name,
+            'state': 'done',  # Fake transaction set to 'done'
+            'payment_method_id': payment_method_id.id,
+        })
+
+        if not order or (order.amount_total and not tx_sudo):
+            return request.redirect('/shop')
+
+        if order and tx_sudo:
+            if order.state != 'sale':
+                order.with_context(send_email=True).with_user(SUPERUSER_ID).action_confirm()
+            request.website.sale_reset()
+            return request.redirect(order.get_portal_url())
+
+        # Clean context and session, then redirect to the confirmation page
+        request.website.sale_reset()
+        if tx_sudo and tx_sudo.state == 'draft':
+            return request.redirect('/shop')
+
+        return request.redirect('/shop/confirmation')

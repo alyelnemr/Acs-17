@@ -168,6 +168,7 @@ class SaleOrder(models.Model):
 
     def write(self, vals):
         if 'website_id' in vals or self.website_id:
+            vals['only_services'] = True
             currency_usd_id = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
             if currency_usd_id:
                 vals['currency_id'] = currency_usd_id.id
