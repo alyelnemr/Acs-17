@@ -13,27 +13,20 @@ class ResPartner(models.Model):
     task_count = fields.Integer(compute='_compute_task_count', string='# Shipments')
 
     def _compute_task_count(self):
-        # retrieve all children partners and prefetch 'parent_id' on them
-        all_partners = self.with_context(active_test=False).search_fetch(
-            [('id', 'child_of', self.ids)],
-            ['parent_id'],
-        )
-        all_opt_partners = self.env['opt.partners'].search([('partner_id', 'in', all_partners.ids)]).mapped('task_id')
+        for partner in self:
+            all_partners = self.with_context(active_test=False).search_fetch(
+                [('id', 'child_of', partner.id)],
+                ['parent_id'],
+            )
 
-        task_data = self.env['project.task']._read_group(
-            domain=[('partner_id', 'in', self.ids)],
-            groupby=['partner_id'], aggregates=['__count']
-        )
+            direct_task_ids = self.env['project.task'].search([('partner_id', 'in', all_partners.ids)]).ids
 
-        self_ids = set(self._ids)
+            opt_task_ids = self.env['opt.partners'].search([('partner_id', 'in', all_partners.ids)]).mapped(
+                'task_id').ids
 
-        self.task_count = 0
-        for partner, count in task_data:
-            while partner:
-                if partner.id in self_ids:
-                    partner.task_count += count
-                    partner.task_count += len(all_opt_partners)
-                partner = partner.parent_id
+            all_task_ids = list(set(direct_task_ids + opt_task_ids))
+
+            partner.task_count = len(all_task_ids)
 
     def action_view_tasks(self):
         """ Open the related tasks for this partner """
