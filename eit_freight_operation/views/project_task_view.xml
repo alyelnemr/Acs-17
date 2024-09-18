@@ -273,6 +273,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='project_id']" position="replace">
 <!--                    <field name="opt_partners_lines.partner_id" string="Partners"/>-->
+
                 </xpath>
                 <xpath expr="//filter[@name='my_tasks']" position="attributes">
                     <attribute name="string">My Operations</attribute>
