@@ -30,7 +30,9 @@ class Task(models.Model):
     customer_ref = fields.Text(string="Customer Ref")
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipments Scope")
     port_id = fields.Many2one('port.cites', string="POL", domain="[('type_id', '=', transport_type_id)]")
+    port_country_id = fields.Many2one('res.country', string="POL Country", related='port_id.country_id')
     port_id_pod = fields.Many2one('port.cites', string="POD", domain="[('type_id', '=', transport_type_id)]")
+    port_country_id_pod = fields.Many2one('res.country', string="POD Country", related='port_id_pod.country_id')
     incoterm_id = fields.Many2one('account.incoterms', string="Incoterm")
     commodity_id = fields.Many2one('commodity.data', string="Commodity")
     commodity_equip = fields.Selection(
@@ -149,6 +151,19 @@ class Task(models.Model):
     vendor_bill_count = fields.Integer(string="Vendor Bill Count", compute="_compute_vendor_bill_count", store=False)
     operation_tracking_stages = fields.One2many(comodel_name='operation.tracking.stages',
                                                 inverse_name='project_task_id', string="Tracking Stages")
+    custom_certificate_numbers = fields.Char(string="Custom Certificate Numbers",
+                                             compute="_compute_custom_certificate_numbers",
+                                             search='_search_custom_certificate_numbers')
+
+    @api.depends('operation_route_other_ids.custom_certificate_number')
+    def _compute_custom_certificate_numbers(self):
+        for task in self:
+            task.custom_certificate_numbers = ', '.join(
+                task.operation_route_other_ids.mapped('custom_certificate_number')
+            )
+
+    def _search_custom_certificate_numbers(self, operator, value):
+        return [('operation_route_other_ids.custom_certificate_number', operator, value)]
 
     def preview_operation(self):
         self.ensure_one()
@@ -719,7 +734,6 @@ class Task(models.Model):
             rec.show_transportation = False
             rec.show_transportation_inland = False
             rec.show_bill_leading_details = False
-            rec.show_acid_details = False
             if rec.transport_type_id.code == 'AIR':
                 rec.show_packages = True
                 rec.show_transportation = True
@@ -961,6 +975,7 @@ class Task(models.Model):
 class OptPartners(models.Model):
     _name = "opt.partners"
     _description = "Opt partners"
+    _rec_name = 'partner_id'
 
     partner_type_id = fields.Many2one('partner.type', string="Partner Type", required=True)
     partner_id = fields.Many2one('res.partner', string="Partner Name",

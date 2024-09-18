@@ -276,6 +276,36 @@
             </field>
         </record>
 
+        <record id="shipment_view_task_partner_info_form" model="ir.ui.view">
+            <field name="name">res.partner.task.buttons</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="project.view_task_partner_info_form"/>
+            <field name="priority" eval="7"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@icon='fa-tasks']" position="replace">
+                    <button class="oe_stat_button" type="object" name="action_view_tasks"
+                        groups="project.group_project_user" invisible="task_count == 0"
+                        icon="fa-tasks">
+                        <field  string="Shipments" name="task_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+            </field>
+       </record>
+
+        <record id="view_task_search_form_base_project" model="ir.ui.view">
+            <field name="name">"inherit.view.task.search.project.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_search_form_base"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='milestone_id']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='user_ids']" position="replace">
+                </xpath>
+            </field>
+        </record>
+
         <record id="inherit_view_task_search_form" model="ir.ui.view">
             <field name="name">"inherit.view.task.search.form</field>
             <field name="model">project.task</field>
@@ -322,10 +352,17 @@
                     <field name="name" string="Operation"
                            filter_domain="['|', ('name', 'ilike', self), ('id', 'ilike', self)]"/>
                     <field name="port_id"/>
+                    <field name="port_country_id"/>
                     <field name="port_id_pod"/>
+                    <field name="port_country_id_pod"/>
+                    <field name="house_bl_seq"/>
                     <field name="master_bl"/>
                     <field name="commodity_id"/>
                     <field name="shipping_container_ids" string="Container Number"/>
+                    <field name="opt_partners_lines" string="Partners"/>
+                    <field name="acid_no"/>
+                    <field name="custom_certificate_numbers" string="Custom Certificate Number"/>
+
                 </xpath>
             </field>
         </record>

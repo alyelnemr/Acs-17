@@ -54,8 +54,8 @@ class ProjectTaskChargesReport(models.AbstractModel):
 
         for doc in docs:
             doc_name = doc.name
-            new_string = re.sub(r'^.*?\/.*?\/', 'STT/', doc_name)if doc.name != '/' else ''
-            doc_name = new_string
+            new_string = re.sub(r'^.*?\/.*?\/', 'STT/', doc_name) if doc.name != '/' else ''
+            doc_name = 'Operation No. ' + doc_name
 
         return {
             'doc_ids': docids,

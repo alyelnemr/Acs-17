@@ -69,7 +69,7 @@ class OperationRoute(models.Model):
             if air_line_partner_id:
                 rec.broker_partner_id = air_line_partner_id[0].partner_id.id if air_line_partner_id else False
 
-    project_task_id = fields.Many2one(comodel_name='project.task', string="Task")
+    project_task_id = fields.Many2one(comodel_name='project.task', string="Operation")
     service_scope_id = fields.Many2one(comodel_name='service.scope', string="Service")
     service_scope_id_code = fields.Char(comodel_name='service.scope', string="Service Code",
                                         related='service_scope_id.code')

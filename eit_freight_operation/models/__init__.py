@@ -1,3 +1,4 @@
+from . import res_partner
 from . import operation_tracking_stages
 from . import operation_route_document
 from . import container_data
