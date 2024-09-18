@@ -419,7 +419,7 @@
 
 
         <record model="ir.actions.act_window" id="action_ebookings_website_sale">
-            <field name="name">eBookings</field>
+            <field name="name">Bookings</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('website_id', '!=', False),('state', '=', 'sale')]</field>
