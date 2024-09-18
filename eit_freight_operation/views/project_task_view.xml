@@ -284,13 +284,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@icon='fa-tasks']" position="replace">
                     <button class="oe_stat_button" type="object" name="action_view_tasks"
-                        groups="project.group_project_user" invisible="task_count == 0"
-                        icon="fa-tasks">
-                        <field  string="Shipments" name="task_count" widget="statinfo"/>
+                            groups="project.group_project_user" invisible="task_count == 0"
+                            icon="fa-tasks">
+                        <field string="Shipments" name="task_count" widget="statinfo"/>
                     </button>
                 </xpath>
             </field>
-       </record>
+        </record>
 
         <record id="view_task_search_form_base_project" model="ir.ui.view">
             <field name="name">"inherit.view.task.search.project.form</field>
@@ -417,11 +417,26 @@
             <field name="sequence">2</field>
         </record>
 
+
+        <record model="ir.actions.act_window" id="action_ebookings_website_sale">
+            <field name="name">eBookings</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('website_id', '!=', False),('state', '=', 'sale')]</field>
+        </record>
+
+        <record id="menu_ebookings_website_sale" model="ir.ui.menu">
+            <field name="name">Bookings</field>
+            <field name="action" ref="action_ebookings_website_sale"/>
+            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
+            <field name="sequence">2</field>
+        </record>
+
         <record id="menu_customer_profiles" model="ir.ui.menu">
             <field name="name">Customer Profiles</field>
             <field name="action" ref="project.open_view_project_all"/>
             <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
-            <field name="sequence">2</field>
+            <field name="sequence">3</field>
         </record>
 
         <record id="menu_customer_contacts" model="ir.ui.menu">

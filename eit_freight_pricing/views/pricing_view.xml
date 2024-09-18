@@ -292,7 +292,7 @@
     <!--    />-->
 
     <menuitem name="CRM Requests" id="sub_menu_freight_requset"
-              parent="sub_menu_freight_pricing" sequence="4" action="action_requset_price"
+              parent="sub_menu_freight_pricing" sequence="4" action="crm.crm_lead_action_pipeline"
     />
     <menuitem name="Vendors" id="sub_menu_freight_vendor"
               parent="sub_menu_freight_pricing" sequence="5" action="account.res_partner_action_supplier"
@@ -304,9 +304,9 @@
               parent="menu_freight_pricing" sequence="4"
     />
 
-    <menuitem name="eBookings" id="sub_menu_freight_ecommorec_sale"
-              parent="sub_menu_freight_ecommorec" sequence="1" action="action_ecomerse_sale"
-    />
+<!--    <menuitem name="eBookings" id="sub_menu_freight_ecommorec_sale"-->
+<!--              parent="sub_menu_freight_ecommorec" sequence="1" action="action_ecomerse_sale"-->
+<!--    />-->
     <menuitem name="Product Pages" id="sub_menu_freight_ecommorec_Product_Pagees"
               parent="sub_menu_freight_ecommorec" sequence="2" action="website_sale.action_product_pages_list"
     />
