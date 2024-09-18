@@ -24,3 +24,8 @@ class InheritResPartner(models.Model):
         part = self.search([('show_partner', '=', True)])
         for p in part:
             p.show_partner = False
+
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        res.show_partner_reset()
+        return res

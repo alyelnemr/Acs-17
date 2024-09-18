@@ -156,6 +156,9 @@ class WebsiteSale(payment_portal.PaymentPortal):
         """
         order = request.website.sale_get_order()
         order.only_services = True
+        partner_type = request.env.ref('eit_freight_MasterData.partner_type_14')
+
+        order.partner_id.partner_type_id = [(4, partner_type.id, 0)]
 
         if order and not order.only_services and (request.httprequest.method == 'POST' or not order.carrier_id):
             # Update order's carrier_id (will be the one of the partner if not defined)
