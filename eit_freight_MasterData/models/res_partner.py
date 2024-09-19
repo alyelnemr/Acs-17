@@ -27,41 +27,41 @@ class InheritResPartner(models.Model):
     def create(self, vals_list):
         res = super(InheritResPartner, self).create(vals_list)
 
-        partner_types_to_add = []
-
-        sale_order = self.env['sale.order'].search([('partner_id', '=', res.id), ('website_id', '!=', False)], limit=1)
-        if sale_order:
-            partner_type_14 = self.env.ref('eit_freight_MasterData.partner_type_14')
-            if partner_type_14:
-                partner_types_to_add.append((4, partner_type_14.id))
-
-        employee = self.env['hr.employee'].search([('address_home_id', '=', res.id)], limit=1)
-        if employee:
-            partner_type_8 = self.env.ref('eit_freight_MasterData.partner_type_8')
-            if partner_type_8:
-                partner_types_to_add.append((4, partner_type_8.id))
-
-        applicant = self.env['hr.applicant'].search([('partner_id', '=', res.id)], limit=1)
-        if applicant:
-            partner_type_9 = self.env.ref('eit_freight_MasterData.partner_type_9')
-            if partner_type_9:
-                partner_types_to_add.append((4, partner_type_9.id))
-
-        portal_group = self.env.ref('base.group_portal')
-        portal_user = self.env['res.users'].search([('partner_id', '=', res.id), ('groups_id', 'in', portal_group.id)], limit=1)
-        if portal_user:
-            partner_type_14 = self.env.ref('eit_freight_MasterData.partner_type_14')
-            if partner_type_14:
-                partner_types_to_add.append((4, partner_type_14.id))
-
-        internal_group = self.env.ref('base.group_user')  # This is the "Internal User" group
-        internal_user = self.env['res.users'].search([('partner_id', '=', res.id), ('groups_id', 'in', internal_group.id)], limit=1)
-        if internal_user:
-            partner_type_8 = self.env.ref('eit_freight_MasterData.partner_type_8')
-            if partner_type_8:
-                partner_types_to_add.append((4, partner_type_8.id))
-
-        if partner_types_to_add:
-            res.partner_type_id = partner_types_to_add
+        # partner_types_to_add = []
+        #
+        # sale_order = self.env['sale.order'].search([('partner_id', '=', res.id), ('website_id', '!=', False)], limit=1)
+        # if sale_order:
+        #     partner_type_14 = self.env.ref('eit_freight_MasterData.partner_type_14')
+        #     if partner_type_14:
+        #         partner_types_to_add.append((4, partner_type_14.id))
+        #
+        # employee = self.env['hr.employee'].search([('address_home_id', '=', res.id)], limit=1)
+        # if employee:
+        #     partner_type_8 = self.env.ref('eit_freight_MasterData.partner_type_8')
+        #     if partner_type_8:
+        #         partner_types_to_add.append((4, partner_type_8.id))
+        #
+        # applicant = self.env['hr.applicant'].search([('partner_id', '=', res.id)], limit=1)
+        # if applicant:
+        #     partner_type_9 = self.env.ref('eit_freight_MasterData.partner_type_9')
+        #     if partner_type_9:
+        #         partner_types_to_add.append((4, partner_type_9.id))
+        #
+        # portal_group = self.env.ref('base.group_portal')
+        # portal_user = self.env['res.users'].search([('partner_id', '=', res.id), ('groups_id', 'in', portal_group.id)], limit=1)
+        # if portal_user:
+        #     partner_type_14 = self.env.ref('eit_freight_MasterData.partner_type_14')
+        #     if partner_type_14:
+        #         partner_types_to_add.append((4, partner_type_14.id))
+        #
+        # internal_group = self.env.ref('base.group_user')  # This is the "Internal User" group
+        # internal_user = self.env['res.users'].search([('partner_id', '=', res.id), ('groups_id', 'in', internal_group.id)], limit=1)
+        # if internal_user:
+        #     partner_type_8 = self.env.ref('eit_freight_MasterData.partner_type_8')
+        #     if partner_type_8:
+        #         partner_types_to_add.append((4, partner_type_8.id))
+        #
+        # if partner_types_to_add:
+        #     res.partner_type_id = partner_types_to_add
 
         return res
