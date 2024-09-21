@@ -262,6 +262,19 @@
                                 </div>
                             </div>
 
+                            <group>
+                                <group>
+                                    <!--                            <label for="conndition_ids" string="Terms &amp; Conditions" class="o_form_label"/>-->
+                                    <field name="conndition_ids" class="o_form_field_spacing"
+                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                </group>
+                            </group>
+                            <field name="condition_test"/>
+
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
 
                         </page>
                         
@@ -354,7 +367,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Conditions">
+                        <page string="Conditions" invisible="1">
                             <group>
                                 <group>
                                     <!--                            <label for="conndition_ids" string="Terms &amp; Conditions" class="o_form_label"/>-->

@@ -397,7 +397,7 @@
             <field name="sequence">1</field> <!-- Update sequence -->
         </record>
 
-        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>
+<!--        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>-->
 
         <record id="operation_open_view_all_task_list_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="20"/>
@@ -416,22 +416,6 @@
             <field name="name">Accounting</field>
             <field name="sequence">2</field>
         </record>
-
-
-        <record model="ir.actions.act_window" id="action_ebookings_website_sale">
-            <field name="name">Bookings</field>
-            <field name="res_model">sale.order</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[('website_id', '!=', False),('state', '=', 'sale')]</field>
-        </record>
-
-        <record id="menu_ebookings_website_sale" model="ir.ui.menu">
-            <field name="name">Bookings</field>
-            <field name="action" ref="action_ebookings_website_sale"/>
-            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
-            <field name="sequence">2</field>
-        </record>
-
         <record id="menu_customer_profiles" model="ir.ui.menu">
             <field name="name">Customer Profiles</field>
             <field name="action" ref="project.open_view_project_all"/>

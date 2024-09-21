@@ -13,6 +13,13 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='stage_id']" position="replace">
+                    <field name="stage_id" widget="statusbar_duration"
+                           options="{'clickable': False, 'fold_field': 'fold'}"
+                           domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]"
+                           invisible="not active or type == 'lead'"/>
+                    <field name="probability" widget="float" class="oe_inline o_input_6ch" invisible="1"/>
+                </xpath>
                 <xpath expr="//div[hasclass('oe_title')]" position="replace">
                     <div class="oe_title" invisible="type == 'lead'">
                         <h1>
@@ -20,7 +27,8 @@
                                    placeholder="e.g. Product Pricing" readonly="1"/>
                         </h1>
                         <h2 class="row g-0 pb-3 pb-sm-4">
-                            <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead'">
+                            <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead'"
+                                 groups="sales_team.group_sale_salesman">
                                 <label for="expected_revenue" class="oe_edit_only"/>
                                 <div class="d-flex align-items-baseline">
                                     <field name="company_currency" invisible="1"/>
@@ -42,7 +50,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-auto" groups="sales_team.group_sale_salesman">
                                 <label for="probability" class="d-inline-block"/>
                                 <button class="d-inline-block px-2 py-0 btn btn-link"
                                         name="action_set_automated_probability" type="object"
@@ -64,39 +72,57 @@
                     </div>
                 </xpath>
                 <field name="partner_id" position="replace">
-                    <field name="partner_id" invisible="type == 'lead'"
+                    <field name="partner_id" invisible="type == 'lead'" groups="sales_team.group_sale_salesman"
                            domain="[('partner_type_id', 'in', [1]), ('is_company', '=', True)]"/>
+                    <field name="partner_id" invisible="1"/>
                 </field>
 
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
+                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='opportunity_partner']//label[@for='email_from']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='email_from']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='opportunity_partner']//label[@for='phone']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                </xpath>
+
+                <xpath expr="//group[@name='opportunity_partner']//field[@name='phone']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']//field[@name='partner_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='lead']//field[@name='campaign_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='lead']//field[@name='medium_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='lead']//field[@name='source_id']" position="attributes">
                     <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
                 </xpath>
 
                 <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='extra']//field[@name='medium_id']" position="attributes">
-                    <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='extra']//field[@name='source_id']" position="attributes">
                     <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
@@ -344,5 +370,23 @@
             <field name="groups_id" eval="[(6,0,[ref('eit_freight_MasterData.make_invisible')])]"/>
         </record>
 
+        <record id="crm_case_form_view_oppor_inherited" model="ir.ui.view">
+            <field name="name">crm.lead.oppor.inherited.crm.inherited</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_sale_order']" position="replace">
+                    <button class="oe_stat_button" type="object" invisible="sale_order_count == 0 or type == 'lead'"
+                            name="action_view_sale_order" icon="fa-usd">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value"><field name="sale_amount_total" widget="monetary"
+                                                              options="{'currency_field': 'company_currency'}"/></span>
+                            <span class="o_stat_text">Bookings</span>
+                            <field name="sale_order_count" invisible="1"/>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

@@ -195,7 +195,7 @@ class Task(models.Model):
 
     def action_view_customer_invoices(self):
         self.ensure_one()
-        action = self.env.ref('eit_freight_operation.action_freight_move_out_invoice_type').read()[0]
+        action = self.env.ref('eit_freight_operation.action_freight_move_out_invoice_type').sudo().read()[0]
         action['domain'] = [
             ('id', 'in',
              self.customer_invoice_ids.filtered(lambda x: x.move_type == 'out_invoice' and x.state != 'cancel').ids)]
@@ -206,7 +206,7 @@ class Task(models.Model):
 
     def action_view_vendor_bills(self):
         self.ensure_one()
-        action = self.env.ref('eit_freight_operation.action_freight_move_in_invoice_type').read()[0]
+        action = self.env.ref('eit_freight_operation.action_freight_move_in_invoice_type').sudo().read()[0]
         action['domain'] = [('id', 'in', self.vendor_bill_ids.filtered(
             lambda x: x.move_type == 'in_invoice' and x.state != 'cancel').ids)]
 
@@ -251,7 +251,7 @@ class Task(models.Model):
 
     def action_open_create_customer_invoice_wizard(self):
         error_message = self.validate_task(task=self, invoice_type='invoice')
-        action_id = self.env.ref('eit_freight_operation.action_project_task_create_invoice_wizard')
+        action_id = self.env.ref('eit_freight_operation.action_project_task_create_invoice_wizard').sudo()
         if error_message:
             return {
                 'type': 'ir.actions.client',
@@ -524,7 +524,7 @@ class Task(models.Model):
             [('expecting_date_closing', '=', today), ('state', '!=', '1_done')])
         for task in tasks:
             task.sudo().write({'state': '1_done', 'state_selectable': '1_done',
-                               'stage_id': self.env.ref('eit_freight_operation.stage_closed').id})
+                               'stage_id': self.env.ref('eit_freight_operation.stage_closed').sudo().id})
 
     @api.onchange('is_consolidation', 'is_house_bl')
     def _on_consolidation_house_bl_change(self):
@@ -559,7 +559,7 @@ class Task(models.Model):
             'view_mode': 'form',
             'res_model': 'commodity.data',
             'view_id': self.env.ref(
-                'frieght.commodity_dta_form').id,
+                'frieght.commodity_dta_form').sudo().id,
             'target': 'new',
         }
 
@@ -592,7 +592,7 @@ class Task(models.Model):
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'main.carriage.wizard',  # The model for the wizard
-            'view_id': self.env.ref('eit_freight_operation.view_main_carriage_wizard_form').id,
+            'view_id': self.env.ref('eit_freight_operation.view_main_carriage_wizard_form').sudo().id,
             # Replace 'your_module_name' with the actual module name
             'target': 'new',
             'context': {
@@ -612,7 +612,7 @@ class Task(models.Model):
             'view_mode': 'form',
             'res_model': 'operation.route',
             'view_id': self.env.ref(
-                'eit_freight_operation.operation_route_form_view').id,
+                'eit_freight_operation.operation_route_form_view').sudo().id,
             'target': 'new',
             'context': {
                 'default_routing_types': self.routing_types,
@@ -637,7 +637,7 @@ class Task(models.Model):
             'view_mode': 'form',
             'res_model': 'origin.route',
             'view_id': self.env.ref(
-                'eit_freight_operation.view_origin_route').id,
+                'eit_freight_operation.view_origin_route').sudo().id,
             'target': 'new',
             'context': {
                 'default_routing_types': self.routing_types,
@@ -656,7 +656,7 @@ class Task(models.Model):
             'view_mode': 'form',
             'res_model': 'transit.route',
             'view_id': self.env.ref(
-                'eit_freight_operation.view_trasit_route').id,
+                'eit_freight_operation.view_trasit_route').sudo().id,
             'target': 'new',
             'context': {
                 'default_routing_types': self.routing_types,
@@ -675,7 +675,7 @@ class Task(models.Model):
             'view_mode': 'form',
             'res_model': 'destination.route',
             'view_id': self.env.ref(
-                'eit_freight_operation.view_dest_route').id,
+                'eit_freight_operation.view_dest_route').sudo().id,
             'target': 'new',
             'context': {
                 'default_routing_types': self.routing_types,
@@ -750,22 +750,21 @@ class Task(models.Model):
                 if rec.shipment_scope_id.code == 'FTL':
                     rec.show_containers = True
 
+    def get_sequence(self):
+        name = "X" + self.env['ir.sequence'].next_by_code('project.task')
+        current_year = datetime.datetime.now().year
+        year_str = str(current_year)[-3:].zfill(3)
+        transport_code = self.transport_type_id.code + "/" if self.transport_type_id and self.transport_type_id.code else ''
+        clearance_code = self.clearence_type_id.code + "/" if self.clearence_type_id and self.clearence_type_id.code else ''
+
+        sequence = transport_code + clearance_code + year_str + "/"
+        name = name.replace("X", sequence)
+        return name
+
     @api.onchange('transport_type_id', 'clearence_type_id')
     def create_sequence(self):
-        self.shipment_scope_id = False
-        if self.transport_type_id and self.clearence_type_id:
-            name = ''
-            if self.name == 'NEW':
-                name = self.env['ir.sequence'].next_by_code('project.task')
-            else:
-                name = "X" + self.name.split('/')[-1]
-            current_year = datetime.datetime.now().year
-            year_str = str(current_year)[-3:].zfill(3)
-            transport_code = self.transport_type_id.code if self.transport_type_id and self.transport_type_id.code else ''
-            clearance_code = self.clearence_type_id.code if self.clearence_type_id and self.clearence_type_id.code else ''
-
-            seequence = transport_code + "/" + clearance_code + "/" + year_str + "/"
-            self.name = name.replace("X", seequence)
+        if not self.name or self.name == 'New' or self.name == '' or self.name == 'NEW':
+            self.name = self.get_sequence()
 
     def generate_house_bl_seq(self):
         current_year = fields.Date.today().year
@@ -822,18 +821,20 @@ class Task(models.Model):
         if not vals.get('stage_id') and project:
             vals['stage_id'] = project.type_ids[0].id  # Set the first stage as default
         if vals.get('state') == '1_under_settlement':
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').sudo().id
         elif vals.get('state') in ['01_in_progress']:
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_open').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_open').sudo().id
         elif vals.get('state') in ['02_changes_requested']:
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_plan_changed').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_plan_changed').sudo().id
         elif vals.get('state') == '1_done':
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_closed').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_closed').sudo().id
         elif vals.get('state') == '03_approved':
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_invoice').sudo().id
         elif vals.get('state') == '1_canceled':
-            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').id
+            vals['stage_id'] = self.env.ref('eit_freight_operation.stage_canceled').sudo().id
         tasks = super(Task, self).create(vals)
+        if not tasks.name or tasks.name == 'NEW' or tasks.name == 'New':
+            tasks.name = self.get_sequence()
 
         for task in tasks:
             if task.project_id.privacy_visibility == 'portal_followers':
@@ -906,19 +907,19 @@ class Task(models.Model):
                     vals['should_set_date_closing'] = True
                     vals['expecting_date_closing'] = datetime.date.today() + timedelta(days=1)
                 if new_state == '1_under_settlement':
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').sudo().id
                 elif new_state in ['01_in_progress']:
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_open').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_open').sudo().id
                 elif new_state in ['02_changes_requested']:
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_plan_changed').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_plan_changed').sudo().id
                 elif new_state == '1_done':
                     vals['should_set_date_closing'] = False
                     vals['expecting_date_closing'] = False
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_closed').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_closed').sudo().id
                 elif new_state == '1_canceled':
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_canceled').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_canceled').sudo().id
                 elif new_state == '03_approved':
-                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').id
+                    new_stage_id = self.env.ref('eit_freight_operation.stage_invoice').sudo().id
                 else:
                     new_stage_id = task.stage_id.id
 
@@ -936,7 +937,7 @@ class Task(models.Model):
                     'message': "Do you want to close operation no. = %s?\nNote that you may not have access to this operation after closing!" % (
                         task.name),
                 }
-                task.stage_id = self.env.ref('eit_freight_operation.stage_closed').id
+                task.stage_id = self.env.ref('eit_freight_operation.stage_closed').sudo().id
                 return {'warning': warning_message}
 
     # @api.model

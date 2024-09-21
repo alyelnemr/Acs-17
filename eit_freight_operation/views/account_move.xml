@@ -237,5 +237,23 @@
             </field>
         </record>
 
+
+    <!-- Portal for invoice move and invoice move lines -->
+    <record id="account_invoice_rule_operation_user" model="ir.rule">
+        <field name="name">Operation User Invoices</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="domain_force">['|', ('create_uid', '=', user.id), ('message_partner_ids','child_of',[user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+    </record>
+
+    <record id="account_invoice_line_rule_operation_user" model="ir.rule">
+        <field name="name">Operation User Invoice Lines</field>
+        <field name="model_id" ref="account.model_account_move_line"/>
+        <field name="domain_force">['|', ('move_id.create_uid', '=', user.id), ('move_id.message_partner_ids','child_of',[user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+    </record>
+
+
+
     </data>
 </odoo>

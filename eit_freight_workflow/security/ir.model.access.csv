@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_available_prices,access_available_prices,model_crm_available_prices,base.group_user,1,1,1,1
+access_crm_lead_pricing,access_crm_lead_pricing,crm.model_crm_lead,eit_freight_pricing.group_prcing_user,1,0,0,0
+access_sale_order_pricing,access_sale_order_pricing,sale.model_sale_order,eit_freight_pricing.group_prcing_user,1,0,0,0
+access_sale_order_line_pricing,access_sale_order_line_pricing,sale.model_sale_order_line,eit_freight_pricing.group_prcing_user,1,0,0,0
+access_confirm_message_wizard,accees_confirm_message_wizard,model_confirm_message_wizard,,1,1,1,1

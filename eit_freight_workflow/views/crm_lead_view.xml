@@ -1,0 +1,262 @@
+<odoo>
+    <data>
+
+        <record id="crm_case_form_view_oppor_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.form.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_sale_quotations_new']" position="replace">
+                    <button name="action_create_rfq" string="Create RFQ" groups="eit_freight_pricing.group_prcing_user"
+                            invisible="not active or probability == 100 or probability == 0"
+                            type="object" class="oe_highlight" title="Create Request For Quotation"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_crm_lead_form_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.form.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_button_box']" position="inside">
+                    <button name="action_view_rfqs" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            groups="eit_freight_pricing.group_prcing_user"
+                            invisible="count_rfqs == 0">
+                        <div class="o_stat_info">
+                            <field name="count_rfqs" widget="statinfo"/>
+                        </div>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='action_set_won_rainbowman']" position="before">
+                    <field name="show_request_price" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="show_available_prices" invisible="1"/>
+                    <field name="show_send_email" invisible="1"/>
+                    <field name="show_back_to_pricing" invisible="1"/>
+                    <button name="action_request_price" string="Request Rate" groups="sales_team.group_sale_salesman"
+                            type="object" class="oe_highlight" title="Request Price"
+                            invisible="not show_request_price"/>
+                    <button name="action_send_pricing_email" type="object" string="Request Update by Email"
+                            groups="sales_team.group_sale_salesman"
+                            invisible="not show_send_email"
+                            class="oe_highlight"/>
+                    <button name="action_set_to_pricing" string="Back To Pricing"
+                            groups="sales_team.group_sale_salesman"
+                            type="object" title="Back to Pricing Stage"
+                            invisible="not show_back_to_pricing"/>
+
+                </xpath>
+                <xpath expr="//button[@name='action_set_won_rainbowman']" position="replace">
+                    <button name="action_set_won_rainbowman" string="Won" groups="sales_team.group_sale_salesman"
+                            type="object" class="oe_highlight" data-hotkey="w" title="Mark as won"
+                            invisible="not active or probability == 100 or type == 'lead'"/>
+                </xpath>
+                <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="replace">
+                    <button name="%(crm.crm_lead_lost_action)d" string="Lost" data-hotkey="l" title="Mark as lost"
+                            groups="sales_team.group_sale_salesman"
+                            type="action" invisible="type == 'lead' or not active and probability &lt; 100"/>
+                </xpath>
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <field name="show_available_prices" invisible="1"/>
+                    <page name="available_prices" string="Available Prices" invisible="not show_available_prices">
+                        <field name="crm_available_prices" readonly="1">
+                            <!-- Enhanced Kanban View with Lighter Background Colors -->
+                            <kanban class="o_kanban_view">
+                                <field name="product_id"/>
+                                <field name="pricing_name"/>
+                                <field name="transport_type_id"/>
+                                <field name="shipment_scope_id"/>
+                                <field name="pol_id"/>
+                                <field name="pod_id"/>
+
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_global_click"
+                                             style="background-color: #f5f8fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 15px;">
+                                            <div class="o_kanban_primary_bottom">
+                                                <strong class="o_kanban_record_title"
+                                                        style="color: #4A90E2;" t-esc="record.pricing_name.value"/>
+                                            </div>
+                                            <div class="oe_kanban_details">
+                                                <div class="o_kanban_tags">
+                                                    <span class="badge badge-light"
+                                                          style="color: #337ab7; background-color: #e3f2fd;">
+                                                        <strong>Transport Type:</strong>
+                                                        <t t-esc="record.transport_type_id.value"/>
+                                                    </span>
+                                                </div>
+                                                <div class="o_kanban_tags">
+                                                    <span class="badge badge-light"
+                                                          style="color: #337ab7; background-color: #e3f2fd;">
+                                                        <strong>Shipment Scope:</strong>
+                                                        <t t-esc="record.shipment_scope_id.value"/>
+                                                    </span>
+                                                </div>
+                                                <div class="o_kanban_tags">
+                                                    <span class="badge badge-light"
+                                                          style="color: #00796B; background-color: #E0F2F1;">
+                                                        <strong>POL:</strong>
+                                                        <t t-esc="record.pol_id.value"/>
+                                                    </span>
+                                                    <span class="badge badge-light"
+                                                          style="color: #00796B; background-color: #E0F2F1;">
+                                                        <strong>POD:</strong>
+                                                        <t t-esc="record.pod_id.value"/>
+                                                    </span>
+                                                </div>
+                                                <div class="o_kanban_tags">
+                                                    <span class="badge badge-light"
+                                                          style="color: #00796B; background-color: #E0F2F1;">
+                                                        <strong>Valid To:</strong>
+                                                        <t t-esc="record.expiration_date"/>
+                                                    </span>
+                                                    <span class="badge badge-light"
+                                                          style="color: #00796B; background-color: #E0F2F1;">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+
+                            <!-- Complete Form View -->
+                            <form string="Available Price Details">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="product_id"
+                                                   options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                            <field name="pricing_name"/>
+                                        </group>
+                                        <group>
+                                            <field name="transport_type_id"/>
+                                            <field name="shipment_scope_id"/>
+                                        </group>
+                                        <group>
+                                            <field name="pol_id"/>
+                                            <field name="pod_id"/>
+                                        </group>
+                                    </group>
+                                    <notebook>
+                                        <page string="Pricing Charges">
+                                            <field name="pricing_charge_ids">
+                                                <tree editable="bottom">
+                                                    <field name="product_id_2"
+                                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                                    <field name="package_type"
+                                                           column_invisible="parent.transport_type_id not in [1,2,3] or parent.shipment_scope_id in [1,3] or parent.transport_type_id in [2, 3] and not parent.shipment_scope_id"
+                                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"
+                                                           optional="false"/>
+                                                    <field name="container_type"
+                                                           column_invisible="parent.transport_type_id in [1] or parent.shipment_scope_id not in [1,3]"
+                                                           options="{'no_quick_create': True, 'no_create_edit': True, 'no_edit': True, 'no_create': True,'no_open': True}"
+                                                           optional="false"/>
+                                                    <field name="cost_price"/>
+                                                    <field name="sale_price"/>
+                                                    <field name="currency_id"
+                                                           options="{'no_edit': True, 'no_quick_create': True, 'no_create_edit': True, 'no_create': True,'no_open': True}"/>
+                                                    <field name="qty" column_invisible="1"/>
+                                                    <field name="ex_rate"/>
+                                                    <field name="cost_main_curr" optional="false"/>
+                                                    <field name="cost_usd" optional="false"/>
+                                                    <field name="sale_main_curr" optional="false"/>
+                                                    <field name="sale_usd"/>
+                                                    <field name="company_id" column_invisible="1"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                        <page string="Vessels" invisible="transport_type_id != 2">
+                                            <field name="vessel_line_ids">
+                                                <tree editable="bottom">
+                                                    <field name="vessel_id"
+                                                           options="{'no_edit': True, 'no_create': True,'no_open': True}"/>
+                                                    <field name="voyage_number"/>
+                                                    <field name="etd"/>
+                                                    <field name="eta"/>
+                                                    <field name="tt_day"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                        <page string="Planes" invisible="transport_type_id != 1">
+                                            <field name="plane_line_ids">
+                                                <tree editable="bottom">
+                                                    <field name="plane_id"
+                                                           options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                                    <field name="voyage_number" string="Flight Number"/>
+                                                    <field name="etd"/>
+                                                    <field name="eta"/>
+                                                    <field name="tt_day"/>
+
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </sheet>
+                                <footer>
+                                    <button string="Create Quotation" type="object" name="action_create_quotation"
+                                            groups="sales_team.group_sale_salesman"
+                                            class="btn-primary"/>
+                                </footer>
+                            </form>
+                        </field>
+
+
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="mail_template_lead_pricing_email" model="mail.template">
+            <field name="name">Lead Pricing Email</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject">Pricing Request for Lead: {{ object.name }}</field>
+            <field name="email_from">{{ (object.create_uid.email_formatted or object.company_id.email_formatted or
+                                         user.email_formatted) }}
+            </field>
+            <field name="body_html" type="html">
+                <p>Dear Pricing Team,</p>
+                <p>We have received a new pricing request with the <a t-attf-href="{{ object.get_lead_url() }}" target="_blank"><t t-out="object.name"/></a>.</p>
+                <p>
+                    Could you please review and process this request at your earliest convenience?
+                </p>
+                <p>
+                    Let me know if you need additional information to process.
+                </p>
+                <p>
+                    Thank you for your prompt attention to this matter.
+                </p>
+                <ul>
+                    <li>
+                        <strong>Lead Name:</strong>
+                        <a t-attf-href="{{ object.get_lead_url() }}" target="_blank"><t t-out="object.name"/></a>
+                    </li>
+                    <li>
+                        <strong>Transport Type:</strong>
+                        <t t-out="object.transport_type_id.name"/>
+                    </li>
+                    <li>
+                        <strong>Shipment Scope:</strong>
+                        <t t-out="object.shipment_scope_id.name"/>
+                    </li>
+                    <li>
+                        <strong>POL:</strong>
+                        <t t-out="object.pol_id.name"/>
+                    </li>
+                    <li>
+                        <strong>POD:</strong>
+                        <t t-out="object.pod_id.name"/>
+                    </li>
+
+                </ul>
+
+                <p>Best regards,
+                    <br/>
+                    <t t-out="user.name"/>
+                </p>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

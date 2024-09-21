@@ -29,3 +29,5 @@ access_operation_route_services_all_users,access_operation_route_services_all_us
 access_operation_route_document_user,access_operation_route_document_user,model_operation_route_document,base.group_user,1,1,1,1
 access_operation_reports_wizard,access.operation.reports.wizard,model_operation_reports_wizard,base.group_user,1,1,1,1
 access_operation_tracking_stages,access.operation.tracking.stages,model_operation_tracking_stages,base.group_user,1,1,1,1
+access_account_move_operation,access.account.move.operation,account.model_account_move,project.group_project_user,1,1,1,0
+access_account_move_line_operation,access.account.move.line.operation,account.model_account_move_line,project.group_project_user,1,1,1,0

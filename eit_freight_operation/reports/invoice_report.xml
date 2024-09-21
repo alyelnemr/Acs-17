@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[@id='informations']" position="after">
+
+                <div id="operation" class="oe_structure">
+                    <div class="table" style="width: 100%; display: table;">
+                        <div class="row" style="display: table-row;">
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>Operation:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.project_task_id.name"/>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>Currency:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.currency_id.name"/>
+                            </div>
+                        </div>
+                        <div class="row" style="display: table-row;">
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>Master B/L:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.project_task_id.master_bl"/>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>House B/L:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.project_task_id.house_bl_seq"/>
+                            </div>
+                        </div>
+                        <div class="row" style="display: table-row;">
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>POL:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.project_task_id.port_id.name"/>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <strong>POD:</strong>
+                            </div>
+                            <div class="cell" style="display: table-cell; width: 25%;">
+                                <span t-out="o.project_task_id.port_id_pod.name"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,69 @@
+<odoo>
+    <data>
+
+        <record id="view_crm_lead_kanban_pricing" model="ir.ui.view">
+            <field name="name">crm.lead.kanban</field>
+            <field name="model">crm.lead</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" archivable="false" js_class="crm_kanban" sample="1" group_by="False">
+                    <field name="name"/>
+                    <field name="contact_name"/>
+                    <field name="priority"/>
+                    <field name="tag_ids"/>
+                    <field name="user_id"/>
+                    <field name="activity_ids"/>
+                    <field name="activity_state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                                <div>
+                                    <strong class="o_kanban_record_title">
+                                        <span>
+                                            <field name="name"/>
+                                        </span>
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="contact_name"/>
+                                    </span>
+                                </div>
+                                <div>
+                                    <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="priority" widget="priority"/>
+                                        <div class="o_kanban_inline_block">
+                                            <field name="activity_ids" widget="kanban_activity"/>
+                                        </div>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="user_id" widget="many2one_avatar_user"
+                                               domain="[('share', '=', False)]"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="crm_lead_action_pricing" model="ir.actions.act_window">
+            <field name="name">Opportunities</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">kanban,tree,graph,pivot,form,calendar,activity</field>
+            <!-- Specify your custom Kanban view here -->
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_crm_lead_kanban_pricing')})]"/>
+            <field name="domain">['|', ('type', '=', 'opportunity'), ('stage_id.is_won', '=', False)]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+
+        <menuitem name="CRM Requests" id="sub_menu_freight_opportunities"
+                  parent="eit_freight_pricing.sub_menu_freight_pricing" sequence="4" action="crm_lead_action_pricing"/>
+    </data>
+</odoo>

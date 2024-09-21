@@ -5,7 +5,7 @@
         <template id="report_project_task_op_charges_main">
             <t t-call="web.external_layout">
                 <!-- Full-Page Frame -->
-                <div style="border: 1px solid #ffffff; padding: 20px; margin: 0px; height: 100%; box-sizing: border-box; font-family: 'Georgia', Times, serif;font-size:larger">
+                <div style="border: 1px solid #ffffff; padding: 20px; margin: 0px; height: 100%; box-sizing: border-box; font-family: 'Georgia', Times, serif;font-size:medium">
                     <!-- Centered Title with the 'name' field from account.move -->
                     <h2 style="text-align: center;">
                         <strong>Statement No.</strong>
@@ -17,16 +17,6 @@
 
                     <!-- Additional Fields from account.move in a 100% width table with auto-sized cells -->
                     <table t-if="not print_invoice" style="width: 100%; margin-top: 10px; border: 1px solid #ffffff;">
-                        <tr>
-                            <td style="white-space: nowrap;" colspan="2">
-                                <strong>Bill To:</strong>
-                                <t t-out="doc.partner_id.name"/>
-                            </td>
-                            <td style="white-space: nowrap;" colspan="2">
-                                <strong>Inv. Date:</strong>
-                                <t t-out="doc.create_date.date()"/>
-                            </td>
-                        </tr>
                         <tr>
                             <td style="white-space: nowrap;" colspan="2">
                                 <strong>Address:</strong>
@@ -70,11 +60,10 @@
                         <tr>
                             <td style="white-space: nowrap;">
                                 <strong>Invoices:</strong>
-
                             </td>
                             <td style="white-space: nowrap;" colspan="3">
                                 <t t-set="invoice_names"
-                                   t-value="','.join([inv.name for inv in doc.customer_invoice_ids.filtered(lambda x: x.state == 'posted')])"/>
+                                   t-value="','.join([inv.name for inv in doc.customer_invoice_ids])"/>
                                 <t t-esc="invoice_names"/>
                             </td>
                         </tr>
@@ -206,13 +195,13 @@
                             <td style="white-space: nowrap;" colspan="2">
                                 <t t-if="doc.atd">
                                     <strong>Departure Date:</strong>
-                                <t t-out="doc.atd"/>
+                                    <t t-out="doc.atd"/>
                                 </t>
                             </td>
                             <td style="white-space: nowrap;" colspan="2">
                                 <t t-if="doc.ata">
                                     <strong>Arrival Date:</strong>
-                                <t t-out="doc.ata"/>
+                                    <t t-out="doc.ata"/>
                                 </t>
                             </td>
                         </tr>
@@ -241,9 +230,7 @@
                         <t t-foreach="doc.project_task_charge_ids" t-as="product_line">
                             <tr>
                                 <td style="white-space: nowrap;">
-                                    <strong>
-                                        <t t-out="product_line.product_id.name"/>
-                                    </strong>
+                                    <t t-out="product_line.product_id.name"/>
                                 </td>
                                 <td style="white-space: nowrap; text-align: center">
                                     <t t-out="product_line.cost_price"/>
@@ -276,8 +263,8 @@
                                             <th colspan="2" style="text-align:left;">Cost Per Currency</th>
                                         </tr>
                                         <tr>
-                                            <th>Currency</th>
-                                            <th>Amount</th>
+                                            <td>Currency</td>
+                                            <td>Amount</td>
                                         </tr>
                                     </thead>
                                     <tbody>

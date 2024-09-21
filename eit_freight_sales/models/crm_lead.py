@@ -43,8 +43,10 @@ class CrmLead(models.Model):
 
     container_type_ids = fields.One2many('crm.lead.container.type', 'lead_id', string="Container Types", store=True)
 
-    pol_id = fields.Many2one('port.cites', string="POL", store=True)
-    pod_id = fields.Many2one('port.cites', string="POD", store=True)
+    pol_id = fields.Many2one(comodel_name='port.cites', string="POL", store=True)
+    pol_id_country_id = fields.Many2one(comodel_name='res.country', string="POL Country", related='pol_id.country_id')
+    pod_id = fields.Many2one(comodel_name='port.cites', string="POD", store=True)
+    pod_id_country_id = fields.Many2one(comodel_name='res.country', string="POD Country", related='pod_id.country_id')
     commodity_equip = fields.Selection([
         ('dry', 'Dry'),
         ('reefer', 'Reefer'),
@@ -74,6 +76,13 @@ class CrmLead(models.Model):
     pickup_address = fields.Char(string="Pickup Address")
     delivery_address = fields.Char(string="Delivery Address")
     is_from_website = fields.Boolean(string="Is From Web", default=False)
+    order_ids = fields.One2many('sale.order', 'opportunity_id', string='Bookings')
+
+    @api.depends('partner_id')
+    def _compute_name(self):
+        for lead in self:
+            if not lead.name or not self.name.startswith('OPP'):
+                lead.name = 'OPP'
 
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
@@ -186,26 +195,19 @@ class CrmLead(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('name'):
-            if vals.get('type') == 'opportunity':
-                vals['name'] = self._generate_opp_id()
-            else:
-                vals['name'] = self._generate_opp_id()
-                contact_name = ', ' + vals['contact_name'] if vals['contact_name'] else ''
-                vals['name'] = vals['partner_name'] if vals['partner_name'] else '' + contact_name if vals[
-                    'contact_name'] else ''
-        # vals['date_deadline'] = date.today() + timedelta(days=15)
+        vals['name'] = self._generate_opp_id()
         return super(CrmLead, self).create(vals)
 
-    def name_get(self):
-        result = []
-        for record in self:
-            name = f"{record.partner_name}, {record.contact_name}"
-            result.append((record.id, name))
-        return result
+    #
+    # def name_get(self):
+    #     result = []
+    #     for record in self:
+    #         name = f"{record.partner_name}, {record.contact_name}"
+    #         result.append((record.id, name))
+    #     return result
 
     def write(self, vals):
-        if 'name' not in vals:
+        if 'name' not in vals and not self.name.startswith('OPP'):
             contact_name = ', ' + vals.get('contact_name') if vals.get('contact_name') else ''
             partner_name = vals.get('partner_name') if vals.get('partner_name') else self.partner_name
             contact_name = contact_name if vals.get('contact_name') else (
@@ -219,9 +221,3 @@ class CrmLead(models.Model):
         year_suffix = str(current_year)[-2:]
         seq = self.env['ir.sequence'].next_by_code('crm.lead.opp.id') or '0000'
         return f"OPP{year_suffix}/{seq}"
-
-    @api.depends('partner_id')
-    def _compute_name(self):
-        for lead in self:
-            if not lead.name and lead.partner_id and lead.partner_id.name:
-                lead.name = _("%s's opportunity") % lead.partner_id.name

@@ -1,0 +1,77 @@
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_sale_order_form_inherit">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@id='create_invoice']" position="replace"/>
+                <xpath expr="//button[@id='create_invoice_percentage']" position="replace">
+                    <button name="action_create_operation" id="action_create_operation" string="Create Operation"
+                            groups="eit_freight_pricing.group_prcing_user"
+                            class="btn-primary" type="object"/>
+                </xpath>
+                <xpath expr="//div[@class='oe_button_box']" position="inside">
+                    <button name="action_view_pricing_id" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            groups="eit_freight_pricing.group_prcing_user"
+                            invisible="not pricing_id">
+                        <div class="o_stat_info">
+                            <field name="pricing_id" string="Pricing" widget="statinfo"/>
+                        </div>
+                    </button>
+                    <button name="action_view_project_task" type="object" class="oe_stat_button"
+                            icon="fa-pencil-square-o"
+                            invisible="not project_task_id">
+                        <div class="o_stat_info">
+                            <field name="project_task_id" string="Operation" widget="statinfo"/>
+                        </div>
+                    </button>
+                </xpath>
+                <xpath expr="//group[@name='sale_reporting']" position="inside">
+                    <field name="pricing_id" string="Pricing"
+                           options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True}" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_bookings_operation_sale">
+            <field name="name">Bookings</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                                  (0, 0, {'view_mode': 'tree', 'view_id': ref('sale.sale_order_tree')}),
+                                  (0, 0, {'view_mode': 'form', 'view_id': ref('view_sale_order_form_inherit')})]"/>
+            <field name="domain">[('state', '=', 'sale')]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <record id="menu_bookings_operation_sale" model="ir.ui.menu">
+            <field name="name">Bookings</field>
+            <field name="action" ref="action_bookings_operation_sale"/>
+            <field name="parent_id" ref="project.menu_project_management_all_tasks"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="view_project_task_inherit_form" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_sale_order" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            invisible="not sale_order_booking_id">
+                        <div class="o_stat_info">
+                            <field name="sale_order_booking_id" string="Booking" widget="statinfo"/>
+                        </div>
+                    </button>
+                </xpath>
+                <xpath expr="//field[@name='user_ids']" position="after">
+                    <field name="sale_order_booking_id" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

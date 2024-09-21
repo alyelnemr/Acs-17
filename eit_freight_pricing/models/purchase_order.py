@@ -49,6 +49,7 @@ class PurchaseOrder(models.Model):
     ftl_container_type_ids = fields.Many2many('ftl.container.type',
                                               string="Ftl Container Types")
     price_req_id = fields.Many2one('request.price', string="Request Price")
+    crm_lead_id = fields.Many2one('crm.lead', string="CRM Lead")
     count_price_req = fields.Integer(string="Price Req Count", compute='get_request_price_count')
     scope_ids = fields.Many2many('service.scope', string="Services")
     rate_per_currency_ids = fields.One2many(

@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_confirm_message_wizard_form" model="ir.ui.view">
+        <field name="name">confirm.message.wizard.form</field>
+        <field name="model">confirm.message.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Message">
+                <div class="row">
+                    <field name="message" readonly="1" nolabel="1" />
+                </div>
+                <div class="row">
+                    <strong>Customer:</strong>
+                    <field name="confirm_message" readonly="1" nolabel="1" />
+                </div>
+                <footer>
+                    <button string="Confirm" type="object" name="confirm_action" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_confirm_message_wizard" model="ir.actions.act_window">
+        <field name="name">Confirm Message</field>
+        <field name="res_model">confirm.message.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_confirm_message_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
