@@ -99,6 +99,13 @@ class SaleOrder(models.Model):
     charges_ids = fields.One2many('sale.charges', 'order_id')
     project_task_id = fields.Many2one(comodel_name='project.task', string="Project Task")
 
+    @api.depends('pricelist_id', 'company_id')
+    def _compute_currency_id(self):
+        for order in self:
+            currency_usd_id = self.env['res.currency'].search([('name', '=', 'USD')], limit=1).id
+            # order.currency_id = order.pricelist_id.currency_id or order.company_id.currency_id
+            order.currency_id = currency_usd_id or order.company_id.currency_id
+
     @api.onchange('conndition_id')
     def _onchange_conndition_ids(self):
         if self.conndition_id:

@@ -9,7 +9,13 @@ class SaleOrderLine(models.Model):
     unit_rate = fields.Monetary(string="Unit Rate")
     ex_rate = fields.Float(related='currency_id.rate', string="EX.Rate", store=True)
     main_curr = fields.Monetary(string="Main Currency", compute='_compute_tot_price')
+    main_currency_id = fields.Many2one(comodel_name='res.currency', compute='_compute_main_currency_id', string="Main Currency", store=True)
     technical_rate = fields.Float(string="Technical Rate", compute="compute_technical_rate")
+
+    @api.depends('order_id.pricelist_id', 'company_id')
+    def _compute_main_currency_id(self):
+        for line in self:
+            line.main_currency_id = line.order_id.pricelist_id.currency_id or line.order_id.company_id.currency_id
 
     @api.depends('currency_id')
     def compute_technical_rate(self):

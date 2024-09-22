@@ -19,6 +19,8 @@ class PortCitiesTemplate(models.Model):
     country_group_id = fields.Many2one('res.country.group', string='Country Group',
                                        compute="compute_country_group_id", store=True)
     is_city = fields.Boolean(string='Is City', default=False)
+    sea_river_id = fields.Many2one(comodel_name='sea.river', string='Sea River')
+    ocean_id = fields.Many2one(comodel_name='ocean.data', string='Ocean', related='sea_river_id.ocean_id')
 
     @api.onchange('country_id')
     def _onchange_country_id(self):

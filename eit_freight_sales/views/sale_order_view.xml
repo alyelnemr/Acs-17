@@ -201,7 +201,8 @@
                            options="{'no_quick_create': True, 'no_create_edit': True, 'no_edit': True, 'no_create': True,'no_open': True}"/>
                     <field name="unit_rate"/>
                     <field name="ex_rate" optional="false"/>
-                    <field name="main_curr" optional="false"/>
+                    <field name="main_currency_id"/>
+                    <field name="main_curr" optional="false" options="{'currency_field': 'main_currency_id'}" />
                     <field name="technical_rate" column_invisible="1"/>
                 </xpath>
                 <xpath expr="//notebook/page[@name='order_lines']/field/tree/field[@name='price_unit']"
@@ -340,7 +341,7 @@
         </record>
 
         <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
-        <field name="domain">[('state', 'in', ['draft','send'])]</field>
+        <field name="domain">[]</field>
     </record>
 
     </data>

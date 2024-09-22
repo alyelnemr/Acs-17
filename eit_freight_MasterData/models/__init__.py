@@ -1,3 +1,5 @@
+from . import ocean_data
+from . import sea_river
 from . import res_company
 from . import friegt_settings
 from . import service_scope
