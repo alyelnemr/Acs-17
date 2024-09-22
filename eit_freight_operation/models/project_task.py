@@ -751,15 +751,18 @@ class Task(models.Model):
                     rec.show_containers = True
 
     def get_sequence(self):
-        name = "X" + self.env['ir.sequence'].next_by_code('project.task')
-        current_year = datetime.datetime.now().year
-        year_str = str(current_year)[-3:].zfill(3)
-        transport_code = self.transport_type_id.code + "/" if self.transport_type_id and self.transport_type_id.code else ''
-        clearance_code = self.clearence_type_id.code + "/" if self.clearence_type_id and self.clearence_type_id.code else ''
+        if self.transport_type_id and self.clearence_type_id:
+            name = "_X_" + self.env['ir.sequence'].next_by_code('project.task')
+            current_year = datetime.datetime.now().year
+            year_str = str(current_year)[-3:].zfill(3)
+            transport_code = self.transport_type_id.code + "/" if self.transport_type_id and self.transport_type_id.code else ''
+            clearance_code = self.clearence_type_id.code + "/" if self.clearence_type_id and self.clearence_type_id.code else ''
 
-        sequence = transport_code + clearance_code + year_str + "/"
-        name = name.replace("X", sequence)
-        return name
+            sequence = transport_code + clearance_code + year_str + "/"
+            name = name.replace("_X_", sequence)
+            return name
+        else:
+            return self.name
 
     @api.onchange('transport_type_id', 'clearence_type_id')
     def create_sequence(self):

@@ -12,7 +12,7 @@
                             class="btn-primary"
                             context="{'default_task_id': active_id}"/>
                     <button name="preview_operation" string="Preview" type="object"
-                            class="btn-primary" invisible="0" />
+                            class="btn-primary" invisible="0"/>
                 </xpath>
 
                 <xpath expr="//div[@name='button_box']" position="inside">
@@ -60,8 +60,8 @@
                     <attribute name="options">{}</attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='user_ids']" position="attributes">
-                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True,
-                        'no_quick_create': True}
+                    <attribute name="options">{'no_open': True, 'no_create': True, 'no_create_edit': True,
+                                               'no_quick_create': True}
                     </attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='partner_id']" position="attributes">
@@ -82,8 +82,8 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='sale_line_id'][2]" position="attributes">
-                    <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True,
-                        'no_quick_create': True}
+                    <attribute name="options">{'no_open': True, 'no_create': True, 'no_create_edit': True,
+                                               'no_quick_create': True}
                     </attribute>
                     <attribute name="string">Booking Item</attribute>
                     <attribute name="readonly">stage_id == closing_stage_id</attribute>
@@ -883,10 +883,11 @@
                                     </group>
                                     <group invisible="service_scope_id_code not in ('INS')">
                                         <group>
-                                                <field name="cargo_value" widget="monetary"
-                                                       options="{'currency_field': 'cargo_currency_id'}"
-                                                       force_save="1"/>
-                                                <field name="cargo_currency_id" force_save="1" options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                                            <field name="cargo_value" widget="monetary"
+                                                   options="{'currency_field': 'cargo_currency_id'}"
+                                                   force_save="1"/>
+                                            <field name="cargo_currency_id" force_save="1"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"/>
                                             <field name="cargo_document_date" force_save="1"/>
                                             <field name="cargo_supplier_partner_id"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
@@ -1008,7 +1009,7 @@
                         <label for="operation_tracking_stages" string="Tracking Stages"/>
                         <field name="operation_tracking_stages" width="100%">
                             <kanban string="Tracking Stages">
-                                <field name="tracking_type"/>
+                                <field name="tracking_type" invisible="1"/>
                                 <field name="tracking_stage"/>
                                 <field name="is_done"/>
                                 <field name="tracking_date"/>
@@ -1059,12 +1060,12 @@
                                 <sheet>
                                     <group>
                                         <group>
-                                            <field name="tracking_type"/>
+                                            <field name="clearence_type_id" invisible="1"/>
+                                            <field name="tracking_stage" domain="[('clearance_type_id', '=', clearence_type_id)]"/>
                                             <field name="description"/>
                                             <field name="tracking_stage_domain" invisible="1"/>
                                         </group>
                                         <group>
-                                            <field name="tracking_stage" domain="tracking_stage_domain"/>
                                             <field name="is_done" widget="boolean_toggle"/>
                                             <field name="tracking_date"/>
                                         </group>
@@ -1074,7 +1075,7 @@
                                     </div>
                                     <group>
                                         <group>
-                                            <field name="next_tracking_stage" domain="tracking_stage_domain"/>
+                                            <field name="next_tracking_stage" domain="[('clearance_type_id', '=', clearence_type_id)]"/>
                                             <field name="expected_date"/>
                                             <field name="next_description"/>
                                         </group>

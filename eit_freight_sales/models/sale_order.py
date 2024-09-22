@@ -97,6 +97,7 @@ class SaleOrder(models.Model):
         default='draft')
 
     charges_ids = fields.One2many('sale.charges', 'order_id')
+    project_task_id = fields.Many2one(comodel_name='project.task', string="Project Task")
 
     @api.onchange('conndition_id')
     def _onchange_conndition_ids(self):

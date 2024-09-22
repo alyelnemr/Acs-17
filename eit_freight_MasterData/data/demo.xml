@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
+        <record id="tracking_stage_seq" model="ir.sequence">
+            <field name="name">Tracking Stage Sequence</field>
+            <field name="code">tracking.stage.seq</field>
+            <field name="padding">0</field>
+        </record>
+    </data>
     <data noupdate="1">
         <record id="demo_transport_air" model="transport.type">
             <field name="name">Air</field>

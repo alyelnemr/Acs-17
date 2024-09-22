@@ -1,11 +1,14 @@
 from odoo import models, fields, api
 
+
 class InheritResPartner(models.Model):
     _inherit = "res.partner"
 
     partner_type_id = fields.Many2many('partner.type', string="Partner Type", required=True)
     excecuters = fields.Many2many('res.users', string="Executors")
     partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type1", compute="compute_partner_type_id_1")
+    show_vendor_portal = fields.Boolean(string="Show Vendor Portal", default=False)
+    vendor_portal_ids = fields.One2many(comodel_name='vendor.portal', inverse_name='partner_id', string='vendor_portal_id')
 
     def compute_partner_type_id_1(self):
         for rec in self:
@@ -65,3 +68,12 @@ class InheritResPartner(models.Model):
         #     res.partner_type_id = partner_types_to_add
 
         return res
+
+
+class VendorsPortal(models.Model):
+    _name = "vendor.portal"
+
+    url = fields.Char(string="Portal URL")
+    username = fields.Char(string="Portal Username")
+    password = fields.Char(string="Portal Password")
+    partner_id = fields.Many2one(comodel_name='res.partner', string="Vendor")

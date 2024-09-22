@@ -4,6 +4,22 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//group[@name='purchase']" position="inside">
+                <field name="show_vendor_portal" />
+            </xpath>
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page invisible="not show_vendor_portal" string="Vendor Portals">
+                    <group>
+                        <field name="vendor_portal_ids" widget="one2many" string="Vendor Portals" >
+                            <tree editable="bottom">
+                                <field name="url" />
+                                <field name="username" />
+                                <field name="password" />
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="partner_type_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 <!--                <field name="show_partner" invisible="1"/>-->

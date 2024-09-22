@@ -18,11 +18,11 @@ class CrmLead(models.Model):
                                 default=_default_date_deadline)
     opportunity_source = fields.Char(string="Opportunity Source", compute="compute_opportunity_source")
     transport_type_id = fields.Many2one('transport.type', string="Transport Type", store=True)
-    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_ocean_or_inland')
+    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air_ocean_or_inland')
+    is_ocean_or_inland = fields.Boolean(string="Is Ocean or Inland", compute='_compute_is_air_ocean_or_inland')
     shipment_scope_id = fields.Many2one('shipment.scop', string="Shipment Scope", store=True)
-    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_fcl_or_ftl')
-    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_lcl_or_ltl')
-    is_air = fields.Boolean(string="Is Air", compute='_compute_is_air')
+    is_fcl_or_ftl = fields.Boolean(string="Is FCL or FTL", compute='_compute_is_air_ocean_or_inland')
+    is_lcl_or_ltl = fields.Boolean(string="Is LCL or LTL", compute='_compute_is_air_ocean_or_inland')
     product_id_domain = fields.Char(compute="_compute_product_id_domain", readonly=True, store=False)
     name = fields.Char(
         'Opportunity', index='trigram', required=False,
@@ -142,47 +142,32 @@ class CrmLead(models.Model):
     @api.depends('transport_type_id')
     def _compute_product_id_domain(self):
         for rec in self:
+            rec.shipment_scope_id = False
+            rec.non_air_package_type_ids = False
+            rec.air_package_type_ids = False
             if rec.transport_type_id:
-                if rec.transport_type_id.code == 'SEA':
+                if rec.transport_type_id.id == 2:
                     rec.product_id_domain = json.dumps(
                         [('type', '=', 'sea')]
                     )
 
-                if self.transport_type_id.code == 'LND':
+                if self.transport_type_id.id == 3:
                     rec.product_id_domain = json.dumps(
                         [('type', '=', 'inland')]
                     )
-                if self.transport_type_id.code == 'AIR':
+                if self.transport_type_id.id == 1:
                     rec.product_id_domain = ""
             else:
                 rec.product_id_domain = ""
 
-    @api.depends('transport_type_id')
-    def _compute_is_air(self):
+    @api.depends('transport_type_id', 'shipment_scope_id')
+    def _compute_is_air_ocean_or_inland(self):
         for record in self:
-            record.is_air = record.transport_type_id.name in ['Air'] if record.transport_type_id else False
-
-    @api.depends('transport_type_id')
-    def _compute_is_ocean_or_inland(self):
-        for record in self:
-            record.is_ocean_or_inland = record.transport_type_id.name in ['Sea',
-                                                                          'In-land'] if record.transport_type_id else False
-
-    @api.depends('shipment_scope_id', 'is_ocean_or_inland')
-    def _compute_is_fcl_or_ftl(self):
-        for record in self:
-            if record.shipment_scope_id and record.is_ocean_or_inland:
-                record.is_fcl_or_ftl = record.shipment_scope_id.code in ['FCL', 'FTL']
-            else:
-                record.is_fcl_or_ftl = False
-
-    @api.depends('shipment_scope_id', 'is_ocean_or_inland')
-    def _compute_is_lcl_or_ltl(self):
-        for record in self:
-            if record.shipment_scope_id and record.is_ocean_or_inland:
-                record.is_lcl_or_ltl = record.shipment_scope_id.code in ['LCL', 'LTL']
-            else:
-                record.is_lcl_or_ltl = False
+            record.is_air = record.transport_type_id.id == 1
+            record.is_ocean_or_inland = record.transport_type_id.id in [2, 3]
+            record.is_fcl_or_ftl = record.is_ocean_or_inland and record.shipment_scope_id.code in ['FCL', 'FTL']
+            record.is_lcl_or_ltl = record.is_ocean_or_inland and record.shipment_scope_id.code in ['LCL', 'LTL']
+            record.by_unit = record.is_air or record.is_lcl_or_ltl
 
     @api.onchange('pol_id', 'pod_id')
     def onchange_pod_id(self):
@@ -197,14 +182,6 @@ class CrmLead(models.Model):
     def create(self, vals):
         vals['name'] = self._generate_opp_id()
         return super(CrmLead, self).create(vals)
-
-    #
-    # def name_get(self):
-    #     result = []
-    #     for record in self:
-    #         name = f"{record.partner_name}, {record.contact_name}"
-    #         result.append((record.id, name))
-    #     return result
 
     def write(self, vals):
         if 'name' not in vals and not self.name.startswith('OPP'):

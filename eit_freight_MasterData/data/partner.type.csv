@@ -14,3 +14,5 @@ partner_type_12,ARL,7,Air Line
 partner_type_13,BKP,2,Booking Party
 partner_type_14,ENU,5,End User
 partner_type_15,BRKR,5,Broker
+partner_type_16,COLO,7,Co-Loader
+partner_type_17,NTWK,9,Network

@@ -176,7 +176,8 @@
                             <group>
                                 <field name="commodity_id"
                                        options="{'no_create': True, 'no_create_edit': True,'no_open': True}"/>
-                                <field name="by_unit"/>
+                                <field name="by_unit" invisible="not is_air"/>
+                                <field name="by_unit" invisible="is_air and not is_lcl_or_ltl"/>
                             </group>
                             <group>
                                 <field name="commodity_equip"/>
@@ -192,8 +193,7 @@
                         <field name="air_package_type_ids" widget="one2many" invisible="not is_air"
                         >
                             <tree editable="bottom">
-                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"
-                                       column_invisible="not parent.by_unit"/>
+                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
                                 <field name="qty" column_invisible="not parent.by_unit"/>
                                 <field name="gw_kg" column_invisible="not parent.by_unit"/>
                                 <field name="cbm" readonly="0"/>
@@ -223,11 +223,10 @@
                         <field name="non_air_package_type_ids" widget="one2many"
                                invisible="not is_lcl_or_ltl">
                             <tree editable="bottom">
-                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"
-                                       column_invisible="not parent.by_unit"/>
+                                <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
                                 <field name="qty" column_invisible="not parent.by_unit"/>
                                 <field name="gw_kg" column_invisible="not parent.by_unit"/>
-                                <field name="cbm" readonly="1"/>
+                                <field name="cbm" readonly="0"/>
                                 <field name="length_cm" column_invisible="not parent.by_unit"/>
                                 <field name="width_cm" column_invisible="not parent.by_unit"/>
                                 <field name="height_cm" column_invisible="not parent.by_unit"/>

@@ -43,7 +43,8 @@ class CrmLeadAirPackageType(models.Model):
                 total = rec.cbm / 0.006
                 rec.chw = total * rec.qty
 
-    @api.depends('length_cm', 'width_cm', 'height_cm', 'qty')
+    @api.depends('gw_kg', 'qty', 'width_cm', 'height_cm', 'length_cm', 'vm', 'cbm')
     def _compute_vm(self):
         for rec in self:
-            rec.vm = (rec.length_cm * rec.width_cm * rec.height_cm) / 0.006
+            vm = (rec.length_cm * rec.width_cm * rec.height_cm) / 1000000
+            rec.vm = vm / 0.006

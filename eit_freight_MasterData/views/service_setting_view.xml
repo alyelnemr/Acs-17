@@ -108,11 +108,15 @@
                     <group>
                         <group>
                             <field name="name"/>
+                            <field name="clearance_type_id"/>
+                            <field name="docs_type" widget="radio" invisible="1"/>
+                            <field name="stage_freight"  invisible="1"/>
+                            <field name="stage_clearance" invisible="1" />
+                            <field name="description"/>
+                        </group>
+                        <group>
                             <field name="code"/>
                             <field name="active" widget="boolean_toggle"/>
-                            <field name="docs_type" widget="radio" invisible="1"/>
-                            <field name="stage_freight" />
-                            <field name="stage_clearance" />
                         </group>
                     </group>
                 </sheet>
@@ -126,9 +130,8 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="code"/>
-                <field name="stage_freight" />
-                <field name="stage_clearance" />
+                <field name="clearance_type_id"/>
+                <field name="code" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>

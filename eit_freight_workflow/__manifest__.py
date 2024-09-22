@@ -30,7 +30,6 @@
         'security/ir.model.access.csv',
         'security/pricing_crm_security.xml',
         'wizard/confirm_message_wizard.xml',
-        # 'views/sale_order_views.xml',
         'views/pricing_views.xml',
         'views/project_task_view.xml',
         'views/crm_lead_view.xml',
