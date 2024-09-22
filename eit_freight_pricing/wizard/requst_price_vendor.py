@@ -43,7 +43,7 @@ class RequestPrice(models.TransientModel):
         for line in self.partner_ids:
             val = {
                 'transport_type_id': self.crm_lead_id.transport_type_id.id,
-                'shipment_scope_id': self.crm_lead_id.shipment_scope_id.id if self.crm_lead_id.shipment_scope_id else self.crm_lead_id.shipment_scope_id_in.id,
+                'shipment_scope_id': self.crm_lead_id.shipment_scope_id.id if self.crm_lead_id.shipment_scope_id else False,
                 'pol_id': self.crm_lead_id.pol_id.id,
                 'pod_id': self.crm_lead_id.pod_id.id,
                 'commodity_id': self.crm_lead_id.commodity_id.id,
