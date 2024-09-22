@@ -28,8 +28,8 @@
                 <separator/>
                 <filter string="Transport Type" name="transport_type"
                         context="{'group_by':'transport_type_id'}"/>
-               <filter string="Container Type" name="container_type_filter"
-                      context="{'group_by':'container_type'}"/>
+                <filter string="Container Type" name="container_type_filter"
+                        context="{'group_by':'container_type'}"/>
                 <filter string="Package Type" name="package_type_filter"
                         context="{'group_by':'package_type'}"/>
                 <filter string="Services" name="services_group_by" context="{'group_by':'scope_ids'}"/>
@@ -129,18 +129,24 @@
                         <group>
                             <field name="p_user_ids" widget="many2many_avatar_user"
                                    options="{'no_edit': True, 'no_create': True}"/>
-                            <field name="transport_type_id" readonly="id != False" required="1" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="transport_type_id" readonly="id != False" required="1"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <!--                            <field name="service_scope" invisible="transport_type_id not in (2, 3)"-->
                             <!--                                   required="transport_type_id in (2, 3)"/>-->
                             <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
-                                   domain="[('type', '=', 'sea')]" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                   domain="[('type', '=', 'sea')]"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="shipment_scope_id" invisible="transport_type_id not in [3]"
-                                   domain="[('type', '=', 'inland')]" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                   domain="[('type', '=', 'inland')]"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                             <field name="sale_ok" invisible="1"/>
                         </group>
                         <group>
-                            <field name="partner_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="currency_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" readonly="0"
+                            <field name="partner_id"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                            <field name="currency_id"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
+                                   readonly="0"
                                    invisible="1"/>
                             <field name="expiration_date"/>
                             <!-- <field name="shipment_scope_id" invisible="transport_type_id not in [2]"
@@ -155,10 +161,12 @@
                             <field name="container_type"
                                    invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"
                                    options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
-                            <field name="package_type" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
+                            <field name="package_type"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
                                    invisible="transport_type_id not in [1, 2, 3] or shipment_scope_id in [1, 3] or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
 
-                            <field name="commodity_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
+                            <field name="commodity_id"
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
                                    invisible="1"/>
                             <label for="transit_time_duration" string="Transit Time"/>
                             <div style="display: flex; align-items: center;">
@@ -277,7 +285,7 @@
                             <br/>
 
                         </page>
-                        
+
                         <!-- <page name="variants" string="Attributes &amp; Variants" groups="product.group_product_variant">
                             <field name="attribute_line_ids" widget="one2many" context="{'show_attribute': False}">
                                 <tree string="Variants" editable="bottom" decoration-info="value_count &lt;= 1">
@@ -328,11 +336,15 @@
                         <page string="Purchase">
                             <field name="seller_ids">
                                 <tree editable="bottom">
-                                    <field name="purchase_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}" domain="[('purchase_type', '=', 'freight')]"/>
+                                    <field name="purchase_id"
+                                           options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"
+                                           domain="[('purchase_type', '=', 'freight')]"/>
                                     <field name="partner_id"
-                                           domain="[('partner_type_id', 'in', [11,12,7,4,5]), ('is_company', '=', True)]" optional="hide"/>
+                                           domain="[('partner_type_id', 'in', [11,12,7,4,5]), ('is_company', '=', True)]"
+                                           optional="hide"/>
                                     <field name="price" string="Rate"/>
-                                    <field name="currency_id" options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
+                                    <field name="currency_id"
+                                           options="{'no_create_edit': True, 'no_quick_create': True, 'no_open': True}"/>
                                     <field name="tt_days" optional="hide"/>
                                     <field name="service_grade" optional="hide"/>
                                     <field name="status"/>
@@ -363,7 +375,7 @@
                                     <field name="etd"/>
                                     <field name="eta"/>
                                     <field name="tt_day"/>
-                                    
+
                                 </tree>
                             </field>
                         </page>
@@ -402,20 +414,20 @@
                                     <field name="default_code"/>
                                     <field name="barcode"/>
                                     <field name="product_tag_ids" widget="many2many_tags"
-                                            context="{'product_template_id': id}"/>
+                                           context="{'product_template_id': id}"/>
                                     <button name="%(product.product_tag_action)d" icon="oi-arrow-right" type="action"
                                             class="btn-link ps-0" colspan="2" string="Configure tags"/>
-                                    
+
                                     <field name="is_accounting"/>
                                 </group>
                                 <group string="eCommerce Shop" name="shop" invisible="not sale_ok">
                                     <field name="website_url" invisible="1"/>
                                     <field name="website_id" options="{'no_create': True}"
-                                        groups="website.group_multi_website"/>
+                                           groups="website.group_multi_website"/>
                                     <field name="website_sequence" groups="base.group_no_one"/>
                                     <field name="public_categ_ids" widget="many2many_tags" string="Categories"/>
                                     <field name="website_ribbon_id" groups="base.group_no_one"
-                                        options="{'no_quick_create': True}"/>
+                                           options="{'no_quick_create': True}"/>
                                     <field name="show_shipping_line" invisible="transport_type_id != 2"/>
                                     <field name="show_air_line" invisible="transport_type_id != 1"/>
 
@@ -435,14 +447,15 @@
                             </group>
                             <group name="variants" string="Attributes &amp; Variants">
                                 <label for="attribute_line_ids" string="" class="o_form_label"/>
-                                <field name="attribute_line_ids" nolabel="1" widget="one2many" context="{'show_attribute': False}">
+                                <field name="attribute_line_ids" nolabel="1" widget="one2many"
+                                       context="{'show_attribute': False}">
                                     <tree string="Variants" editable="bottom" decoration-info="value_count &lt;= 1">
                                         <field name="value_count" column_invisible="True"/>
                                         <field name="sequence" widget="handle"/>
                                         <field name="attribute_id" readonly="id"/>
                                         <field name="value_ids" widget="many2many_tags"
-                                            options="{'no_create_edit': True, 'color_field': 'color'}"
-                                            context="{'default_attribute_id': attribute_id, 'show_attribute': False}"/>
+                                               options="{'no_create_edit': True, 'color_field': 'color'}"
+                                               context="{'default_attribute_id': attribute_id, 'show_attribute': False}"/>
                                         <button string="Configure" class="float-end btn-secondary"
                                                 type="object" name="action_open_attribute_values"
                                                 groups="product.group_product_variant"/>
@@ -460,7 +473,8 @@
                             </group>
                         </page>
                         <page string="Accounting" name="invoicing"
-                              groups="account.group_account_readonly,account.group_account_invoice" invisible="is_accounting == False">
+                              groups="account.group_account_readonly,account.group_account_invoice"
+                              invisible="is_accounting == False">
                             <group name="properties" groups="account.group_account_readonly">
                                 <group string="Receivables">
                                     <field name="property_account_income_id"
@@ -512,10 +526,12 @@
                 <field name="count_rfqs" invisible="1"/>
                 <field name="count_pricing" invisible="1"/>
                 <div class="oe_button_box" name="button_box">
-                    <button name="action_view_rfqs" type="object" class="oe_stat_button" icon="fa-pencil-square-o"  invisible="count_rfqs == 0">
+                    <button name="action_view_rfqs" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            invisible="count_rfqs == 0">
                         <field name="purchase_id" widget="statinfo"/>
                     </button>
-                    <button name="action_view_pricing" type="object" class="oe_stat_button" icon="fa-pencil-square-o"  invisible="count_pricing == 0">
+                    <button name="action_view_pricing" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                            invisible="count_pricing == 0">
                         <field name="product_tmpl_id" string="Pricing" widget="statinfo"/>
                     </button>
                 </div>
@@ -554,8 +570,10 @@
                 <field name="tt_days" readonly="True"/>
                 <field name="transport_type_id" readonly="True"/>
                 <field name="shipment_scope_id" readonly="True" invisible="1"/>
-                <field name="package_type" readonly="True" invisible="transport_type_id not in [1] or (shipment_scope_id in [1, 3] and transport_type_id in [2, 3]) or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
-                <field name="container_type" readonly="True" invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"/>
+                <field name="package_type" readonly="True"
+                       invisible="transport_type_id not in [1] or (shipment_scope_id in [1, 3] and transport_type_id in [2, 3]) or (transport_type_id in [2, 3] and not shipment_scope_id)"/>
+                <field name="container_type" readonly="True"
+                       invisible="transport_type_id in [1] or shipment_scope_id not in [1,3]"/>
             </xpath>
             <xpath expr="//form[1]/sheet[1]/group[1]/group[not(@name)][1]/div[3]" position="after">
                 <field name="service_grade" readonly="True"/>
@@ -635,7 +653,7 @@
             <xpath expr="//field[@name='date_start']" position="attributes">
                 <attribute name="column_invisible">True</attribute>
             </xpath>
-            
+
             <xpath expr="//tree[1]/field[@name='delay']" position="attributes">
                 <attribute name="column_invisible">True</attribute>
             </xpath>
@@ -652,31 +670,31 @@
             <xpath expr="//div[contains(@class, 'oe_kanban_global_click')]" position="replace">
                 <!-- Your new div -->
                 <div class="oe_kanban_card oe_kanban_global_click">
-                        <!-- <div class="o_kanban_image">
-                            <field name="partner_id" widget="many2one_avatar_user"/>
-                        </div> -->
-                        <div class="o_kanban_details">
-                            <strong>
-                                <field name="partner_id"/>
-                            </strong>
-                            <div>
-                                <!-- <strong>Services: </strong> -->
-                                <field name="scope_ids"/>
-                            </div>
-                            <div>
-                                <strong>Rate: </strong>
-                                <field name="price"/> 
-                            </div>
-                            <div>
-                                <strong>Currency: </strong>
-                                <field name="currency_id"/>
-                            </div>
-                            <div>
-                                <strong>Validity: </strong>
-                                <field name="date_end"/>
-                            </div>
+                    <!-- <div class="o_kanban_image">
+                        <field name="partner_id" widget="many2one_avatar_user"/>
+                    </div> -->
+                    <div class="o_kanban_details">
+                        <strong>
+                            <field name="partner_id"/>
+                        </strong>
+                        <div>
+                            <!-- <strong>Services: </strong> -->
+                            <field name="scope_ids"/>
+                        </div>
+                        <div>
+                            <strong>Rate: </strong>
+                            <field name="price"/>
+                        </div>
+                        <div>
+                            <strong>Currency: </strong>
+                            <field name="currency_id"/>
+                        </div>
+                        <div>
+                            <strong>Validity: </strong>
+                            <field name="date_end"/>
                         </div>
                     </div>
+                </div>
             </xpath>
         </field>
     </record>
@@ -723,7 +741,8 @@
                 <!-- <separator name="studio_separator_804_1i628ifrn"/> -->
             </xpath>
             <xpath expr="//filter[@name='groupby_vendor']" position="after">
-                <filter name="tranport_type_group_by" string="Transport Type" context="{'group_by': 'transport_type_id'}"/>
+                <filter name="tranport_type_group_by" string="Transport Type"
+                        context="{'group_by': 'transport_type_id'}"/>
                 <filter name="servies_group_by" string="Services" context="{'group_by': 'scope_ids'}"/>
                 <filter name="status_group_by" string="Status" context="{'group_by': 'status'}"/>
                 <filter name="service_grade_group_by" string="Service Grade" context="{'group_by': 'service_grade'}"/>
@@ -744,7 +763,8 @@
                 <field name="currency_id"/>
                 <field name="activity_state"/>
                 <field name="categ_id"/>
-                <progressbar field="activity_state" colors="{&quot;planned&quot;: &quot;success&quot;, &quot;today&quot;: &quot;warning&quot;, &quot;overdue&quot;: &quot;danger&quot;}"/>
+                <progressbar field="activity_state"
+                             colors="{&quot;planned&quot;: &quot;success&quot;, &quot;today&quot;: &quot;warning&quot;, &quot;overdue&quot;: &quot;danger&quot;}"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card oe_kanban_global_click">
@@ -761,7 +781,8 @@
                                     <field name="priority" widget="priority"/>
                                 </div>
                                 <t t-if="record.default_code.value">[<field name="default_code"/>]</t>
-                                <div t-if="record.product_variant_count.value &gt; 1" groups="product.group_product_variant">
+                                <div t-if="record.product_variant_count.value &gt; 1"
+                                     groups="product.group_product_variant">
                                     <strong>
                                         <t t-esc="record.product_variant_count.value"/> Variants
                                     </strong>
@@ -785,16 +806,6 @@
             </kanban>
 
         </field>
-    </record>
-
-    <record id="sequence_product_template" model="ir.sequence">
-        <field name="name">Product</field>
-        <field name="code">product.template</field>
-        <field name="active">TRUE</field>
-        <field name="prefix">%(prefix)s/%(y)s/</field>
-        <field name="padding">4</field>
-        <field name="number_next">1</field>
-        <field name="number_increment">1</field>
     </record>
 
 </odoo>
