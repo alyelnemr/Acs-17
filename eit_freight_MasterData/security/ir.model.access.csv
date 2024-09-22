@@ -92,3 +92,5 @@ sale.access_product_product_sale_manager,product.product salemanager,model_produ
 hr_expense.access_product_product_hr_expense_user,product.product.hr.expense.user,product.model_product_product,hr_expense.group_hr_expense_manager,1,0,0,0
 product.access_product_product_manager,product.product manager,model_product_product,base.group_system,1,1,1,0
 access_vendor_portal,access_vendor_portal,model_vendor_portal,,1,1,1,1
+access_sea_river_user,access.sea.river.user,model_sea_river,base.group_user,1,1,1,1
+access_ocean_user,access.ocean.user,model_ocean_data,base.group_system,1,1,1,1
