@@ -142,9 +142,6 @@ class CrmLead(models.Model):
     @api.depends('transport_type_id')
     def _compute_product_id_domain(self):
         for rec in self:
-            rec.shipment_scope_id = False
-            rec.non_air_package_type_ids = False
-            rec.air_package_type_ids = False
             if rec.transport_type_id:
                 if rec.transport_type_id.id == 2:
                     rec.product_id_domain = json.dumps(
