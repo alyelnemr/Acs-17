@@ -29,11 +29,12 @@
                 <group expand="1" string="Group By">
                     <filter string="Country" name='country' context="{'group_by':'country_id'}"/>
                     <filter string="Country Group" name="country_group" context="{'group_by':'country_group_id'}"/>
+                    <filter string="Seas and Rivers" name="seas_group" context="{'group_by':'sea_river_id'}"/>
+                    <filter string="Oceans" name="ocean_group" context="{'group_by':'ocean_id'}"/>
                 </group>
                 <separator/>
                 <filter name="air" string="Air" domain="[('type_id.code', '=', 'AIR')]"/>
                 <filter name="sea" string="Sea" domain="[('type_id.code', '=', 'SEA')]"/>
-                <filter name="island" string="Inland" domain="[('type_id.code', '=', 'LND')]"/>
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
 
