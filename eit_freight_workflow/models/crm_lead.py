@@ -10,53 +10,47 @@ class CrmLead(models.Model):
                                            string="Available Prices")
     show_request_price = fields.Boolean(string="Show Request Price", default=True)
     show_send_email = fields.Boolean(string="Show Send Email", default=False)
-    show_back_to_pricing = fields.Boolean(string="Show Back To Pricing", compute='_get_back_to_pricing', default=False)
-    show_available_prices = fields.Boolean(string="Show Available Price", default=False)
+    is_new_stage = fields.Boolean(string="Is New Stage", compute='get_new_stage')
+    is_won_stage = fields.Boolean(string="Is Won Stage", related='stage_id.is_won')
+    is_followup_stage = fields.Boolean(string="Is Follow Up Stage", related='stage_id.is_follow_up_stage')
+    is_pricing_stage = fields.Boolean(string="Is Pricing Stage", related='stage_id.is_pricing_stage')
     count_rfqs = fields.Integer(string="Purchase", compute='get_purchase_count')
 
     @api.depends('stage_id')
-    def _get_back_to_pricing(self):
-        self.show_back_to_pricing = self.stage_id.is_follow_up_stage or self.stage_id.is_won
+    def get_new_stage(self):
+        self.is_new_stage = self.stage_id.name == 'New'
 
     def action_set_to_pricing(self):
         pricing_stage = self.env['crm.stage'].search([('is_pricing_stage', '=', True)])
         self.stage_id = pricing_stage.id
-        self.show_available_prices = False
         self.show_request_price = True
         self.show_send_email = False
 
     @api.onchange('stage_id')
     def _onchange_stage_id(self):
-        self.show_back_to_pricing = True
         if self.stage_id.is_won:
             self.show_request_price = False
             self.show_send_email = False
         elif self.stage_id.is_pricing_stage:
             self.show_request_price = False
             self.show_send_email = True
-            self.show_back_to_pricing = False
 
     def action_set_lost(self, **additional_values):
         res = super().action_set_lost(**additional_values)
-        self.show_available_prices = False
         self.show_request_price = False
         self.show_send_email = False
-        self.show_back_to_pricing = True
         return res
 
     def toggle_active(self):
         res = super(CrmLead, self).toggle_active()
         pricing_stage = self.env['crm.stage'].search([('is_pricing_stage', '=', True)])
         followup_stage = self.env['crm.stage'].search([('is_follow_up_stage', '=', True)])
-        self.show_available_prices = False
         self.show_request_price = False
         self.show_send_email = False
-        self.show_back_to_pricing = False
 
         if self.stage_id == pricing_stage:
             self.show_request_price = True
         if self.stage_id == followup_stage:
-            self.show_back_to_pricing = True
             self.show_send_email = True
         return res
 
@@ -78,15 +72,27 @@ class CrmLead(models.Model):
             count = self.env['purchase.order'].sudo().search_count([('crm_lead_id', '=', self.id)])
             rec.count_rfqs = count
 
-    def action_request_price(self):
+    def action_move_pricing(self):
         if not self.pol_id:
-            raise UserError(_("Please select a POL before sending the request to the pricing team."))
+            raise UserError(_("Please select a POL before moving to the pricing stage."))
         if not self.pod_id:
-            raise UserError(_("Please select a POD before sending the request to the pricing team."))
+            raise UserError(_("Please select a POD before moving to the pricing stage."))
         if not self.transport_type_id:
-            raise UserError(_("Please select a Transport Type before sending the request to the pricing team."))
+            raise UserError(_("Please select a Transport Type before moving to the pricing stage."))
         if not self.shipment_scope_id and self.transport_type_id.id != 1:
-            raise UserError(_("Please select a Shipment Scope before sending the request to the pricing team."))
+            raise UserError(_("Please select a Shipment Scope before moving to the pricing stage."))
+        pricing_stage = self.env['crm.stage'].search([('is_pricing_stage', '=', True)])
+        self.stage_id = pricing_stage.id
+
+    def check_prices_update(self):
+        if not self.pol_id:
+            raise UserError(_("Please select a POL before moving to the pricing stage."))
+        if not self.pod_id:
+            raise UserError(_("Please select a POD before moving to the pricing stage."))
+        if not self.transport_type_id:
+            raise UserError(_("Please select a Transport Type before moving to the pricing stage."))
+        if not self.shipment_scope_id and self.transport_type_id.id != 1:
+            raise UserError(_("Please select a Shipment Scope before moving to the pricing stage."))
 
         domain = [('transport_type_id', '=', self.transport_type_id.id),
                   ('pol_id_country_id', '=', self.pol_id_country_id.id),
@@ -98,23 +104,53 @@ class CrmLead(models.Model):
             domain.append(('shipment_scope_id', '=', self.shipment_scope_id.id))
 
         available_prices = self.env['product.template'].search(domain)
+        pricing_stage = self.env['crm.stage'].search([('is_pricing_stage', '=', True)])
+        self.stage_id = pricing_stage.id
 
         if available_prices:
-            self.show_available_prices = True
-            self.show_back_to_pricing = True
             self.show_request_price = False
             followup_stage = self.env['crm.stage'].search([('is_follow_up_stage', '=', True)])
             if not followup_stage:
                 raise UserError("No Follow up stage found in the system. Please create one.")
             self.stage_id = followup_stage.id
             self.show_send_email = True
-            self.crm_available_prices = [
-                (5, 0, 0),  # Removes all existing records
-                *[(0, 0, {'product_id': price.id}) for price in available_prices]  # Insert new records
-            ]
+            self.write({
+                'crm_available_prices': [
+                    (5, 0, 0),  # Removes all existing records
+                    *[(0, 0, {'product_id': price.id}) for price in available_prices]  # Insert new records
+                ]
+            })
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Rates Available'),
+                    'message': _('Please check the tab below and quote your customer shortly.'),
+                    'type': 'info',
+                    'sticky': False,
+                    'next': {
+                        'type': 'ir.actions.client',
+                        'tag': 'soft_reload',
+                    },
+                },
+            }
 
         else:
-            raise UserError(_("No available prices found for the selected criteria."))
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Error'),
+                    'message': _('No available prices found for the selected criteria.'),
+                    'type': 'danger',
+                    'sticky': False,
+                }
+            }
+
+    def action_move_followup(self):
+        pricing_stage = self.env['crm.stage'].search([('is_follow_up_stage', '=', True)])
+        self.stage_id = pricing_stage.id
 
     def action_create_rfq(self):
         return {
@@ -167,3 +203,21 @@ class CrmLead(models.Model):
             self.show_send_email = False
 
         return True
+
+    def action_open_pricing_opportunities(self):
+
+        return {
+            'name': 'Opportunities',
+            'type': 'ir.actions.act_window',
+            'res_model': 'crm.lead',
+            'view_mode': 'kanban,tree,graph,pivot,form,calendar,activity',
+            'views': [
+                (self.env.ref('eit_freight_workflow.view_crm_lead_kanban_pricing').id, 'kanban'),
+                (self.env.ref('crm.crm_case_tree_view_oppor').id, 'tree'),
+            ],
+            'domain': ['|', ('type', '=', 'opportunity'), ('stage_id.is_won', '=', False)],
+            'context': {
+                'create': False,
+                'hide_create_rfq_button': False,
+            },
+        }

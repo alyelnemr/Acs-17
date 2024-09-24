@@ -1,5 +1,10 @@
 <odoo>
     <data>
+        <record id="crm.crm_lead_action_pipeline" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'opportunity', 'search_default_assigned_to_me': 1,
+                                   'hide_create_rfq_button': True}
+            </field>
+        </record>
 
         <record id="crm_case_form_view_oppor_inherit" model="ir.ui.view">
             <field name="name">crm.lead.form.inherit</field>
@@ -7,12 +12,16 @@
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_sale_quotations_new']" position="replace">
-                    <button name="action_create_rfq" string="Create RFQ" groups="eit_freight_pricing.group_prcing_user"
-                            invisible="not active or probability == 100 or probability == 0"
-                            type="object" class="oe_highlight" title="Create Request For Quotation"/>
+                    <div invisible="context.get('hide_create_rfq_button', False)">
+                        <button name="action_create_rfq" string="Create RFQ"
+                                groups="eit_freight_pricing.group_prcing_user"
+                                invisible="not is_pricing_stage"
+                                type="object" class="oe_highlight" title="Create Request For Quotation"/>
+                    </div>
                 </xpath>
             </field>
         </record>
+
 
         <record id="view_crm_lead_form_inherit" model="ir.ui.view">
             <field name="name">crm.lead.form.inherit</field>
@@ -31,12 +40,18 @@
                 <xpath expr="//button[@name='action_set_won_rainbowman']" position="before">
                     <field name="show_request_price" invisible="1"/>
                     <field name="partner_id" invisible="1"/>
-                    <field name="show_available_prices" invisible="1"/>
+                    <field name="is_won_stage" invisible="1"/>
+                    <field name="is_followup_stage" invisible="1"/>
+                    <field name="is_pricing_stage" invisible="1"/>
+                    <field name="is_new_stage" invisible="1"/>
                     <field name="show_send_email" invisible="1"/>
-                    <field name="show_back_to_pricing" invisible="1"/>
-                    <button name="action_request_price" string="Request Rate" groups="sales_team.group_sale_salesman"
-                            type="object" class="oe_highlight" title="Request Price"
-                            invisible="not show_request_price"/>
+                    <button name="action_move_pricing" string="Move To Pricing" groups="sales_team.group_sale_salesman"
+                            type="object" class="oe_highlight" title="Move to pricing stage"
+                            invisible="not is_new_stage"/>
+                    <button name="action_move_followup" string="Move To Follow Up"
+                            groups="sales_team.group_sale_salesman"
+                            type="object" class="oe_highlight" title="Move to Follow Up stage"
+                            invisible="not is_pricing_stage"/>
                     <button name="action_send_pricing_email" type="object" string="Request Update by Email"
                             groups="sales_team.group_sale_salesman"
                             invisible="not show_send_email"
@@ -44,22 +59,24 @@
                     <button name="action_set_to_pricing" string="Back To Pricing"
                             groups="sales_team.group_sale_salesman"
                             type="object" title="Back to Pricing Stage"
-                            invisible="not show_back_to_pricing"/>
+                            invisible="is_pricing_stage or is_new_stage"/>
 
                 </xpath>
                 <xpath expr="//button[@name='action_set_won_rainbowman']" position="replace">
                     <button name="action_set_won_rainbowman" string="Won" groups="sales_team.group_sale_salesman"
                             type="object" class="oe_highlight" data-hotkey="w" title="Mark as won"
-                            invisible="not active or probability == 100 or type == 'lead'"/>
+                            invisible="not is_followup_stage"/>
                 </xpath>
                 <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="replace">
                     <button name="%(crm.crm_lead_lost_action)d" string="Lost" data-hotkey="l" title="Mark as lost"
                             groups="sales_team.group_sale_salesman"
                             type="action" invisible="type == 'lead' or not active and probability &lt; 100"/>
                 </xpath>
-                <xpath expr="//notebook/page[last()]" position="after">
-                    <field name="show_available_prices" invisible="1"/>
-                    <page name="available_prices" string="Available Prices" invisible="not show_available_prices">
+                <xpath expr="//notebook/page[1]" position="before">
+                    <page name="available_prices" string="Available Prices" invisible="is_new_stage">
+                        <button name="check_prices_update" type="object" string="Check for updates"/>
+                        <br/>
+                        <br/>
                         <field name="crm_available_prices" readonly="1">
                             <!-- Enhanced Kanban View with Lighter Background Colors -->
                             <kanban class="o_kanban_view">
@@ -216,7 +233,8 @@
             </field>
             <field name="body_html" type="html">
                 <p>Dear Pricing Team,</p>
-                <p>We have received a new pricing request with the <a t-attf-href="{{ object.get_lead_url() }}" target="_blank"><t t-out="object.name"/></a>.</p>
+                <p>We have received a new pricing request with the <a t-attf-href="{{ object.get_lead_url() }}"
+                                                                      target="_blank"><t t-out="object.name"/></a>.</p>
                 <p>
                     Could you please review and process this request at your earliest convenience?
                 </p>

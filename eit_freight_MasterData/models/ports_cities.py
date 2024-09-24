@@ -7,6 +7,7 @@ class PortCitiesTemplate(models.Model):
     _name = "port.cites"
     _description = 'ports & Cities Data'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_names_search = ['name', 'country_id']
 
     name = fields.Char(string="Name")
     code = fields.Char(string="Code")

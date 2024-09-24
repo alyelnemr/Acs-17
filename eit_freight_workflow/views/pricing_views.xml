@@ -59,7 +59,17 @@
             <field name="view_ids"
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_crm_lead_kanban_pricing')})]"/>
             <field name="domain">['|', ('type', '=', 'opportunity'), ('stage_id.is_won', '=', False)]</field>
-            <field name="context">{'create': False}</field>
+            <field name="context">{'create': False,
+                                   'hide_create_rfq_button': False}</field>
+        </record>
+
+        <record id="action_open_pricing_crm_requests_action" model="ir.actions.server">
+            <field name="name">Opportunities Server Action</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="binding_model_id" ref="crm.model_crm_lead"/>
+            <field name="code">
+                action = env['crm.lead'].action_open_pricing_crm_requests()
+            </field>
         </record>
 
 
