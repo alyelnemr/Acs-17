@@ -60,7 +60,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_crm_lead_kanban_pricing')})]"/>
             <field name="domain">['|', ('type', '=', 'opportunity'), ('stage_id.is_won', '=', False)]</field>
             <field name="context">{'create': False,
-                                   'hide_create_rfq_button': False}</field>
+                                   'hide_create_rfq_button': False, 'hide_all_buttons': True}</field>
         </record>
 
         <record id="action_open_pricing_crm_requests_action" model="ir.actions.server">

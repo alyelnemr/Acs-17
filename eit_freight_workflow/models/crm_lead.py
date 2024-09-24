@@ -189,17 +189,14 @@ class CrmLead(models.Model):
 
         # Send the email to the users in the group
         if mail_template:
-
             action = self.env.ref('crm.crm_lead_action_pipeline').id  # Use your specific action here
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             lead_url = f"{base_url}/web#id={self.id}&model=crm.lead&view_type=form&action={action}"
 
             email_values = {
-                'email_cc': False,
+                'email_to': ','.join(email_list),
             }
-            for email in email_list:
-                email_values['email_to'] = email
-                mail_template.sudo().send_mail(self.id, force_send=True, email_values=email_values)
+            mail_template.sudo().send_mail(self.id, force_send=True, email_values=email_values)
             self.show_send_email = False
 
         return True

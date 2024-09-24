@@ -219,7 +219,7 @@ class SaleOrder(models.Model):
             if record.transport_type_id.name == 'Sea':
                 record.shipment_domain = [('type', '=', 'sea')]
 
-            elif record.transport_type_id.name == 'In-land':
+            elif record.transport_type_id.name == 'Land':
                 record.shipment_domain = [('type', '=', 'inland')]
 
             else:

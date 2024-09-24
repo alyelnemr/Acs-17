@@ -2,7 +2,7 @@
     <data>
         <record id="crm.crm_lead_action_pipeline" model="ir.actions.act_window">
             <field name="context">{'default_type': 'opportunity', 'search_default_assigned_to_me': 1,
-                                   'hide_create_rfq_button': True}
+                                   'hide_create_rfq_button': True, 'hide_all_buttons': False}
             </field>
         </record>
 
@@ -45,17 +45,24 @@
                     <field name="is_pricing_stage" invisible="1"/>
                     <field name="is_new_stage" invisible="1"/>
                     <field name="show_send_email" invisible="1"/>
-                    <button name="action_move_pricing" string="Move To Pricing" groups="sales_team.group_sale_salesman"
-                            type="object" class="oe_highlight" title="Move to pricing stage"
-                            invisible="not is_new_stage"/>
-                    <button name="action_move_followup" string="Move To Follow Up"
-                            groups="sales_team.group_sale_salesman"
-                            type="object" class="oe_highlight" title="Move to Follow Up stage"
-                            invisible="not is_pricing_stage"/>
-                    <button name="action_send_pricing_email" type="object" string="Request Update by Email"
-                            groups="sales_team.group_sale_salesman"
-                            invisible="not show_send_email"
-                            class="oe_highlight"/>
+                    <div invisible="context.get('hide_all_buttons', False)">
+                        <button name="action_move_pricing" string="Move To Pricing"
+                                groups="sales_team.group_sale_salesman"
+                                type="object" class="oe_highlight" title="Move to pricing stage"
+                                invisible="not is_new_stage"/>
+                    </div>
+                    <div invisible="context.get('hide_all_buttons', False)">
+                        <button name="action_move_followup" string="Move To Follow Up"
+                                groups="sales_team.group_sale_salesman"
+                                type="object" class="oe_highlight" title="Move to Follow Up stage"
+                                invisible="not is_pricing_stage"/>
+                    </div>
+                    <div invisible="context.get('hide_all_buttons', False)">
+                        <button name="action_send_pricing_email" type="object" string="Request Update by Email"
+                                groups="sales_team.group_sale_salesman"
+                                invisible="not is_pricing_stage"
+                                class="oe_highlight"/>
+                    </div>
                     <button name="action_set_to_pricing" string="Back To Pricing"
                             groups="sales_team.group_sale_salesman"
                             type="object" title="Back to Pricing Stage"
@@ -68,9 +75,13 @@
                             invisible="not is_followup_stage"/>
                 </xpath>
                 <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="replace">
-                    <button name="%(crm.crm_lead_lost_action)d" string="Lost" data-hotkey="l" title="Mark as lost"
-                            groups="sales_team.group_sale_salesman"
-                            type="action" invisible="type == 'lead' or not active and probability &lt; 100"/>
+
+                    <div invisible="context.get('hide_all_buttons', False)">
+                        <button name="%(crm.crm_lead_lost_action)d" string="Lost" data-hotkey="l"
+                                title="Mark as lost"
+                                groups="sales_team.group_sale_salesman"
+                                type="action" invisible="type == 'lead' or not active and probability &lt; 100"/>
+                    </div>
                 </xpath>
                 <xpath expr="//notebook/page[1]" position="before">
                     <page name="available_prices" string="Available Prices" invisible="is_new_stage">
@@ -246,7 +257,6 @@
                 </p>
                 <ul>
                     <li>
-                        <strong>Lead Name:</strong>
                         <a t-attf-href="{{ object.get_lead_url() }}" target="_blank"><t t-out="object.name"/></a>
                     </li>
                     <li>
