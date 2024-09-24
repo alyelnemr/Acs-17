@@ -22,6 +22,16 @@ class OperationTrackingStages(models.Model):
                                         related='project_task_id.clearence_type_id')
     tracking_stage_domain = fields.Char(string="Tracking Stage Domain", compute='_compute_tracking_stage_domain')
 
+    @api.onchange('tracking_type')
+    def _compute_tracking_stage_domain(self):
+        for record in self:
+            if record.tracking_type == 'clearance':
+                record.tracking_stage_domain = "[('stage_clearance', '=', True)]"
+            elif record.tracking_type == 'freight':
+                record.tracking_stage_domain = "[('stage_freight', '=', True), ('stage_clearance', '=', False)]"
+            else:
+                record.tracking_stage_domain = "[]"
+
     @api.onchange('tracking_stage')
     def onchange_tracking_stage(self):
         for record in self:
