@@ -6,13 +6,15 @@
             <form string="Confirm Message">
                 <div class="row">
                     <field name="message" readonly="1" nolabel="1" />
+                    <field name="show_label" invisible="1" />
                 </div>
                 <div class="row">
-                    <strong>Customer:</strong>
+                    <strong invisible="not show_label">Customer:</strong>
                     <field name="confirm_message" readonly="1" nolabel="1" />
                 </div>
                 <footer>
-                    <button string="Confirm" type="object" name="confirm_action" class="btn-primary"/>
+                    <button string="Confirm" type="object" invisible="not show_label" name="confirm_action" class="btn-primary"/>
+                    <button string="Mark Lost" type="object" invisible="show_label" name="action_mark_lost" class="btn-primary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

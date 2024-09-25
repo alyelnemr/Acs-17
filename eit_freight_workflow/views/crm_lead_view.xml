@@ -13,6 +13,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_sale_quotations_new']" position="replace">
                     <div invisible="context.get('hide_create_rfq_button', False)">
+                        <field name="is_pricing_stage" invisible="1" />
                         <button name="action_create_rfq" string="Create RFQ"
                                 groups="eit_freight_pricing.group_prcing_user"
                                 invisible="not is_pricing_stage"
@@ -66,26 +67,26 @@
                     <button name="action_set_to_pricing" string="Back To Pricing"
                             groups="sales_team.group_sale_salesman"
                             type="object" title="Back to Pricing Stage"
-                            invisible="is_pricing_stage or is_new_stage"/>
+                            invisible="is_pricing_stage or is_new_stage or probability == 0"/>
 
                 </xpath>
                 <xpath expr="//button[@name='action_set_won_rainbowman']" position="replace">
                     <button name="action_set_won_rainbowman" string="Won" groups="sales_team.group_sale_salesman"
                             type="object" class="oe_highlight" data-hotkey="w" title="Mark as won"
-                            invisible="not is_followup_stage"/>
+                            invisible="not is_followup_stage or probability == 0"/>
                 </xpath>
                 <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="replace">
 
                     <div invisible="context.get('hide_all_buttons', False)">
-                        <button name="%(crm.crm_lead_lost_action)d" string="Lost" data-hotkey="l"
+                        <button name="action_mark_lost" string="Lost" data-hotkey="l"
                                 title="Mark as lost"
                                 groups="sales_team.group_sale_salesman"
-                                type="action" invisible="type == 'lead' or not active and probability &lt; 100"/>
+                                type="object" invisible="type == 'lead' or not active and probability &lt; 100"/>
                     </div>
                 </xpath>
                 <xpath expr="//notebook/page[1]" position="before">
                     <page name="available_prices" string="Available Prices" invisible="is_new_stage">
-                        <button name="check_prices_update" type="object" string="Check for updates"/>
+                        <button name="action_prices_update" type="object" string="Check for updates"/>
                         <br/>
                         <br/>
                         <field name="crm_available_prices" readonly="1">
@@ -104,49 +105,40 @@
                                              style="background-color: #f5f8fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 15px;">
                                             <div class="o_kanban_primary_bottom">
                                                 <strong class="o_kanban_record_title"
-                                                        style="color: #4A90E2;" t-esc="record.pricing_name.value"/>
+                                                        style="color: #4A90E2; font-size: 14px;"
+                                                        t-esc="record.pricing_name.value"/>
                                             </div>
-                                            <div class="oe_kanban_details">
-                                                <div class="o_kanban_tags">
+                                            <div class="oe_kanban_details"
+                                                 style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                                                <div class="o_kanban_tags" style="flex: 1; min-width: 45%;">
                                                     <span class="badge badge-light"
-                                                          style="color: #337ab7; background-color: #e3f2fd;">
-                                                        <strong>Transport Type:</strong>
-                                                        <t t-esc="record.transport_type_id.value"/>
+                                                          style="color: #337ab7; background-color: #e3f2fd; font-size: 13px;">
+                                                        <t t-esc="record.pol_id.value"/>
                                                     </span>
                                                 </div>
-                                                <div class="o_kanban_tags">
+                                                <div class="o_kanban_tags" style="flex: 1; min-width: 45%;">
                                                     <span class="badge badge-light"
-                                                          style="color: #337ab7; background-color: #e3f2fd;">
-                                                        <strong>Shipment Scope:</strong>
+                                                          style="color: #337ab7; background-color: #e3f2fd; font-size: 13px;">
+                                                        <t t-esc="record.expiration_date"/>
+                                                    </span>
+                                                </div>
+                                                <div class="o_kanban_tags" style="flex: 1; min-width: 45%;">
+                                                    <span class="badge badge-light"
+                                                          style="color: #337ab7; background-color: #e3f2fd; font-size: 13px;">
                                                         <t t-esc="record.shipment_scope_id.value"/>
                                                     </span>
                                                 </div>
-                                                <div class="o_kanban_tags">
+                                                <div class="o_kanban_tags" style="flex: 1; min-width: 45%;">
                                                     <span class="badge badge-light"
-                                                          style="color: #00796B; background-color: #E0F2F1;">
-                                                        <strong>POL:</strong>
-                                                        <t t-esc="record.pol_id.value"/>
-                                                    </span>
-                                                    <span class="badge badge-light"
-                                                          style="color: #00796B; background-color: #E0F2F1;">
-                                                        <strong>POD:</strong>
+                                                          style="color: #337ab7; background-color: #e3f2fd; font-size: 13px;">
                                                         <t t-esc="record.pod_id.value"/>
-                                                    </span>
-                                                </div>
-                                                <div class="o_kanban_tags">
-                                                    <span class="badge badge-light"
-                                                          style="color: #00796B; background-color: #E0F2F1;">
-                                                        <strong>Valid To:</strong>
-                                                        <t t-esc="record.expiration_date"/>
-                                                    </span>
-                                                    <span class="badge badge-light"
-                                                          style="color: #00796B; background-color: #E0F2F1;">
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </t>
                                 </templates>
+
                             </kanban>
 
                             <!-- Complete Form View -->
@@ -226,6 +218,7 @@
                                     <button string="Create Quotation" type="object" name="action_create_quotation"
                                             groups="sales_team.group_sale_salesman"
                                             class="btn-primary"/>
+                                    <button string="Discard" class="btn-secondary" special="cancel"/>
                                 </footer>
                             </form>
                         </field>

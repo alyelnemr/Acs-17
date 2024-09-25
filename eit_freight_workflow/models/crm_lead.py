@@ -83,8 +83,12 @@ class CrmLead(models.Model):
             raise UserError(_("Please select a Shipment Scope before moving to the pricing stage."))
         pricing_stage = self.env['crm.stage'].search([('is_pricing_stage', '=', True)])
         self.stage_id = pricing_stage.id
+        self.check_for_prices_update()
 
-    def check_prices_update(self):
+    def action_prices_update(self):
+        return self.check_for_prices_update(show_message=True)
+
+    def check_for_prices_update(self, show_message=False):
         if not self.pol_id:
             raise UserError(_("Please select a POL before moving to the pricing stage."))
         if not self.pod_id:
@@ -120,33 +124,34 @@ class CrmLead(models.Model):
                     *[(0, 0, {'product_id': price.id}) for price in available_prices]  # Insert new records
                 ]
             })
-
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Rates Available'),
-                    'message': _('Please check the tab below and quote your customer shortly.'),
-                    'type': 'info',
-                    'sticky': False,
-                    'next': {
-                        'type': 'ir.actions.client',
-                        'tag': 'soft_reload',
+            if show_message:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Rates Available'),
+                        'message': _('Please check the tab below and quote your customer shortly.'),
+                        'type': 'info',
+                        'sticky': False,
+                        'next': {
+                            'type': 'ir.actions.client',
+                            'tag': 'soft_reload',
+                        },
                     },
-                },
-            }
+                }
 
         else:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Error'),
-                    'message': _('No available prices found for the selected criteria.'),
-                    'type': 'danger',
-                    'sticky': False,
+            if show_message:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Error'),
+                        'message': _('No available prices found for the selected criteria.'),
+                        'type': 'danger',
+                        'sticky': False,
+                    }
                 }
-            }
 
     def action_move_followup(self):
         pricing_stage = self.env['crm.stage'].search([('is_follow_up_stage', '=', True)])
@@ -217,4 +222,47 @@ class CrmLead(models.Model):
                 'create': False,
                 'hide_create_rfq_button': False,
             },
+        }
+
+    def action_mark_lost(self):
+        if self.quotation_count > 0:
+            action = self.env.ref('eit_freight_workflow.action_confirm_message_wizard').read()[0]
+            quotations = self.order_ids.filtered_domain([('state', 'in', ('draft', 'sent'))])
+            return {
+                'name': 'Confirm Message',
+                'type': 'ir.actions.act_window',
+                'res_model': 'confirm.message.wizard',
+                'view_mode': 'form',
+                'view_id': self.env.ref('eit_freight_workflow.view_confirm_message_wizard_form').id,
+                'target': 'new',
+                'context': {
+                    'default_name': 'Confirmation',
+                    'default_message': 'There are some quotations, Are you sure you want to proceed?',
+                    'default_confirm_message': ', '.join([f'{quote.name}' for quote in quotations]),
+                    'default_show_label': False,
+                    'active_id': self.id,  # Pass the active sale order ID
+                }
+            }
+        action = self.env.ref('crm.crm_lead_lost_action').read()[0]
+        # You can modify the context if needed, like passing active_ids or other parameters
+        action['context'] = {
+            'dialog_size': 'medium',
+            'default_lead_ids': self.ids  # Pass current record's ID or a list of IDs
+        }
+        return action
+
+    def open_confirm_message_wizard(self):
+        # Trigger the confirmation wizard action
+        return {
+            'name': 'Confirm Message',
+            'type': 'ir.actions.act_window',
+            'res_model': 'confirm.message.wizard',
+            'view_mode': 'form',
+            'view_id': self.env.ref('your_module.view_confirm_message_wizard_form').id,
+            'target': 'new',
+            'context': {
+                'default_name': 'Confirmation',
+                'default_message': 'Are you sure you want to proceed?',
+                'active_id': self.id,  # Pass the active sale order ID
+            }
         }
