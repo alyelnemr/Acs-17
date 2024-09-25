@@ -26,7 +26,17 @@
                                 </div>
                                 <div>
                                     <span class="o_kanban_record_subtitle">
-                                        <field name="contact_name"/>
+                                        <field name="transport_type_id"/>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="pol_id"/>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="pod_id"/>
                                     </span>
                                 </div>
                                 <div>
@@ -54,11 +64,11 @@
         <record id="crm_lead_action_pricing" model="ir.actions.act_window">
             <field name="name">Opportunities</field>
             <field name="res_model">crm.lead</field>
-            <field name="view_mode">kanban,tree,graph,pivot,form,calendar,activity</field>
+            <field name="view_mode">kanban,form</field>
             <!-- Specify your custom Kanban view here -->
             <field name="view_ids"
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_crm_lead_kanban_pricing')})]"/>
-            <field name="domain">['|', ('type', '=', 'opportunity'), ('stage_id.is_won', '=', False)]</field>
+            <field name="domain">[('is_pricing_stage', '=', True)]</field>
             <field name="context">{'create': False,
                                    'hide_create_rfq_button': False, 'hide_all_buttons': True}</field>
         </record>

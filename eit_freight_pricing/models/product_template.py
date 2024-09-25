@@ -73,7 +73,7 @@ class ProductTemplate(models.Model):
     @api.model
     def unlink(self):
         # Check if the current user is part of the 'group_pricing_admin' group
-        if not self.env.user.has_group('your_module.group_pricing_admin'):
+        if not self.env.user.has_group('eit_freight_pricing.group_pricing_admin'):
             # Raise an AccessError to prevent the user from deleting the product
             raise AccessError(
                 _("You do not have the required permissions to delete a product. Only users with the Pricing Admin group can delete products."))

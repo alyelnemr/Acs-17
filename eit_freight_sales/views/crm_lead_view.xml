@@ -13,6 +13,28 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
+                <button name="action_schedule_meeting" position="replace">
+                    <button name="action_schedule_meeting" type="object"
+                                class="oe_stat_button" icon="fa-calendar"
+                                context="{'partner_id': partner_id}"
+                                invisible="not id or type == 'lead' or context.get('hide_all_buttons', False)">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text"><field name="meeting_display_label"/></span>
+                                    <field name="meeting_display_date" class="o_stat_value" invisible="not meeting_display_date"/>
+                                </div>
+                            </button>
+                </button>
+                <button name="action_show_potential_duplicates" position="replace">
+                    <button name="action_show_potential_duplicates" type="object"
+                                class="oe_stat_button" icon="fa-star"
+                                invisible="duplicate_lead_count &lt; 1 or context.get('hide_all_buttons', False)">
+                                <div class="o_stat_info">
+                                    <field name="duplicate_lead_count" class="o_stat_value"/>
+                                    <span class="o_stat_text" invisible="duplicate_lead_count &lt; 2">Similar Leads</span>
+                                    <span class="o_stat_text" invisible="duplicate_lead_count &gt; 1">Similar Lead</span>
+                                </div>
+                            </button>
+                            </button>
                 <xpath expr="//field[@name='stage_id']" position="replace">
                     <field name="stage_id" widget="statusbar_duration"
                            options="{'clickable': False, 'fold_field': 'fold'}"
@@ -27,8 +49,7 @@
                                    placeholder="e.g. Product Pricing" readonly="1"/>
                         </h1>
                         <h2 class="row g-0 pb-3 pb-sm-4">
-                            <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead'"
-                                 groups="sales_team.group_sale_salesman">
+                            <div class="col-auto pb-2 pb-md-0" invisible="type == 'lead' or context.get('hide_all_buttons', False)">
                                 <label for="expected_revenue" class="oe_edit_only"/>
                                 <div class="d-flex align-items-baseline">
                                     <field name="company_currency" invisible="1"/>
@@ -50,7 +71,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto" groups="sales_team.group_sale_salesman">
+                            <div class="col-auto" invisible="context.get('hide_all_buttons', False)">
                                 <label for="probability" class="d-inline-block"/>
                                 <button class="d-inline-block px-2 py-0 btn btn-link"
                                         name="action_set_automated_probability" type="object"
@@ -79,23 +100,23 @@
 
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
-                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                    <attribute name="invisible">context.get('hide_all_buttons', False)</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']//label[@for='email_from']" position="attributes">
-                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                    <attribute name="invisible">context.get('hide_all_buttons', False)</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='email_from']" position="attributes">
-                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                    <attribute name="invisible">context.get('hide_all_buttons', False)</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']//label[@for='phone']" position="attributes">
-                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                    <attribute name="invisible">context.get('hide_all_buttons', False)</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='opportunity_partner']//field[@name='phone']" position="attributes">
-                    <attribute name="groups">sales_team.group_sale_salesman</attribute>
+                    <attribute name="invisible">context.get('hide_all_buttons', False)</attribute>
                 </xpath>
 
                 <xpath expr="//group[@name='lead_partner']//field[@name='partner_id']" position="attributes">
@@ -288,6 +309,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//kanban" position="attributes">
                     <attribute name="on_create" position="replace"></attribute>
+                    <attribute name="groupby">False</attribute>
+                    <attribute name="default_group_by"></attribute>
                 </xpath>
                 <xpath expr="//kanban" position="inside">
                     <field name="transport_type_id"/>
@@ -324,6 +347,23 @@
                 </filter>
                 <filter name="country" position="replace">
                 </filter>
+                <field name="country_id" position="replace" />
+                <field name="city" position="replace" />
+                <filter name="won" position="before">
+                <filter string="Air" name="transport_type_id_air" domain="[('transport_type_id','=', 1)]"/>
+                <filter string="Sea" name="transport_type_id_sea" domain="[('transport_type_id','=', 2)]"/>
+                <filter string="Land" name="transport_type_id_inland" domain="[('transport_type_id','=',3)]"/>
+                </filter>
+                <xpath expr="//search" position="inside">
+                    <field name="pol_id" string="POL"
+                           filter_domain="[('pol_id', 'ilike', self)]"/>
+                    <field name="pod_id" string="POD"
+                           filter_domain="[('pod_id', 'ilike', self)]"/>
+                    <field name="pol_id_country_id" string="POL Country"
+                           filter_domain="[('pol_id_country_id', 'ilike', self)]"/>
+                    <field name="pod_id_country_id" string="POD Country"
+                           filter_domain="[('pod_id_country_id', 'ilike', self)]"/>
+                </xpath>
 
             </field>
         </record>
@@ -383,6 +423,12 @@
                             <span class="o_stat_text">Bookings</span>
                             <field name="sale_order_count" invisible="1"/>
                         </div>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='action_view_sale_quotation']" position="replace">
+                    <button class="oe_stat_button" type="object"
+                        name="action_view_sale_quotation" icon="fa-pencil-square-o" invisible="type == 'lead' or context.get('hide_all_buttons', False)">
+                        <field name="quotation_count" widget="statinfo" string="Quotations"/>
                     </button>
                 </xpath>
             </field>

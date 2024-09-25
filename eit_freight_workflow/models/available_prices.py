@@ -12,8 +12,19 @@ class AvailablePrices(models.Model):
                                         related='product_id.transport_type_id')
     shipment_scope_id = fields.Many2one(comodel_name='shipment.scop', string="Shipment Scope",
                                         related='product_id.shipment_scope_id')
+    package_type_id = fields.Many2one(comodel_name='package.type', string="Package Type",
+                                      related='product_id.package_type')
+    container_type_id = fields.Many2one(comodel_name='container.type', string="Container Type",
+                                        related='product_id.container_type')
+    scope_ids = fields.Many2many(comodel_name='service.scope', string="Services", related='product_id.scope_ids')
+    scope_names = fields.Char(string='Service Scopes', compute='_compute_scope_names', store=False)
+    expiration_date = fields.Date(string="Expiration Date", related='product_id.expiration_date')
     pol_id = fields.Many2one(comodel_name='port.cites', string="POL", related='product_id.pol_id')
     pod_id = fields.Many2one(comodel_name='port.cites', string="POD", related='product_id.pod_id')
+    transit_time_duration = fields.Integer(string="Transit Time", related='product_id.transit_time_duration')
+    free_time_duration = fields.Integer(string="Free Time", related='product_id.free_time_duration')
+    shipping_line_id = fields.Many2one(comodel_name='res.partner', string="Shipping Line", related='product_id.shipping_line')
+    air_line_id = fields.Many2one(comodel_name='res.partner', string="Air Line", related='product_id.air_line')
     crm_lead_id = fields.Many2one(comodel_name='crm.lead', string="Opportunity")
     pricing_charge_ids = fields.One2many(comodel_name='pricing.charges', inverse_name='product_id',
                                          related='product_id.pricing_charge_ids')
@@ -21,6 +32,14 @@ class AvailablePrices(models.Model):
                                       related='product_id.vessel_line_ids')
     plane_line_ids = fields.One2many(comodel_name='frieght.plane.line', inverse_name='product_plane_id',
                                      related='product_id.plane_line_ids')
+
+    def _compute_scope_names(self):
+        for record in self:
+            if record.scope_ids:
+                # Join scope names with commas
+                record.scope_names = ', '.join(record.scope_ids.mapped('name'))
+            else:
+                record.scope_names = 'No Scopes Available'
 
     def action_create_quotation(self):
         self.ensure_one()  # Ensure this is called on a single record
