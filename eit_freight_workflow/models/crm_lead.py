@@ -26,6 +26,10 @@ class CrmLead(models.Model):
         self.show_request_price = True
         self.show_send_email = False
 
+    def action_set_to_followup(self):
+        followup_stage = self.env['crm.stage'].search([('is_follow_up_stage', '=', True)])
+        self.stage_id = followup_stage.id
+
     @api.onchange('stage_id')
     def _onchange_stage_id(self):
         if self.stage_id.is_won:

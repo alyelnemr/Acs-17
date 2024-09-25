@@ -67,7 +67,12 @@
                     <button name="action_set_to_pricing" string="Back To Pricing"
                             groups="sales_team.group_sale_salesman"
                             type="object" title="Back to Pricing Stage"
-                            invisible="is_pricing_stage or is_new_stage or probability == 0"/>
+                            invisible="is_pricing_stage or is_new_stage or probability == 0 or probability == 100 "/>
+
+                    <button name="action_set_to_followup" string="Back To Follow Up"
+                            groups="sales_team.group_sale_salesman"
+                            type="object" title="Back to Pricing Stage"
+                            invisible="is_pricing_stage or is_followup_stage or is_new_stage or probability == 0"/>
 
                 </xpath>
                 <xpath expr="//button[@name='action_set_won_rainbowman']" position="replace">
