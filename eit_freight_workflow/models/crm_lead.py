@@ -90,7 +90,7 @@ class CrmLead(models.Model):
         self.check_for_prices_update()
 
     def action_prices_update(self):
-        return self.check_for_prices_update(show_message=True)
+        self.check_for_prices_update()
 
     def check_for_prices_update(self, show_message=False):
         if not self.pol_id:
