@@ -6,9 +6,56 @@ class InheritResPartner(models.Model):
 
     partner_type_id = fields.Many2many('partner.type', string="Partner Type", required=True)
     excecuters = fields.Many2many('res.users', string="Executors")
-    partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type1", compute="compute_partner_type_id_1")
     show_vendor_portal = fields.Boolean(string="Show Vendor Portal", default=False)
     vendor_portal_ids = fields.One2many(comodel_name='vendor.portal', inverse_name='partner_id', string='vendor_portal_id')
+    partner_type_id_1 = fields.Many2many('partner.type', string="Partner Type1", compute="compute_partner_type_id_1")
+    carrier_route_ids = fields.One2many('carrier.route', 'partner_id', string="Carriers")
+    carrier_route_count = fields.Integer(
+        string="Carrier Routes Count",
+        compute='_compute_carrier_route_count'
+    )
+
+    @api.depends('carrier_route_ids')
+    def _compute_carrier_route_count(self):
+        for partner in self:
+            # Count the number of carrier routes where the partner is in the carriers Many2many field
+            partner.carrier_route_count = self.env['carrier.routes'].search_count([('carriers', 'in', partner.id)])
+
+    def action_view_carrier_routes(self):
+        """Action to open the carrier routes related to this partner."""
+        self.ensure_one()
+        return {
+            'name': 'Carrier Routes',
+            'domain': [('carriers', 'in', self.id)],
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'carrier.routes',
+            'type': 'ir.actions.act_window',
+            'context': {'default_carriers': [(4, self.id)]},
+        }
+
+    @api.model
+    def create(self, vals):
+        partner = super(InheritResPartner, self).create(vals)
+        partner._add_executors_as_followers()
+        return partner
+
+    def write(self, vals):
+        result = super(InheritResPartner, self).write(vals)
+        self._add_executors_as_followers()
+        return result
+
+    def _add_executors_as_followers(self):
+        for partner in self:
+            if partner.excecuters:
+                # Check if the executors are already in the message_follower_ids
+                current_followers = partner.message_follower_ids.mapped('partner_id').ids
+                new_followers = partner.excecuters.mapped('partner_id').filtered(
+                    lambda p: p.id not in current_followers)
+
+                # Add new executors as followers
+                if new_followers:
+                    partner.message_subscribe(new_followers.ids)
 
     def compute_partner_type_id_1(self):
         for rec in self:

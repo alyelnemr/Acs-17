@@ -32,6 +32,7 @@
         'views/ir_module_view.xml',
         'views/hr_expense_view.xml',
         'views/hr_employee_view.xml',
+        'views/carrier_route_view.xml',
         'data/demo.xml',
         'data/ocean.data.csv',
         'data/contaniner_type_demo.xml',

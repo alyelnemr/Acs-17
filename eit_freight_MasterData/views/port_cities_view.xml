@@ -360,20 +360,21 @@
 
 
     <!-- menu-->
-    <menuitem id="menu_sea_river" name="Seas and Rivers" sequence="2" parent="menu_freight1" action="action_sea_river"/>
-
-    <menuitem id="menu_ocean" name="Oceans" sequence="3" parent="menu_freight1" action="action_ocean"/>
+    <menuitem name="Seas &#38; Ports" id="menu_seas_ports_group" parent="menu_freight1" sequence="1" groups="base.group_user"/>
+    <menuitem name="Countries and Cities" id="menu_countries_cities_group" parent="menu_freight1" sequence="1" groups="base.group_user"/>
+    <menuitem id="menu_sea_river" name="Seas and Rivers" sequence="3" parent="menu_seas_ports_group" action="action_sea_river"/>
 
     <menuitem name="Locations" id="menu_freight1" parent="menu_freight" sequence="1"/>
-    <menuitem name="Ports" id="port_cities_ports" sequence="1" parent="menu_freight1"
-              action="action_port_cities_ports"/>
-    <menuitem name="Cities" id="port_cities_cities" sequence="4" parent="menu_freight1"
+    <menuitem id="menu_ocean" name="Oceans" sequence="4" parent="menu_seas_ports_group" action="action_ocean"/>
+
+    <menuitem name="Ports" id="port_cities_ports" sequence="1" parent="menu_seas_ports_group" action="action_port_cities_ports"/>
+    <menuitem name="Cities" id="port_cities_cities" sequence="4" parent="menu_countries_cities_group"
               action="action_port_cities_cities"/>
-    <menuitem name="Terminals" id="sub_menu_terminals" sequence="5" parent="menu_freight1" action="action_terminals"/>
-    <menuitem name="Warehouses" id="sub_menu_warehouses" sequence="6" parent="menu_freight1"
+    <menuitem name="Terminals" id="sub_menu_terminals" sequence="5" parent="menu_countries_cities_group" action="action_terminals"/>
+    <menuitem name="Warehouses" id="sub_menu_warehouses" sequence="6" parent="menu_countries_cities_group"
               action="action_warehouses"/>
-    <menuitem name="Countries" id="sub_menu_freight2" parent="menu_freight1" action="action_show_countries"/>
-    <menuitem name="Country Group" id="sub_menu_freight3" parent="menu_freight1" action="action_show_countries_group"/>
+    <menuitem name="Countries" id="sub_menu_freight2" parent="menu_countries_cities_group" action="action_show_countries"/>
+    <menuitem name="Country Group" id="sub_menu_freight3" parent="menu_countries_cities_group" action="action_show_countries_group"/>
     <!--    <menuitem name="Port Type" id="sub_menu_fport_type" parent="menu_freight1" action="action_show_port_type"/>-->
 
 </odoo>

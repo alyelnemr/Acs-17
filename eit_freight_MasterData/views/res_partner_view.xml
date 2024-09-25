@@ -4,6 +4,17 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- Smart button for Carrier Routes -->
+                <button name="action_view_carrier_routes"
+                        type="object"
+                        string="Carrier Routes"
+                        icon="fa-road"
+                        invisible="carrier_route_count == 0"
+                        />
+                <!-- Carrier Route Count -->
+                <field name="carrier_route_count" widget="statinfo" string="Carrier Routes" invisible="0"/>
+            </xpath>
             <xpath expr="//group[@name='purchase']" position="inside">
                 <field name="show_vendor_portal" />
             </xpath>

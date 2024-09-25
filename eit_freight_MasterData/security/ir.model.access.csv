@@ -13,6 +13,8 @@ access_service_scope_manager,service.scope.manager,model_service_scope,group_fre
 access_clearence_type,clearence.type,model_clearence_type,group_freight_admin,1,0,0,0
 access_commodity_group,commodity.group,model_commodity_group,group_freight_admin,1,1,1,1
 access_commodity_data,commodity.data,model_commodity_data,group_freight_admin,1,1,1,1
+access_carrier_routes_user,carrier.routes.user,model_carrier_route,group_freight_user,1,1,1,0
+access_carrier_routes.admin,carrier.routes.admin,model_carrier_route,group_freight_admin,1,1,1,1
 access_document_type,document.type,model_document_type,group_freight_admin,1,1,1,1
 access_frieght_tags,frieght.tags,model_frieght_tags,group_freight_admin,1,1,1,1
 access_bill_leading_type,bill.leading.type,model_bill_leading_type,group_freight_admin,1,0,0,0
