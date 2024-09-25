@@ -212,15 +212,15 @@
                             <group>
                                 <field name="commodity_id"
                                        options="{'no_create': True, 'no_create_edit': True,'no_open': True}"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <field name="by_unit" invisible="not is_air"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <field name="by_unit" invisible="is_air and not is_lcl_or_ltl"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                             </group>
                             <group>
                                 <field name="commodity_equip"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <field name="temperature" invisible="commodity_equip !='reefer'"/>
                                 <field name="un_number" invisible="commodity_equip !='imo'"/>
                                 <field name="attachment" invisible="commodity_equip !='imo'"/>
@@ -231,7 +231,7 @@
 
                     <group invisible="type == 'lead'">
                         <field name="air_package_type_ids" widget="one2many" invisible="not is_air"
-                                   readonly="context.get('hide_all_buttons', False)"
+                               readonly="context.get('hide_all_buttons', False)"
                         >
                             <tree editable="bottom">
                                 <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
@@ -251,7 +251,7 @@
                     <!-- For FCL or FTL Shipment Scope -->
                     <group invisible="not is_fcl_or_ftl">
                         <field name="container_type_ids"
-                                   readonly="context.get('hide_all_buttons', False)">
+                               readonly="context.get('hide_all_buttons', False)">
                             <tree editable="bottom">
                                 <field name="container_type_id" options="{'no_create': True, 'no_edit': True}"/>
                                 <field name="qty"/>
@@ -263,7 +263,7 @@
 
                     <group>
                         <field name="non_air_package_type_ids" widget="one2many"
-                                   readonly="context.get('hide_all_buttons', False)"
+                               readonly="context.get('hide_all_buttons', False)"
                                invisible="not is_lcl_or_ltl">
                             <tree editable="bottom">
                                 <field name="package_type_id" options="{'no_create': True, 'no_edit': True}"/>
@@ -286,39 +286,39 @@
                         <group>
                             <group>
                                 <field name="cargo_readiness_date"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <label for="transit_time_duration" string="Transit Time"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <div style="display: flex; align-items: center;">
                                     <field name="transit_time_duration"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                           readonly="context.get('hide_all_buttons', False)"/>
                                     <div class="o_form_label">Days</div>
                                 </div>
                                 <label for="free_time_duration" string="Free Time"/>
 
                                 <div style="display: flex; align-items: center;">
                                     <field name="free_time_duration"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                           readonly="context.get('hide_all_buttons', False)"/>
                                     <div class="o_form_label">Days</div>
                                 </div>
                             </group>
                             <group>
                                 <field name="target_rate"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_create_edit': True}"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                                 <field name="preferred_line_id" options="{'no_create': True, 'no_create_edit': True}"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                             </group>
                         </group>
                         <group>
                             <group>
                                 <field name="service_needed_ids" widget="many2many_tags"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                             </group>
                             <group invisible="not invoice_amount_for_insurance > 0">
                                 <field name="invoice_amount_for_insurance" widget="monetary"
-                                   readonly="context.get('hide_all_buttons', False)"/>
+                                       readonly="context.get('hide_all_buttons', False)"/>
                             </group>
                         </group>
                         <group>
