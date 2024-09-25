@@ -361,6 +361,7 @@
 
     <!-- menu-->
     <menuitem name="Seas &#38; Ports" id="menu_seas_ports_group" parent="menu_freight1" sequence="1" groups="base.group_user"/>
+
     <menuitem name="Countries and Cities" id="menu_countries_cities_group" parent="menu_freight1" sequence="1" groups="base.group_user"/>
     <menuitem id="menu_sea_river" name="Seas and Rivers" sequence="3" parent="menu_seas_ports_group" action="action_sea_river"/>
 
