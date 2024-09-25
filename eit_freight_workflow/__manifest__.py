@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Freight Sales Pricing Workflow",
+    'name': "Freight Workflow",
 
     'summary': """
         Freight Forwarding Sales Pricing Workflow
