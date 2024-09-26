@@ -50,23 +50,26 @@ class PortCitiesTemplate(models.Model):
             if not rec.active:
                 rec.toggle_active()
 
-    def create(self, vals):
+    def create(self, vals_list):
         lnd_transport_type = self.env['transport.type'].search([('code', '=', 'LND')])
 
-        if vals.get('is_city', False):
-            # Ensure that the type_id includes LND
-            vals['type_id'] = [(4, lnd_transport_type.id)]
-        else:
-            if 'type_id' in vals:
-                # Add the selected type_ids plus LND
-                selected_type_ids = vals.get('type_id', [])
-                if isinstance(selected_type_ids, list):
-                    type_ids = [op[1] for op in selected_type_ids if op[0] in [4, 6]]
-                    if lnd_transport_type.id not in type_ids:
-                        vals['type_id'].append((4, lnd_transport_type.id))
-        vals['is_city'] = False
-        record = super(PortCitiesTemplate, self).create(vals)
-        return record
+        for vals in vals_list:
+            if vals.get('is_city', False):
+                # Ensure that the type_id includes LND
+                vals['type_id'] = [(4, lnd_transport_type.id)]
+            else:
+                if 'type_id' in vals:
+                    # Add the selected type_ids plus LND
+                    selected_type_ids = vals.get('type_id', [])
+                    if isinstance(selected_type_ids, list):
+                        type_ids = [op[1] for op in selected_type_ids if op[0] in [4, 6]]
+                        if lnd_transport_type.id not in type_ids:
+                            vals['type_id'].append((4, lnd_transport_type.id))
+            vals['is_city'] = False
+
+        # After processing all vals dictionaries, create records for all
+        records = super(PortCitiesTemplate, self).create(vals_list)
+        return records
 
     def write(self, vals):
         lnd_transport_type = self.env['transport.type'].search([('code', '=', 'LND')])
@@ -74,6 +77,8 @@ class PortCitiesTemplate(models.Model):
         if vals.get('is_city', False):
             # Ensure that the type_id includes LND
             if 'type_id' in vals:
+                if not isinstance(vals['type_id'], list):
+                    vals['type_id'] = []
                 vals['type_id'].append((4, lnd_transport_type.id))
             else:
                 vals['type_id'] = [(4, lnd_transport_type.id)]
@@ -84,7 +89,11 @@ class PortCitiesTemplate(models.Model):
                     type_ids = [op[1] for op in selected_type_ids if op[0] in [4, 6]]
                     if lnd_transport_type.id not in type_ids:
                         vals['type_id'].append((4, lnd_transport_type.id))
+
+        # Reset is_city to False regardless of the condition
         vals['is_city'] = False
+
+        # Call the parent class write method
         result = super(PortCitiesTemplate, self).write(vals)
         return result
 
