@@ -4,28 +4,26 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <!-- Smart button for Carrier Routes -->
-                <button name="action_view_carrier_routes"
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" name="action_view_carrier_routes"
                         type="object"
                         string="Carrier Routes"
                         icon="fa-road"
-                        invisible="carrier_route_count == 0"
-                        />
-                <!-- Carrier Route Count -->
-                <field name="carrier_route_count" widget="statinfo" string="Carrier Routes" invisible="0"/>
-            </xpath>
+                        invisible="not carrier_route_count">
+                    <field string="Carrier Routes" name="carrier_route_count" widget="statinfo"/>
+                </button>
+            </div>
             <xpath expr="//group[@name='purchase']" position="inside">
-                <field name="show_vendor_portal" />
+                <field name="show_vendor_portal"/>
             </xpath>
             <xpath expr="//page[@name='internal_notes']" position="after">
                 <page invisible="not show_vendor_portal" string="Vendor Portals">
                     <group>
-                        <field name="vendor_portal_ids" widget="one2many" string="Vendor Portals" >
+                        <field name="vendor_portal_ids" widget="one2many" string="Vendor Portals">
                             <tree editable="bottom">
-                                <field name="url" />
-                                <field name="username" />
-                                <field name="password" />
+                                <field name="url"/>
+                                <field name="username"/>
+                                <field name="password"/>
                             </tree>
                         </field>
                     </group>
@@ -40,13 +38,13 @@
                 <field name="excecuters" widget="many2many_tags"/>
             </field>
             <xpath expr="//field[@name='state_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
             </xpath>
             <xpath expr="//group[@name='sale']/field[@name='user_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 <attribute name="widget">selection</attribute>
             </xpath>
             <!--                         <xpath expr="//field[@name='buyer_id']" position="attributes">-->
@@ -61,14 +59,14 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 <attribute name="widget">selection</attribute>
             </xpath>
             <xpath expr="//field[@name='excecuters']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
             </xpath>
             <xpath expr="//field[@name='industry_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//form//field[@name='mobile']" position="after">
                 <field name="partner_type_id" widget="many2many_tags"/>
@@ -76,9 +74,11 @@
             </xpath>
             <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']" position="attributes">
                 <attribute name="context">{'default_partner_type_id': partner_type_id, 'default_parent_id': id,
-                    'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id':
-                    state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_lang': lang,
-                    'default_user_id': user_id, 'default_type': 'other'}
+                                           'default_street': street, 'default_street2': street2, 'default_city': city,
+                                           'default_state_id':
+                                               state_id, 'default_zip': zip, 'default_country_id': country_id,
+                                           'default_lang': lang,
+                                           'default_user_id': user_id, 'default_type': 'other'}
                 </attribute>
 
             </xpath>
@@ -92,7 +92,7 @@
         <field name="inherit_id" ref="purchase.view_partner_property_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='buyer_id']" position="attributes">
-                <attribute name="options">{'no_create': True, 'no_create_edit': True,'no_open': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True, 'no_open': True}</attribute>
                 <attribute name="widget">selection</attribute>
             </xpath>
         </field>
@@ -258,7 +258,7 @@
     </record>
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
-        <field name="context">{'default_is_company': True,'search_default_type_company':
+        <field name="context">{'default_is_company': True, 'search_default_type_company':
             True}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
@@ -296,8 +296,8 @@
     </record>
 
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
-        <field name="context">{'search_default_type_company': True,'res_partner_search_mode': 'customer',
-            'default_is_company': True, 'default_customer_rank': 1}
+        <field name="context">{'search_default_type_company': True, 'res_partner_search_mode': 'customer',
+                               'default_is_company': True, 'default_customer_rank': 1}
         </field>
         <field name="domain">[('partner_type_id', 'in', [1])]</field>
         <field name="view_ids" eval="[(5, 0, 0),
@@ -307,7 +307,7 @@
     </record>
 
     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
-        <field name="domain">[('partner_type_id', 'in', [12,11,13,7,5,4,6])]</field>
+        <field name="domain">[('partner_type_id', 'in', [12, 11, 13, 7, 5, 4, 6])]</field>
         <field name="context">{'search_default_type_company': True}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),

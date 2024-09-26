@@ -26,7 +26,7 @@ class InheritResPartner(models.Model):
         self.ensure_one()
         return {
             'name': 'Carrier Routes',
-            'domain': [('carriers', 'in', self.id)],
+            'domain': [('carrier_ids', 'in', self.id)],
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'carrier.route',
