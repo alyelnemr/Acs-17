@@ -396,14 +396,12 @@
             <field name="sequence">1</field> <!-- Update sequence -->
         </record>
 
-<!--        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>-->
+        <!--        <delete model="ir.actions.act_window.view" id="project.open_view_all_task_list_kanban"/>-->
 
-        <record id="operation_open_view_all_task_list_tree" model="ir.actions.act_window.view">
-            <field name="sequence" eval="20"/>
-            <field name="view_mode">kanban</field>
-            <field name="act_window_id" ref="project.action_view_all_task"/>
-            <field name="view_id" ref="operation_inherit_view_task_kanban"/>
+        <record id="project.open_view_all_task_list_kanban" model="ir.actions.act_window.view">
+            <field name="view_id" ref="operation_inherit_view_task_kanban"/> <!-- Your custom view -->
         </record>
+
 
         <record id="menu_main_customer_profiles" model="ir.ui.menu">
             <field name="name">Profiles</field>
