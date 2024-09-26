@@ -19,7 +19,7 @@ class InheritResPartner(models.Model):
     def _compute_carrier_route_count(self):
         for partner in self:
             # Count the number of carrier routes where the partner is in the carriers Many2many field
-            partner.carrier_route_count = self.env['carrier.routes'].search_count([('carriers', 'in', partner.id)])
+            partner.carrier_route_count = self.env['carrier.route'].search_count([('carrier_ids', 'in', partner.id)])
 
     def action_view_carrier_routes(self):
         """Action to open the carrier routes related to this partner."""
@@ -29,9 +29,9 @@ class InheritResPartner(models.Model):
             'domain': [('carriers', 'in', self.id)],
             'view_type': 'form',
             'view_mode': 'tree,form',
-            'res_model': 'carrier.routes',
+            'res_model': 'carrier.route',
             'type': 'ir.actions.act_window',
-            'context': {'default_carriers': [(4, self.id)]},
+            'context': {'default_carrier_ids': [(4, self.id)]},
         }
 
     @api.model
@@ -68,10 +68,10 @@ class InheritResPartner(models.Model):
             else:
                 rec.partner_type_id_1 = None
 
-    def show_partner_reset(self):
-        part = self.search([('show_partner', '=', True)])
-        for p in part:
-            p.show_partner = False
+    # def show_partner_reset(self):
+    #     part = self.search([('show_partner', '=', True)])
+    #     for p in part:
+    #         p.show_partner = False
 
     @api.model
     def create(self, vals_list):
