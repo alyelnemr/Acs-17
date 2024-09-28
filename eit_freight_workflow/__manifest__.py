@@ -21,7 +21,7 @@
     # any module necessary for this one to work correctly
     'depends': [
         'base', 'crm', 'sale_management',
-        'account', 'eit_freight_MasterData', 'eit_freight_sales', 'eit_freight_operation',
+        'account', 'eit_freight_MasterData', 'eit_freight_sales', 'eit_freight_operation', 'eit_freight_pricing',
         'sale_crm', 'web', 'website'
     ],
 

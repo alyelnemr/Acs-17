@@ -98,6 +98,7 @@ class SaleOrder(models.Model):
 
     charges_ids = fields.One2many('sale.charges', 'order_id')
     project_task_id = fields.Many2one(comodel_name='project.task', string="Project Task")
+    website_id = fields.Many2one(comodel_name='website', string='Website')
 
     @api.depends('pricelist_id', 'company_id')
     def _compute_currency_id(self):
