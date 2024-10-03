@@ -341,8 +341,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//kanban" position="attributes">
                     <attribute name="on_create" position="replace"></attribute>
-                    <attribute name="groupby">False</attribute>
-                    <attribute name="default_group_by"></attribute>
                 </xpath>
                 <xpath expr="//kanban" position="inside">
                     <field name="transport_type_id"/>

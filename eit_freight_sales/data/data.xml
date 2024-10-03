@@ -5,4 +5,14 @@
         <field name="parent_id" ref="website.main_menu" />
         <field name="sequence">10</field>
     </record>
+    <record model="crm.stage" id="crm.stage_lead2">
+        <field name="name">Pricing</field>
+        <field name="is_pricing_stage">True</field>
+        <field name="sequence">2</field>
+    </record>
+    <record model="crm.stage" id="crm.stage_lead3">
+        <field name="name">Follow Up</field>
+        <field name="is_follow_up_stage">True</field>
+        <field name="sequence">3</field>
+    </record>
 </odoo>

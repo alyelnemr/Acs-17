@@ -6,6 +6,19 @@
             </field>
         </record>
 
+        <record id="crm_case_kanban_view_leads_workflow_inherit" model="ir.ui.view">
+            <field name="name">crm.kandan.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="on_create" position="replace"></attribute>
+                    <attribute name="groupby">False</attribute>
+                    <attribute name="default_group_by"></attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="crm_case_form_view_oppor_inherit" model="ir.ui.view">
             <field name="name">crm.lead.form.inherit</field>
             <field name="model">crm.lead</field>
