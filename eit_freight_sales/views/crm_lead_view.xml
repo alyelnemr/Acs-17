@@ -36,13 +36,6 @@
                         </div>
                     </button>
                 </button>
-                <xpath expr="//field[@name='stage_id']" position="replace">
-                    <field name="stage_id" widget="statusbar_duration"
-                           options="{'clickable': False, 'fold_field': 'fold'}"
-                           domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]"
-                           invisible="not active or type == 'lead'"/>
-                    <field name="probability" widget="float" class="oe_inline o_input_6ch" invisible="1"/>
-                </xpath>
                 <xpath expr="//div[hasclass('oe_title')]" position="replace">
                     <div class="oe_title" invisible="type == 'lead'">
                         <h1>
